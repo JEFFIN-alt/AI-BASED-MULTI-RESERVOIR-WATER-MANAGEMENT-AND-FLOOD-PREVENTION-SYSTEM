@@ -2,3 +2,15 @@ models/random_forest_baseline.joblib
 __pycache__/
 *.pyc
 .DS_Store
+
+# ML generated models
+models/*.joblib
+
+# Generated ML results
+data/processed/model_results/
+
+# Generated V4 feature datasets
+data/processed/model_splits_v4/
+
+# Temporary ML sequence datasets
+data/processed/ml_sequences_*.csv
