@@ -1,0 +1,55 @@
+{
+  "history_days": 7,
+  "dynamic_features": [
+    "inflow",
+    "water_level",
+    "live_storage",
+    "rainfall",
+    "total_outflow"
+  ],
+  "static_features": [
+    "static_latitude",
+    "static_longitude",
+    "static_FRL",
+    "static_MWL",
+    "static_blue_level",
+    "static_orange_level",
+    "static_red_level",
+    "static_rule_level"
+  ],
+  "static_availability_features": [
+    "static_latitude_available",
+    "static_longitude_available",
+    "static_FRL_available",
+    "static_MWL_available",
+    "static_blue_level_available",
+    "static_orange_level_available",
+    "static_red_level_available",
+    "static_rule_level_available"
+  ],
+  "targets": [
+    "target_1d",
+    "target_3d",
+    "target_7d"
+  ],
+  "train_samples": 16662,
+  "validation_samples": 4383,
+  "test_samples": 1100,
+  "dynamic_shape": [
+    16662,
+    7,
+    5
+  ],
+  "static_shape": [
+    16662,
+    8
+  ],
+  "static_availability_shape": [
+    16662,
+    8
+  ],
+  "target_shape": [
+    16662,
+    3
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "graph": "A \u2014 correlation",
+  "data_window": "\u2264 2023-12-31 (training only)",
+  "leakage_safe": true,
+  "nodes": 18,
+  "reservoirs": [
+    "Anathode",
+    "Anayirankal",
+    "Banasura Sagar",
+    "Chenkulam",
+    "Erattayar",
+    "Idamalayar",
+    "Idukki",
+    "Kakkayam",
+    "Kallar",
+    "Kallarkutty",
+    "Kundala",
+    "Mattupetty",
+    "Moozhiyar",
+    "Pamba",
+    "Pambla",
+    "Ponmudi",
+    "Poringalkuthu",
+    "Sholayar"
+  ],
+  "edges": 24,
+  "min_overlap_days": 1000,
+  "min_positive_correlation": 0.7,
+  "connected_components": 10,
+  "components": [
+    [
+      "Kallarkutty",
+      "Pambla",
+      "Poringalkuthu"
+    ],
+    [
+      "Anathode",
+      "Anayirankal",
+      "Banasura Sagar",
+      "Idamalayar",
+      "Idukki",
+      "Mattupetty",
+      "Sholayar"
+    ],
+    [
+      "Chenkulam"
+    ],
+    [
+      "Ponmudi"
+    ],
+    [
+      "Kakkayam"
+    ],
+    [
+      "Moozhiyar"
+    ],
+    [
+      "Kallar"
+    ],
+    [
+      "Kundala"
+    ],
+    [
+      "Erattayar"
+    ],
+    [
+      "Pamba"
+    ]
+  ],
+  "isolated_reservoirs": [
+    "Chenkulam",
+    "Erattayar",
+    "Kakkayam",
+    "Kallar",
+    "Kundala",
+    "Moozhiyar",
+    "Pamba",
+    "Ponmudi"
+  ],
+  "edge_rule": "positive Pearson inflow correlation >= 0.7 with >= 1000 common training-period dates"
+}

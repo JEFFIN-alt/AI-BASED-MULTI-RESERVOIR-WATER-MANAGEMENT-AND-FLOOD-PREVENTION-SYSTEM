@@ -1,0 +1,31 @@
+source,target,correlation,overlap_days
+Anathode,Anayirankal,0.9300850682458641,1998
+Anathode,Banasura Sagar,0.9513551812930638,1977
+Anathode,Idamalayar,0.9598005148877115,1994
+Anathode,Idukki,0.959572163240927,1999
+Anathode,Kakkayam,0.705222540258259,1607
+Anathode,Mattupetty,0.9467971067406445,1997
+Anathode,Sholayar,0.9626816199420855,1997
+Anayirankal,Banasura Sagar,0.880312883313436,1979
+Anayirankal,Idamalayar,0.9433493532636936,1995
+Anayirankal,Idukki,0.9632989916528265,1999
+Anayirankal,Mattupetty,0.9368379637693954,1999
+Anayirankal,Sholayar,0.9256325471817012,1999
+Banasura Sagar,Idamalayar,0.9704228339491824,1975
+Banasura Sagar,Idukki,0.9333875350049381,1979
+Banasura Sagar,Kakkayam,0.7682370776746945,1609
+Banasura Sagar,Mattupetty,0.9096748037635628,1978
+Banasura Sagar,Sholayar,0.9503027578735631,1978
+Idamalayar,Idukki,0.9804506664484306,1995
+Idamalayar,Kakkayam,0.7900088728083091,1606
+Idamalayar,Mattupetty,0.9509175209088263,1994
+Idamalayar,Sholayar,0.9799800343262782,1994
+Idukki,Kakkayam,0.7313027947152019,1609
+Idukki,Mattupetty,0.9392643480181404,1998
+Idukki,Sholayar,0.9570737741478882,1998
+Kakkayam,Kallarkutty,0.7372132428285098,1599
+Kakkayam,Pambla,0.7523929154768567,1607
+Kallarkutty,Pambla,0.9578286868694964,1970
+Kallarkutty,Poringalkuthu,0.8420835306391237,1990
+Mattupetty,Sholayar,0.9429975930843025,1998
+Pambla,Poringalkuthu,0.8583154751777924,1980

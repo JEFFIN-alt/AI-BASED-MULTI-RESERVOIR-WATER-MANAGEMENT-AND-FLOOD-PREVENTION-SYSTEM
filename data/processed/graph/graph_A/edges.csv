@@ -1,0 +1,25 @@
+source,target,correlation,overlap_days
+Anathode,Anayirankal,0.939363,1216
+Anathode,Banasura Sagar,0.958801,1214
+Anathode,Idamalayar,0.959784,1214
+Anathode,Idukki,0.959712,1218
+Anathode,Mattupetty,0.955887,1215
+Anathode,Sholayar,0.96909,1216
+Anayirankal,Banasura Sagar,0.889581,1216
+Anayirankal,Idamalayar,0.951056,1215
+Anayirankal,Idukki,0.971264,1218
+Anayirankal,Mattupetty,0.950208,1217
+Anayirankal,Sholayar,0.937334,1218
+Banasura Sagar,Idamalayar,0.974438,1213
+Banasura Sagar,Idukki,0.939764,1216
+Banasura Sagar,Mattupetty,0.913087,1215
+Banasura Sagar,Sholayar,0.959858,1216
+Idamalayar,Idukki,0.980931,1215
+Idamalayar,Mattupetty,0.960554,1214
+Idamalayar,Sholayar,0.983599,1215
+Idukki,Mattupetty,0.950758,1217
+Idukki,Sholayar,0.961225,1218
+Kallarkutty,Pambla,0.950678,1198
+Kallarkutty,Poringalkuthu,0.817059,1218
+Mattupetty,Sholayar,0.950054,1217
+Pambla,Poringalkuthu,0.831883,1198
