@@ -1,0 +1,58 @@
+{
+  "graph": "D \u2014 correlation_v1_2",
+  "data_window": "training only (via train.csv split)",
+  "leakage_safe": true,
+  "nodes": 16,
+  "reservoirs": [
+    "Anathode",
+    "Anayirankal",
+    "Banasura Sagar",
+    "Chenkulam",
+    "Idamalayar",
+    "Idukki",
+    "Kakkayam",
+    "Kallarkutty",
+    "Kundala",
+    "Mattupetty",
+    "Moozhiyar",
+    "Pamba",
+    "Pambla",
+    "Ponmudi",
+    "Poringalkuthu",
+    "Sholayar"
+  ],
+  "edges": 41,
+  "min_overlap_days": 365,
+  "min_positive_correlation": 0.55,
+  "connected_components": 2,
+  "components": [
+    [
+      "Anathode",
+      "Anayirankal",
+      "Banasura Sagar",
+      "Chenkulam",
+      "Idamalayar",
+      "Idukki",
+      "Kakkayam",
+      "Kallarkutty",
+      "Kundala",
+      "Mattupetty",
+      "Moozhiyar",
+      "Pambla",
+      "Ponmudi",
+      "Poringalkuthu",
+      "Sholayar"
+    ],
+    [
+      "Pamba"
+    ]
+  ],
+  "isolated_reservoirs": [
+    "Pamba"
+  ],
+  "min_degree": 0,
+  "max_degree": 8,
+  "average_degree": 5.125,
+  "density": 0.3416666666666667,
+  "edge_rule": "positive Pearson inflow correlation >= 0.55 with >= 365 common training-period dates"
+}

@@ -1,0 +1,61 @@
+{
+  "graph": "C \u2014 hybrid (correlation + geo k-NN)",
+  "data_window": "training only <= 2023-12-31",
+  "leakage_safe": true,
+  "sources": {
+    "graph_A": "/home/jeffin/Downloads/AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM_LATEST/AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM/data/processed/graph/graph_A/edges.csv",
+    "graph_B": "/home/jeffin/Downloads/AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM_LATEST/AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM/data/processed/graph/graph_B/edges.csv"
+  },
+  "edge_rule": "union of Graph-A (correlation>=0.70, overlap>=1000) and Graph-B (k=3 geo k-NN)",
+  "nodes": 18,
+  "reservoirs": [
+    "Anathode",
+    "Anayirankal",
+    "Banasura Sagar",
+    "Chenkulam",
+    "Erattayar",
+    "Idamalayar",
+    "Idukki",
+    "Kakkayam",
+    "Kallar",
+    "Kallarkutty",
+    "Kundala",
+    "Mattupetty",
+    "Moozhiyar",
+    "Pamba",
+    "Pambla",
+    "Ponmudi",
+    "Poringalkuthu",
+    "Sholayar"
+  ],
+  "edges": 55,
+  "edge_type_counts": {
+    "geo": 31,
+    "correlation": 19,
+    "both": 5
+  },
+  "connected_components": 1,
+  "components": [
+    [
+      "Anathode",
+      "Anayirankal",
+      "Banasura Sagar",
+      "Chenkulam",
+      "Erattayar",
+      "Idamalayar",
+      "Idukki",
+      "Kakkayam",
+      "Kallar",
+      "Kallarkutty",
+      "Kundala",
+      "Mattupetty",
+      "Moozhiyar",
+      "Pamba",
+      "Pambla",
+      "Ponmudi",
+      "Poringalkuthu",
+      "Sholayar"
+    ]
+  ],
+  "isolated_reservoirs": []
+}

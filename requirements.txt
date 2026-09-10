@@ -1,0 +1,13 @@
+# Core Data Processing & Utilities
+numpy
+pandas
+scikit-learn
+networkx
+
+# Visualization & Interactive Dashboards
+matplotlib
+plotly
+streamlit
+
+# Development & Exploration
+jupyter

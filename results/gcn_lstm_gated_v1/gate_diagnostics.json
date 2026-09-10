@@ -1,0 +1,8 @@
+{
+  "initial_alpha": -4.595,
+  "initial_gate": 0.01,
+  "final_alpha": -4.177877902984619,
+  "final_gate": 0.01509951613843441,
+  "gate_type": "scalar (1 parameter)",
+  "interpretation": "gate < 0.05 = effectively ignored spatial; gate > 0.2 = meaningfully active"
+}

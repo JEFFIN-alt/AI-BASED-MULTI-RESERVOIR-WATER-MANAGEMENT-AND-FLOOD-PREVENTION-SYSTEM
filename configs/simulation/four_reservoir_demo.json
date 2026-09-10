@@ -1,0 +1,53 @@
+{
+  "topology": {
+    "cascade_order": ["Virtual Reservoir A", "Virtual Reservoir B", "Virtual Reservoir C", "Virtual Reservoir D"],
+    "routing_delays_days": {
+      "A_to_B": {"parameter": "routing delay A to B", "value": 1, "unit": "days", "reason": "Discretize flow time between upstream and mid-upper", "source": "SIMULATION ASSUMPTION"},
+      "B_to_C": {"parameter": "routing delay B to C", "value": 1, "unit": "days", "reason": "Discretize flow time between mid-upper and mid-lower", "source": "SIMULATION ASSUMPTION"},
+      "C_to_D": {"parameter": "routing delay C to D", "value": 1, "unit": "days", "reason": "Discretize flow time between mid-lower and terminal", "source": "SIMULATION ASSUMPTION"}
+    },
+    "downstream_capacity": {
+      "parameter": "downstream river flood capacity", "value": 50.0, "unit": "MCM/day", "reason": "Threshold at which downstream flooding occurs", "source": "SIMULATION ASSUMPTION"
+    }
+  },
+  "reservoirs": {
+    "Virtual Reservoir A": {
+      "repository_derived_source": "Anayirankal",
+      "capacity_mcm": {"value": 10.82, "source": "repository-derived"},
+      "initial_storage_mcm": {"parameter": "initial storage", "value": 5.0, "unit": "MCM", "reason": "Start at ~50% capacity", "source": "SIMULATION ASSUMPTION"},
+      "max_release_capacity_mcm_day": {"parameter": "max physical release", "value": 5.0, "unit": "MCM/day", "reason": "Assuming gate can release ~50% capacity per day", "source": "SIMULATION ASSUMPTION"}
+    },
+    "Virtual Reservoir B": {
+      "repository_derived_source": "Ponmudi",
+      "capacity_mcm": {"value": 21.26, "source": "repository-derived"},
+      "initial_storage_mcm": {"parameter": "initial storage", "value": 10.0, "unit": "MCM", "reason": "Start at ~50% capacity", "source": "SIMULATION ASSUMPTION"},
+      "max_release_capacity_mcm_day": {"parameter": "max physical release", "value": 10.0, "unit": "MCM/day", "reason": "Assuming gate can release ~50% capacity per day", "source": "SIMULATION ASSUMPTION"}
+    },
+    "Virtual Reservoir C": {
+      "repository_derived_source": "Idamalayar",
+      "capacity_mcm": {"value": 348.29, "source": "repository-derived"},
+      "initial_storage_mcm": {"parameter": "initial storage", "value": 170.0, "unit": "MCM", "reason": "Start at ~50% capacity", "source": "SIMULATION ASSUMPTION"},
+      "max_release_capacity_mcm_day": {"parameter": "max physical release", "value": 150.0, "unit": "MCM/day", "reason": "Assuming gate can release ~45% capacity per day", "source": "SIMULATION ASSUMPTION"}
+    },
+    "Virtual Reservoir D": {
+      "repository_derived_source": "Idukki",
+      "capacity_mcm": {"value": 401.43, "source": "repository-derived"},
+      "initial_storage_mcm": {"parameter": "initial storage", "value": 200.0, "unit": "MCM", "reason": "Start at ~50% capacity", "source": "SIMULATION ASSUMPTION"},
+      "max_release_capacity_mcm_day": {"parameter": "max physical release", "value": 200.0, "unit": "MCM/day", "reason": "Assuming gate can release ~50% capacity per day", "source": "SIMULATION ASSUMPTION"}
+    }
+  },
+  "gate_rules": {
+    "parameter": "gate position to volume mapping",
+    "value": "linear",
+    "unit": "None",
+    "reason": "Assume gate % scales linearly with max release capacity",
+    "source": "SIMULATION ASSUMPTION"
+  },
+  "minimum_environmental_flow_percent": {
+    "parameter": "minimum baseline release",
+    "value": 0.05,
+    "unit": "Fraction (0-1)",
+    "reason": "Ensure rivers do not run dry during NORMAL state",
+    "source": "SIMULATION ASSUMPTION"
+  }
+}

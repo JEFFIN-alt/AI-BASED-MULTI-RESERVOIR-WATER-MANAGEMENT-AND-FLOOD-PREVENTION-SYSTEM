@@ -1,0 +1,42 @@
+source,target,correlation,overlap_days
+Anathode,Anayirankal,0.935203,1060
+Anathode,Banasura Sagar,0.954683,1051
+Anathode,Idamalayar,0.985163,1037
+Anathode,Idukki,0.955076,1079
+Anathode,Kakkayam,0.630288,754
+Anathode,Kundala,0.558729,1042
+Anathode,Mattupetty,0.952025,1052
+Anathode,Sholayar,0.964854,1062
+Anayirankal,Banasura Sagar,0.880374,1084
+Anayirankal,Idamalayar,0.946599,1064
+Anayirankal,Idukki,0.96918,1094
+Anayirankal,Kundala,0.599971,1074
+Anayirankal,Mattupetty,0.944035,1084
+Anayirankal,Sholayar,0.929157,1094
+Banasura Sagar,Idamalayar,0.974468,1055
+Banasura Sagar,Idukki,0.935065,1085
+Banasura Sagar,Kakkayam,0.73179,781
+Banasura Sagar,Mattupetty,0.907986,1075
+Banasura Sagar,Sholayar,0.960105,1085
+Chenkulam,Pambla,0.595432,862
+Idamalayar,Idukki,0.979253,1066
+Idamalayar,Kakkayam,0.716696,761
+Idamalayar,Kundala,0.567679,1046
+Idamalayar,Mattupetty,0.957656,1056
+Idamalayar,Sholayar,0.982722,1066
+Idukki,Kakkayam,0.661557,781
+Idukki,Kundala,0.566925,1076
+Idukki,Mattupetty,0.945127,1086
+Idukki,Sholayar,0.955867,1096
+Kakkayam,Kallarkutty,0.647886,780
+Kakkayam,Pambla,0.611416,763
+Kakkayam,Sholayar,0.560416,781
+Kallarkutty,Pambla,0.947889,1050
+Kallarkutty,Ponmudi,0.664212,1085
+Kallarkutty,Poringalkuthu,0.765049,897
+Kundala,Mattupetty,0.645929,1066
+Kundala,Ponmudi,0.571684,1066
+Kundala,Sholayar,0.5743,1076
+Mattupetty,Sholayar,0.944654,1086
+Moozhiyar,Pambla,0.570412,1037
+Pambla,Poringalkuthu,0.799182,870

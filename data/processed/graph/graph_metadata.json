@@ -1,0 +1,73 @@
+{
+  "nodes": 18,
+  "reservoirs": [
+    "Anathode",
+    "Anayirankal",
+    "Banasura Sagar",
+    "Chenkulam",
+    "Erattayar",
+    "Idamalayar",
+    "Idukki",
+    "Kakkayam",
+    "Kallar",
+    "Kallarkutty",
+    "Kundala",
+    "Mattupetty",
+    "Moozhiyar",
+    "Pamba",
+    "Pambla",
+    "Ponmudi",
+    "Poringalkuthu",
+    "Sholayar"
+  ],
+  "candidate_edges": 30,
+  "min_overlap_days": 1000,
+  "min_positive_correlation": 0.7,
+  "connected_components": 8,
+  "components": [
+    [
+      "Anathode",
+      "Anayirankal",
+      "Banasura Sagar",
+      "Idamalayar",
+      "Idukki",
+      "Kakkayam",
+      "Kallarkutty",
+      "Mattupetty",
+      "Pambla",
+      "Poringalkuthu",
+      "Sholayar"
+    ],
+    [
+      "Ponmudi"
+    ],
+    [
+      "Kundala"
+    ],
+    [
+      "Chenkulam"
+    ],
+    [
+      "Pamba"
+    ],
+    [
+      "Moozhiyar"
+    ],
+    [
+      "Kallar"
+    ],
+    [
+      "Erattayar"
+    ]
+  ],
+  "isolated_reservoirs": [
+    "Chenkulam",
+    "Erattayar",
+    "Kallar",
+    "Kundala",
+    "Moozhiyar",
+    "Pamba",
+    "Ponmudi"
+  ],
+  "edge_rule": "positive Pearson inflow correlation >= 0.70 with >= 1000 common dates"
+}

@@ -1,0 +1,56 @@
+source,target,edge_type,correlation,distance_km
+Anathode,Anayirankal,correlation,0.939363,
+Anathode,Banasura Sagar,correlation,0.958801,
+Anathode,Erattayar,geo,,52.332
+Anathode,Idamalayar,correlation,0.959784,
+Anathode,Idukki,correlation,0.959712,
+Anathode,Mattupetty,correlation,0.955887,
+Anathode,Moozhiyar,geo,,9.989
+Anathode,Pamba,geo,,5.546
+Anathode,Sholayar,correlation,0.96909,
+Anayirankal,Banasura Sagar,correlation,0.889581,
+Anayirankal,Idamalayar,correlation,0.951056,
+Anayirankal,Idukki,correlation,0.971264,
+Anayirankal,Kundala,geo,,14.938
+Anayirankal,Mattupetty,both,0.950208,14.117
+Anayirankal,Ponmudi,geo,,17.388
+Anayirankal,Sholayar,correlation,0.937334,
+Banasura Sagar,Idamalayar,correlation,0.974438,
+Banasura Sagar,Idukki,correlation,0.939764,
+Banasura Sagar,Kakkayam,geo,,13.616
+Banasura Sagar,Mattupetty,correlation,0.913087,
+Banasura Sagar,Poringalkuthu,geo,,168.222
+Banasura Sagar,Sholayar,both,0.959858,173.08
+Chenkulam,Kallarkutty,geo,,4.833
+Chenkulam,Kundala,geo,,23.429
+Chenkulam,Mattupetty,geo,,14.581
+Chenkulam,Pambla,geo,,9.91
+Chenkulam,Ponmudi,geo,,6.193
+Erattayar,Idukki,geo,,14.695
+Erattayar,Kallar,geo,,5.754
+Erattayar,Moozhiyar,geo,,56.029
+Erattayar,Pamba,geo,,47.04
+Erattayar,Ponmudi,geo,,17.549
+Idamalayar,Idukki,correlation,0.980931,
+Idamalayar,Mattupetty,correlation,0.960554,
+Idamalayar,Pambla,geo,,39.857
+Idamalayar,Poringalkuthu,geo,,13.005
+Idamalayar,Sholayar,both,0.983599,11.103
+Idukki,Kallar,geo,,19.823
+Idukki,Kallarkutty,geo,,15.416
+Idukki,Mattupetty,correlation,0.950758,
+Idukki,Pambla,geo,,13.336
+Idukki,Sholayar,correlation,0.961225,
+Kakkayam,Poringalkuthu,geo,,157.737
+Kakkayam,Sholayar,geo,,163.12
+Kallar,Ponmudi,geo,,18.555
+Kallarkutty,Pambla,both,0.950678,5.277
+Kallarkutty,Ponmudi,geo,,6.417
+Kallarkutty,Poringalkuthu,correlation,0.817059,
+Kundala,Mattupetty,geo,,9.186
+Mattupetty,Sholayar,correlation,0.950054,
+Moozhiyar,Pamba,geo,,13.827
+Pambla,Ponmudi,geo,,10.92
+Pambla,Poringalkuthu,both,0.831883,52.8
+Pambla,Sholayar,geo,,46.464
+Poringalkuthu,Sholayar,geo,,10.922

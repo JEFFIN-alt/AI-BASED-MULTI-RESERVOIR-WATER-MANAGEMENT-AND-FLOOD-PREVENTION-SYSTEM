@@ -1,0 +1,9 @@
+metric,baseline,mpc,diff,verdict
+overflow_events,7,0,-7.0000,MPC_BETTER
+overflow_volume_mcm,10.75003168999999,0.0,-10.7500,MPC_BETTER
+ds_violations,8,0,-8.0000,MPC_BETTER
+peak_ds_flow,60.0,30.0,-30.0000,MPC_BETTER
+total_release_mcm,2017.25,2031.0,+13.7500,MPC_WORSE
+forecast_dates_used,0,74,N/A,N/A
+total_steps,74,74,+0.0000,SAME
+mass_balance_residual,-6.821210263296962e-13,-6.821210263296962e-13,0.00e+00,PASS

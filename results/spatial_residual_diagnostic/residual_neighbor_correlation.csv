@@ -1,0 +1,10 @@
+horizon,period,pearson_r,pearson_pval,spearman_r,spearman_pval,n_total,n_valid,n_excluded,n_nan_inf
+target_1d,Overall,0.0219,0.484002,0.0303,0.33331,1100,1020,80,0
+target_1d,Jan-Apr 2025,-0.0404,0.304727,-0.0602,0.125802,692,648,44,0
+target_1d,Jun-Aug 2025,0.262,0.0,0.2935,0.0,408,372,36,0
+target_3d,Overall,0.1027,0.00102,0.0693,0.026834,1100,1020,80,0
+target_3d,Jan-Apr 2025,0.0346,0.378856,-0.0403,0.30594,692,648,44,0
+target_3d,Jun-Aug 2025,0.3082,0.0,0.3483,0.0,408,372,36,0
+target_7d,Overall,0.1585,0.0,0.142,5e-06,1100,1020,80,0
+target_7d,Jan-Apr 2025,0.0608,0.121878,0.017,0.665379,692,648,44,0
+target_7d,Jun-Aug 2025,0.3148,0.0,0.4038,0.0,408,372,36,0

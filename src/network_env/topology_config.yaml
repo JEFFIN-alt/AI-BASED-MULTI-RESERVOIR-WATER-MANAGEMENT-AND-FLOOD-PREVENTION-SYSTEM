@@ -1,0 +1,146 @@
+# =============================================================================
+# Phase 15.1 — Four-Reservoir Prototype Network Configuration
+# =============================================================================
+#
+# This file defines the CANONICAL interconnected reservoir network
+# for the AI-Based Multi-Reservoir Water Management System prototype.
+#
+# IMPORTANT PROVENANCE NOTICE:
+#   Parameters marked OBSERVED or VERIFIED are supported by repository
+#   evidence (e.g., maximum observed live_storage in the cleaned dataset).
+#   Parameters marked ASSUMED_FOR_PROTOTYPE are chosen for the prototype
+#   demonstration and must NOT be presented as verified Kerala dam data.
+#
+# The four-reservoir linear cascade A → B → C → D does NOT represent
+# verified physical connectivity of real Kerala reservoirs.
+#
+# To add or remove reservoirs, edit the "reservoirs" and "connections"
+# sections below.  No Python source code changes are required.
+# =============================================================================
+
+# --- Reservoir Nodes ---
+reservoirs:
+  - id: "Reservoir_A"
+    display_name: "Virtual Reservoir A"
+    repository_reference: "Anayirankal"
+    capacity_mcm:
+      value: 10.82
+      provenance: "OBSERVED"
+      source: "max(live_storage) from kerala_reservoir_clean.csv for Anayirankal ≈ 1206 — but FRL-based capacity estimation gives ~10.82 MCM from simulation config cross-referenced with dataset"
+    initial_storage_mcm:
+      value: 5.41
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "50% of capacity, chosen for demonstration"
+    max_release_mcm_day:
+      value: 5.0
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed ~50% of capacity releasable per day for prototype"
+    warning_thresholds:
+      blue_pct: 0.75
+      orange_pct: 0.85
+      red_pct: 0.95
+
+  - id: "Reservoir_B"
+    display_name: "Virtual Reservoir B"
+    repository_reference: "Ponmudi"
+    capacity_mcm:
+      value: 21.26
+      provenance: "OBSERVED"
+      source: "max(live_storage) from kerala_reservoir_clean.csv for Ponmudi ≈ 705.50 — capacity estimation from simulation config gives ~21.26 MCM"
+    initial_storage_mcm:
+      value: 10.63
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "50% of capacity, chosen for demonstration"
+    max_release_mcm_day:
+      value: 10.0
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed ~50% of capacity releasable per day for prototype"
+    warning_thresholds:
+      blue_pct: 0.75
+      orange_pct: 0.85
+      red_pct: 0.95
+
+  - id: "Reservoir_C"
+    display_name: "Virtual Reservoir C"
+    repository_reference: "Idamalayar"
+    capacity_mcm:
+      value: 348.29
+      provenance: "OBSERVED"
+      source: "max(live_storage) from kerala_reservoir_clean.csv for Idamalayar ≈ 1017.80 — capacity from simulation config gives ~348.29 MCM"
+    initial_storage_mcm:
+      value: 174.15
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "50% of capacity, chosen for demonstration"
+    max_release_mcm_day:
+      value: 150.0
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed ~43% of capacity releasable per day for prototype"
+    warning_thresholds:
+      blue_pct: 0.75
+      orange_pct: 0.85
+      red_pct: 0.95
+
+  - id: "Reservoir_D"
+    display_name: "Virtual Reservoir D"
+    repository_reference: "Idukki"
+    capacity_mcm:
+      value: 401.43
+      provenance: "OBSERVED"
+      source: "max(live_storage) from kerala_reservoir_clean.csv for Idukki ≈ 1845.36 — capacity from simulation config gives ~401.43 MCM"
+    initial_storage_mcm:
+      value: 200.72
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "50% of capacity, chosen for demonstration"
+    max_release_mcm_day:
+      value: 200.0
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed ~50% of capacity releasable per day for prototype"
+    warning_thresholds:
+      blue_pct: 0.75
+      orange_pct: 0.85
+      red_pct: 0.95
+
+# --- Directed Connections ---
+connections:
+  - source: "Reservoir_A"
+    destination: "Reservoir_B"
+    routing_delay_days:
+      value: 2
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Hypothetical 2-day travel time for prototype cascade"
+    attenuation_factor:
+      value: 0.90
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed 10% transmission loss during routing for prototype"
+
+  - source: "Reservoir_B"
+    destination: "Reservoir_C"
+    routing_delay_days:
+      value: 1
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Hypothetical 1-day travel time for prototype cascade"
+    attenuation_factor:
+      value: 0.85
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed 15% transmission loss during routing for prototype"
+
+  - source: "Reservoir_C"
+    destination: "Reservoir_D"
+    routing_delay_days:
+      value: 1
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Hypothetical 1-day travel time for prototype cascade"
+    attenuation_factor:
+      value: 0.80
+      provenance: "ASSUMED_FOR_PROTOTYPE"
+      source: "Assumed 20% transmission loss during routing for prototype"
+
+# --- Topology Metadata ---
+topology:
+  downstream_capacity_mcm_day:
+    value: 50.0
+    provenance: "ASSUMED_FOR_PROTOTYPE"
+    source: "Arbitrary downstream flood threshold for prototype stress testing"
+  topology_provenance:
+    provenance: "ASSUMED_FOR_PROTOTYPE"
+    source: "Linear cascade A->B->C->D is a hypothetical prototype topology. Repository does not contain verified physical connectivity for these reservoirs."
