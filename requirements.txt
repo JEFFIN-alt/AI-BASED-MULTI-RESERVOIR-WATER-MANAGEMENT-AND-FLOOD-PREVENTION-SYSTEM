@@ -3,11 +3,15 @@ numpy
 pandas
 scikit-learn
 networkx
+joblib
 
 # Visualization & Interactive Dashboards
 matplotlib
 plotly
 streamlit
+
+# Deep Learning Inference
+torch
 
 # Development & Exploration
 jupyter

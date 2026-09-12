@@ -20,8 +20,16 @@ _PROJECT_ROOT = _THIS_DIR.parent.parent  # src/dashboard -> src -> project root
 
 sys.path.insert(0, str(_PROJECT_ROOT))
 
-from src.management.management_data_loader import load_reservoir_metadata, get_current_state
+from src.management.management_data_loader import load_reservoir_metadata, get_current_state, get_recent_history
 from src.management.risk_engine import assess_risk
+import streamlit as st
+
+# We wrap the forecaster initialization in a Streamlit cache to avoid reloading PyTorch every refresh
+@st.cache_resource
+def get_live_forecaster():
+    from src.modeling.inference import LiveForecaster
+    return LiveForecaster(str(_PROJECT_ROOT))
+
 
 # ---------------------------------------------------------------------------
 # Paths (relative to project root)
@@ -100,6 +108,7 @@ def get_latest_v3_forecasts(predictions_df: pd.DataFrame) -> Dict[str, Dict[str,
             "actual_1d": float(latest["target_1d_actual"]) if pd.notna(latest["target_1d_actual"]) else None,
             "actual_3d": float(latest["target_3d_actual"]) if pd.notna(latest["target_3d_actual"]) else None,
             "actual_7d": float(latest["target_7d_actual"]) if pd.notna(latest["target_7d_actual"]) else None,
+            "source": "VALIDATED_TEST_PREDICTION"
         }
     return forecasts
 
@@ -111,13 +120,53 @@ def assess_all_reservoirs() -> List[Dict[str, Any]]:
     """
     metadata = load_all_metadata()
     predictions_df = load_v3_predictions()
-    latest_forecasts = get_latest_v3_forecasts(predictions_df)
+    latest_static_forecasts = get_latest_v3_forecasts(predictions_df)
+    
+    try:
+        forecaster = get_live_forecaster()
+    except Exception as e:
+        print(f"Warning: Failed to load LiveForecaster: {e}")
+        forecaster = None
 
     results = []
     for reservoir in V3_RESERVOIRS:
         state = load_current_state(reservoir)
         meta = metadata.get(reservoir.lower().strip(), {})
-        fc = latest_forecasts.get(reservoir, {})
+        
+        # 1. Attempt Live Inference
+        fc = None
+        if forecaster is not None:
+            filename = reservoir.replace(" ", "_") + ".json"
+            hist_path = HISTORIC_DATA_DIR / filename
+            history = get_recent_history(str(hist_path), days=7)
+            
+            if len(history) == 7:
+                hist_df = pd.DataFrame(history)
+                # Convert dates from DD.MM.YYYY to YYYY-MM-DD for pandas standard parsing if needed
+                if 'date' in hist_df.columns:
+                    hist_df['date'] = pd.to_datetime(hist_df['date'], format='%d.%m.%Y', errors='coerce')
+                    
+                try:
+                    fc_result = forecaster.predict(hist_df)
+                    fc = {
+                        "date": fc_result["forecast_date"],
+                        "forecast_1d": fc_result["forecast_1d"],
+                        "forecast_3d": fc_result["forecast_3d"],
+                        "forecast_7d": fc_result["forecast_7d"],
+                        "actual_1d": None,
+                        "actual_3d": None,
+                        "actual_7d": None,
+                        "source": fc_result["source"]
+                    }
+                except Exception as e:
+                    print(f"Live inference failed for {reservoir}: {e}")
+                    fc = None
+                    
+        # 2. Fallback to Static Test Predictions
+        if fc is None:
+            fc = latest_static_forecasts.get(reservoir, {})
+            if not fc.get("source"):
+                fc["source"] = "UNAVAILABLE"
 
         risk = assess_risk(
             state, meta,
@@ -138,6 +187,7 @@ def assess_all_reservoirs() -> List[Dict[str, Any]]:
             "actual_1d": fc.get("actual_1d"),
             "actual_3d": fc.get("actual_3d"),
             "actual_7d": fc.get("actual_7d"),
+            "source": fc.get("source", "UNAVAILABLE"),
             "blue_level": meta.get("blueLevel"),
             "orange_level": meta.get("orangeLevel"),
             "red_level": meta.get("redLevel"),

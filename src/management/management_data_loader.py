@@ -81,3 +81,39 @@ def get_current_state(historic_data_path: str) -> Dict[str, Any]:
             }
     except FileNotFoundError:
         return {}
+
+def get_recent_history(historic_data_path: str, days: int = 7) -> list:
+    """
+    Reads the latest N days of telemetry state from a historic JSON file.
+    Returns a list of dicts, sorted chronologically (oldest first).
+    """
+    try:
+        with open(historic_data_path, 'r') as f:
+            data = json.load(f)
+            records = data.get('data', [])
+            if len(records) < days:
+                return []
+            
+            recent = records[:days]
+            
+            def parse_float(val):
+                try:
+                    if val and str(val).strip() != "":
+                        return float(val)
+                except ValueError:
+                    pass
+                return None
+                
+            history = []
+            for rec in reversed(recent): # Reverse to get oldest first
+                history.append({
+                    'date': rec.get('date'),
+                    'water_level': parse_float(rec.get('waterLevel')),
+                    'live_storage': parse_float(rec.get('liveStorage')),
+                    'inflow': parse_float(rec.get('inflow')),
+                    'rainfall': parse_float(rec.get('rainfall')),
+                    'total_outflow': parse_float(rec.get('totalOutflow'))
+                })
+            return history
+    except FileNotFoundError:
+        return []
