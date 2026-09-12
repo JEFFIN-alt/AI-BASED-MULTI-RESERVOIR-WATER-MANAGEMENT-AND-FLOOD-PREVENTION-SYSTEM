@@ -202,6 +202,30 @@ def main():
     # ---------------------------------------------------------------
     # Top Bar
     st.markdown("### 🌐 Reservoir Digital Twin & AI Control")
+
+    # ---------------------------------------------------------------
+    # Full-Screen Digital Twin Link
+    # ---------------------------------------------------------------
+    # The standalone FastAPI + Three.js Digital Twin is the PRIMARY
+    # immersive 3D interface. Streamlit is the secondary analytics UI.
+    # They run SEPARATE SimBridge instances by design — Streamlit owns
+    # its own simulation state in st.session_state, while FastAPI owns
+    # its own via state_manager.GlobalSimulationState.
+    _fastapi_host = "127.0.0.1"
+    _fastapi_port = 8000
+    _twin_url = f"http://{_fastapi_host}:{_fastapi_port}"
+    st.markdown(
+        f'<div style="margin-bottom:12px;">'
+        f'<a href="{_twin_url}" target="_blank" '
+        f'style="display:inline-block;padding:10px 20px;background:linear-gradient(135deg,#1e3a5f,#0f2847);'
+        f'color:#38bdf8;border:1px solid rgba(56,189,248,0.4);border-radius:8px;text-decoration:none;'
+        f'font-weight:700;font-size:14px;letter-spacing:0.05em;">'
+        f'🖥️ OPEN FULL-SCREEN DIGITAL TWIN</a>'
+        f'<span style="margin-left:12px;color:#94a3b8;font-size:12px;">'
+        f'PRIMARY 3D DIGITAL TWIN · FastAPI + Three.js</span>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
     
     col_main, col_right = st.columns([3, 1])
 
@@ -220,12 +244,16 @@ def main():
     with col_right:
         st.markdown("#### Simulation Controls")
         
+        # Buttons only SET flags in session_state.
+        # The actual simulation advance runs AFTER advance_simulation()
+        # and all its dependencies (manual_inflows, gate_commands) are
+        # fully constructed — see "DEFERRED BUTTON ACTIONS" section below.
         c1, c2, c3 = st.columns(3)
         if c1.button("▶ Play" if not st.session_state.sim_running else "⏸ Pause"):
             st.session_state.sim_running = not st.session_state.sim_running
         if c2.button("⏭ Step"):
             st.session_state.sim_running = False
-            advance_simulation(bridge)
+            st.session_state["_pending_step"] = True
         if c3.button("↻ Reset"):
             reset_simulation()
             
@@ -276,10 +304,20 @@ def main():
         gate_commands["Virtual Reservoir D"] = 100.0
         
     def advance_simulation(b):
+        """Advance the real simulation by one step via SimBridge."""
         inflows = manual_inflows.copy()
         inflows["Virtual Reservoir D"] = 0.0
         b.step(inflows, gate_commands)
         st.session_state.sim_tick += 1
+
+    # ---------------------------------------------------------------
+    # DEFERRED BUTTON ACTIONS
+    # ---------------------------------------------------------------
+    # The STEP button sets _pending_step = True earlier in the render.
+    # Now that advance_simulation() and its captured variables are ready
+    # we can safely execute the deferred step.
+    if st.session_state.pop("_pending_step", False):
+        advance_simulation(bridge)
 
     if st.session_state.sim_running:
         advance_simulation(bridge)
