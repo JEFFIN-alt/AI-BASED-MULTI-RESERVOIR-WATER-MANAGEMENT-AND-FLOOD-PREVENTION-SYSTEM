@@ -44,7 +44,10 @@ export class TwinAPI {
   }
 
   async setGate(reservoirId, value) {
-    return this.post(`/gate/${reservoirId}`, { value: value / 100.0 });
+    // Gate API contract: value is a PERCENTAGE in [0, 100]
+    // (routes.py stores it in manual_gates; environment.py clamps to [0, 100]).
+    // The UI slider is already 0-100, so send it directly - do NOT divide by 100.
+    return this.post(`/gate/${reservoirId}`, { value: value });
   }
 
   async play() {

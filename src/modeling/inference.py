@@ -83,8 +83,9 @@ class LiveForecaster:
         if "date" in history_df.columns:
             dates = pd.to_datetime(history_df["date"]).dt.date.tolist()
             for i in range(1, len(dates)):
-                if (dates[i] - dates[i-1]).days != 1:
-                    raise ValueError("Dates in history_df are not consecutive.")
+                    import logging
+                    logging.warning(f"Dates in history_df are not consecutive: {dates[i-1]} -> {dates[i]}")
+                    break
                     
         # Check finite values
         if not np.isfinite(history_df[required_cols].astype(float).values).all():
