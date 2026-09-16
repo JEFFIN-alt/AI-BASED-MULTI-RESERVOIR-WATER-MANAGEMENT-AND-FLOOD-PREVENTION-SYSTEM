@@ -1,0 +1,29 @@
+# AquaFlow — project configuration
+# =============================================================================
+#
+# Why this file exists
+# --------------------
+# The repository uses absolute imports rooted at the project root, e.g.
+#
+#     from src.management.risk_engine import assess_risk
+#     from src.network_env.reservoir_network import ReservoirNetwork
+#
+# Running the `pytest` console script therefore failed at collection with:
+#
+#     ModuleNotFoundError: No module named 'src'
+#
+# `python -m pytest` happens to work because the interpreter prepends the
+# current directory to sys.path, but the console script does not. Declaring
+# `pythonpath` here fixes both invocation styles declaratively, instead of
+# scattering `sys.path.insert(...)` hacks through individual test modules.
+#
+# Scope note: this section only affects test discovery/import. It does not
+# change any runtime behaviour, and it does not modify test logic.
+#
+# =============================================================================
+
+[tool.pytest.ini_options]
+# Put the repository root on sys.path so `src.*` imports resolve.
+pythonpath = ["."]
+# Keep pytest's default recursive discovery (tests/ plus test modules that
+# live inside src/ and results/), matching the pre-existing behaviour.

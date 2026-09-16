@@ -1,0 +1,218 @@
+{
+  "timestamp": "2026-09-15T09:48:59.715968",
+  "script": "scripts/run_phase15_3_validation.py",
+  "network_provenance_summary": {
+    "OBSERVED": 4,
+    "VERIFIED": 0,
+    "ASSUMED_FOR_PROTOTYPE": 16
+  },
+  "network_provenance_entries": {
+    "Reservoir_A.capacity": {
+      "name": "Reservoir_A capacity",
+      "value": 10.82,
+      "unit": "MCM",
+      "provenance": "OBSERVED",
+      "source": "max(live_storage) from kerala_reservoir_clean.csv for Anayirankal \u00e2\u2030\u02c6 1206 \u00e2\u20ac\u201d but FRL-based capacity estimation gives ~10.82 MCM from simulation config cross-referenced with dataset",
+      "notes": ""
+    },
+    "Reservoir_A.initial_storage": {
+      "name": "Reservoir_A initial storage",
+      "value": 5.41,
+      "unit": "MCM",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "50% of capacity, chosen for demonstration",
+      "notes": ""
+    },
+    "Reservoir_A.max_release": {
+      "name": "Reservoir_A max release",
+      "value": 5.0,
+      "unit": "MCM/day",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed ~50% of capacity releasable per day for prototype",
+      "notes": ""
+    },
+    "Reservoir_B.capacity": {
+      "name": "Reservoir_B capacity",
+      "value": 21.26,
+      "unit": "MCM",
+      "provenance": "OBSERVED",
+      "source": "max(live_storage) from kerala_reservoir_clean.csv for Ponmudi \u00e2\u2030\u02c6 705.50 \u00e2\u20ac\u201d capacity estimation from simulation config gives ~21.26 MCM",
+      "notes": ""
+    },
+    "Reservoir_B.initial_storage": {
+      "name": "Reservoir_B initial storage",
+      "value": 10.63,
+      "unit": "MCM",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "50% of capacity, chosen for demonstration",
+      "notes": ""
+    },
+    "Reservoir_B.max_release": {
+      "name": "Reservoir_B max release",
+      "value": 10.0,
+      "unit": "MCM/day",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed ~50% of capacity releasable per day for prototype",
+      "notes": ""
+    },
+    "Reservoir_C.capacity": {
+      "name": "Reservoir_C capacity",
+      "value": 348.29,
+      "unit": "MCM",
+      "provenance": "OBSERVED",
+      "source": "max(live_storage) from kerala_reservoir_clean.csv for Idamalayar \u00e2\u2030\u02c6 1017.80 \u00e2\u20ac\u201d capacity from simulation config gives ~348.29 MCM",
+      "notes": ""
+    },
+    "Reservoir_C.initial_storage": {
+      "name": "Reservoir_C initial storage",
+      "value": 174.15,
+      "unit": "MCM",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "50% of capacity, chosen for demonstration",
+      "notes": ""
+    },
+    "Reservoir_C.max_release": {
+      "name": "Reservoir_C max release",
+      "value": 150.0,
+      "unit": "MCM/day",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed ~43% of capacity releasable per day for prototype",
+      "notes": ""
+    },
+    "Reservoir_D.capacity": {
+      "name": "Reservoir_D capacity",
+      "value": 401.43,
+      "unit": "MCM",
+      "provenance": "OBSERVED",
+      "source": "max(live_storage) from kerala_reservoir_clean.csv for Idukki \u00e2\u2030\u02c6 1845.36 \u00e2\u20ac\u201d capacity from simulation config gives ~401.43 MCM",
+      "notes": ""
+    },
+    "Reservoir_D.initial_storage": {
+      "name": "Reservoir_D initial storage",
+      "value": 200.72,
+      "unit": "MCM",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "50% of capacity, chosen for demonstration",
+      "notes": ""
+    },
+    "Reservoir_D.max_release": {
+      "name": "Reservoir_D max release",
+      "value": 200.0,
+      "unit": "MCM/day",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed ~50% of capacity releasable per day for prototype",
+      "notes": ""
+    },
+    "Reservoir_A->Reservoir_B.routing_delay": {
+      "name": "Reservoir_A->Reservoir_B routing delay",
+      "value": 2,
+      "unit": "days",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Hypothetical 2-day travel time for prototype cascade",
+      "notes": ""
+    },
+    "Reservoir_A->Reservoir_B.attenuation": {
+      "name": "Reservoir_A->Reservoir_B attenuation factor",
+      "value": 0.9,
+      "unit": "fraction",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed 10% transmission loss during routing for prototype",
+      "notes": ""
+    },
+    "Reservoir_B->Reservoir_C.routing_delay": {
+      "name": "Reservoir_B->Reservoir_C routing delay",
+      "value": 1,
+      "unit": "days",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Hypothetical 1-day travel time for prototype cascade",
+      "notes": ""
+    },
+    "Reservoir_B->Reservoir_C.attenuation": {
+      "name": "Reservoir_B->Reservoir_C attenuation factor",
+      "value": 0.85,
+      "unit": "fraction",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed 15% transmission loss during routing for prototype",
+      "notes": ""
+    },
+    "Reservoir_C->Reservoir_D.routing_delay": {
+      "name": "Reservoir_C->Reservoir_D routing delay",
+      "value": 1,
+      "unit": "days",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Hypothetical 1-day travel time for prototype cascade",
+      "notes": ""
+    },
+    "Reservoir_C->Reservoir_D.attenuation": {
+      "name": "Reservoir_C->Reservoir_D attenuation factor",
+      "value": 0.8,
+      "unit": "fraction",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Assumed 20% transmission loss during routing for prototype",
+      "notes": ""
+    },
+    "downstream_capacity": {
+      "name": "downstream river capacity",
+      "value": 50.0,
+      "unit": "MCM/day",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Arbitrary downstream flood threshold for prototype stress testing",
+      "notes": ""
+    },
+    "network_topology": {
+      "name": "network topology A->B->C->D",
+      "value": "linear cascade",
+      "unit": "graph",
+      "provenance": "ASSUMED_FOR_PROTOTYPE",
+      "source": "Linear cascade A->B->C->D is a hypothetical prototype topology. Repository does not contain verified physical connectivity for these reservoirs.",
+      "notes": ""
+    }
+  },
+  "v3_adapter_provenance": {
+    "model": "LSTM_V3",
+    "artifact": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv",
+    "artifact_exists": true,
+    "total_records": 1100,
+    "unique_dates": 74,
+    "unique_reservoirs": 16,
+    "reservoir_mapping": {
+      "Reservoir_A": "Anayirankal",
+      "Reservoir_B": "Ponmudi",
+      "Reservoir_C": "Idamalayar",
+      "Reservoir_D": "Idukki"
+    },
+    "mapping_provenance": "ASSUMED_FOR_PROTOTYPE (from topology_config.yaml)",
+    "forecast_semantics": {
+      "target_1d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 1 day",
+      "target_3d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 3 days",
+      "target_7d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 7 days"
+    },
+    "units": "MCM/day (original physical units)",
+    "provenance_level": "MODEL_PREDICTION",
+    "warnings": [
+      "These are POINT FORECASTS, NOT cumulative volumes.",
+      "Do NOT multiply by horizon length.",
+      "Do NOT interpolate between horizons.",
+      "Reservoir mapping is ASSUMED_FOR_PROTOTYPE."
+    ]
+  },
+  "reservoir_mapping": {
+    "Reservoir_A": "Anayirankal",
+    "Reservoir_B": "Ponmudi",
+    "Reservoir_C": "Idamalayar",
+    "Reservoir_D": "Idukki"
+  },
+  "mapping_classification": "ASSUMED_FOR_PROTOTYPE",
+  "topology_classification": "ASSUMED_FOR_PROTOTYPE",
+  "v3_forecast_semantics": {
+    "target_1d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 1 day",
+    "target_3d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 3 days",
+    "target_7d": "POINT FORECAST: predicted inflow (MCM/day) on forecast_date + 7 days"
+  },
+  "v3_warnings": [
+    "These are POINT FORECASTS, NOT cumulative volumes.",
+    "Do NOT multiply by horizon length.",
+    "Do NOT interpolate between horizons.",
+    "Reservoir mapping is ASSUMED_FOR_PROTOTYPE."
+  ]
+}

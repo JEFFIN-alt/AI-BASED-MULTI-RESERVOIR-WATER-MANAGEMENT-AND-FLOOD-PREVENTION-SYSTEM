@@ -1,0 +1,4407 @@
+{
+  "timestamp": "2026-09-14T18:23:36.409047",
+  "live_config": "configs\\simulation\\four_reservoir_demo.json",
+  "canonical_topology": "src\\network_env\\topology_config.yaml",
+  "cascade_order": [
+    "Virtual Reservoir A",
+    "Virtual Reservoir B",
+    "Virtual Reservoir C",
+    "Virtual Reservoir D"
+  ],
+  "results": [
+    {
+      "scenario": "S1_routing_only_no_spill",
+      "description": "Moderate inflows, no reservoir reaches capacity. Isolates the ROUTING implementation itself: with legacy-equivalent parameters (1/1/1, attenuation 1.0) the two engines must agree exactly.",
+      "initial_storages": {
+        "Virtual Reservoir A": 5.0,
+        "Virtual Reservoir B": 10.0,
+        "Virtual Reservoir C": 170.0,
+        "Virtual Reservoir D": 200.0
+      },
+      "inflows": {
+        "Virtual Reservoir A": 1.0,
+        "Virtual Reservoir B": 2.0,
+        "Virtual Reservoir C": 20.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "gates_pct": {
+        "Virtual Reservoir A": 40.0,
+        "Virtual Reservoir B": 35.0,
+        "Virtual Reservoir C": 50.0,
+        "Virtual Reservoir D": 100.0
+      },
+      "n_days": 10,
+      "traces": {
+        "legacy": {
+          "engine": "legacy",
+          "days": [
+            {
+              "downstream_flow": 200.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 4.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 115.0,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 200.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 3.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 63.5,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.375,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 2.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 12.0,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.375,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 1.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.2366666666666667,
+                  "release_total": 35.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.375,
+                  "release_total": 75.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 35.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1775,
+                  "release_total": 35.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 35.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 11.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1175,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1175,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1175,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1175,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.15666666666666668,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.1175,
+                  "release_total": 23.5,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            }
+          ]
+        },
+        "network_legacy_equivalent": {
+          "engine": "network_legacy_equivalent",
+          "days": [
+            {
+              "downstream_flow": 200.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 4.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 115.0,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 200.0,
+                  "controlled_release": 200.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 3.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 63.5,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 2.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 12.0,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 75.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 1.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 35.5,
+                  "controlled_release": 35.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 75.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 35.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 35.5,
+                  "controlled_release": 35.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 35.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 11.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 10.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 23.5,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 9.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 3.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 23.5,
+                  "controlled_release": 23.5,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 23.5,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 230.0,
+            "storage_change": -376.0,
+            "total_terminal_outflow": 578.0,
+            "total_nonterminal_spill": 0.0,
+            "total_routing_loss": 0.0,
+            "water_in_transit": 28.0,
+            "accounted": 230.0,
+            "residual_error": 0.0
+          }
+        },
+        "authoritative": {
+          "engine": "authoritative",
+          "days": [
+            {
+              "downstream_flow": 200.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 4.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.5,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 115.0,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 200.0,
+                  "controlled_release": 200.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 60.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 3.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.0,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 62.974999999999994,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 60.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 60.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 2.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.300000000000001,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.8,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 10.949999999999989,
+                  "gate_position": 0.5,
+                  "release_total": 75.0,
+                  "controlled_release": 75.0,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 60.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 60.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 1.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.600000000000001,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.8,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 33.92499999999999,
+                  "controlled_release": 33.92499999999999,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 60.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 27.139999999999993,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.900000000000002,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.8,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 27.139999999999993,
+                  "controlled_release": 27.139999999999993,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 27.139999999999993,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 18.380000000000003,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.200000000000003,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.8,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 18.380000000000003,
+                  "controlled_release": 18.380000000000003,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 18.380000000000003,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 18.380000000000003,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.500000000000004,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 1.8,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 18.380000000000003,
+                  "controlled_release": 18.380000000000003,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 18.380000000000003,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 18.380000000000003,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.900000000000004,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.9,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 18.380000000000003,
+                  "controlled_release": 18.380000000000003,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 18.380000000000003,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 18.380000000000003,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 7.300000000000004,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.9,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 18.380000000000003,
+                  "controlled_release": 18.380000000000003,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 18.380000000000003,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 18.380000000000003,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 1.0,
+                  "controlled_release": 1.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 6.700000000000005,
+                  "gate_position": 0.35,
+                  "release_total": 3.5,
+                  "controlled_release": 3.5,
+                  "spill": 0.0,
+                  "inflow_local": 2.0,
+                  "inflow_routed": 0.9,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 22.975,
+                  "controlled_release": 22.975,
+                  "spill": 0.0,
+                  "inflow_local": 20.0,
+                  "inflow_routed": 2.975,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 18.380000000000003,
+                  "controlled_release": 18.380000000000003,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 18.380000000000003,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 230.0,
+            "storage_change": -378.3,
+            "total_terminal_outflow": 499.03999999999996,
+            "total_nonterminal_spill": 0.0,
+            "total_routing_loss": 80.78499999999998,
+            "water_in_transit": 28.475,
+            "accounted": 229.99999999999991,
+            "residual_error": 8.526512829121202e-14
+          }
+        }
+      },
+      "comparisons": {
+        "legacy__vs__network_legacy_equivalent": {
+          "storage_max_abs_diff": 0.0,
+          "release_total_max_abs_diff": 0.0,
+          "inflow_routed_max_abs_diff": 0.0,
+          "downstream_flow_max_abs_diff": 0.0,
+          "numerically_identical": true
+        },
+        "network_legacy_equivalent__vs__authoritative": {
+          "storage_max_abs_diff": 2.799999999999997,
+          "release_total_max_abs_diff": 15.0,
+          "inflow_routed_max_abs_diff": 15.0,
+          "downstream_flow_max_abs_diff": 15.0,
+          "numerically_identical": false
+        },
+        "legacy__vs__authoritative": {
+          "storage_max_abs_diff": 2.799999999999997,
+          "release_total_max_abs_diff": 15.0,
+          "inflow_routed_max_abs_diff": 15.0,
+          "downstream_flow_max_abs_diff": 15.0,
+          "numerically_identical": false
+        }
+      }
+    },
+    {
+      "scenario": "S2_upstream_spill",
+      "description": "Reservoir A overflows (storage reaches capacity with the gate mostly closed). Isolates the SPILL semantics: the legacy cascade routes spill downstream; the network treats non-terminal spill as leaving the network.",
+      "initial_storages": {
+        "Virtual Reservoir A": 10.0,
+        "Virtual Reservoir B": 5.0,
+        "Virtual Reservoir C": 50.0,
+        "Virtual Reservoir D": 100.0
+      },
+      "inflows": {
+        "Virtual Reservoir A": 6.0,
+        "Virtual Reservoir B": 1.0,
+        "Virtual Reservoir C": 10.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "gates_pct": {
+        "Virtual Reservoir A": 10.0,
+        "Virtual Reservoir B": 20.0,
+        "Virtual Reservoir C": 40.0,
+        "Virtual Reservoir D": 100.0
+      },
+      "n_days": 8,
+      "traces": {
+        "legacy": {
+          "engine": "legacy",
+          "days": [
+            {
+              "downstream_flow": 100.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.18,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 4.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 60.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.5,
+                  "release_total": 100.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 60.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 8.18,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 5.18,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.08,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.3,
+                  "release_total": 60.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 60.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 13.18,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.08,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.06,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 18.18,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.08,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.06,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.3919999999999998,
+                  "release_total": 3.919999999999998,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.08,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.06,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.7,
+                  "release_total": 7.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.0928,
+                  "release_total": 13.919999999999998,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 3.919999999999998,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.06,
+                  "release_total": 12.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 13.919999999999998,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.7,
+                  "release_total": 7.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.11333333333333333,
+                  "release_total": 17.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 7.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.0696,
+                  "release_total": 13.919999999999998,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 13.919999999999998,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 17.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 6.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.7,
+                  "release_total": 7.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 6.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.11333333333333333,
+                  "release_total": 17.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 7.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.085,
+                  "release_total": 17.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 17.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            }
+          ]
+        },
+        "network_legacy_equivalent": {
+          "engine": "network_legacy_equivalent",
+          "days": [
+            {
+              "downstream_flow": 100.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 5.18,
+                  "controlled_release": 0.5,
+                  "spill": 4.68,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 4.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 100.0,
+                  "controlled_release": 100.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 60.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 3.5,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 60.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 3.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 2.5,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 2.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 1.5,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 1.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 12.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 0.5,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.5,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 2.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 12.0,
+                  "controlled_release": 12.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 12.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 136.0,
+            "storage_change": -153.68,
+            "total_terminal_outflow": 232.0,
+            "total_nonterminal_spill": 43.18,
+            "total_routing_loss": 0.0,
+            "water_in_transit": 14.5,
+            "accounted": 136.0,
+            "residual_error": 0.0
+          }
+        },
+        "authoritative": {
+          "engine": "authoritative",
+          "days": [
+            {
+              "downstream_flow": 100.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 5.18,
+                  "controlled_release": 0.5,
+                  "spill": 4.68,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 4.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 60.0,
+                  "controlled_release": 60.0,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 100.0,
+                  "controlled_release": 100.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 48.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 3.0,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 48.0,
+                  "controlled_release": 48.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 48.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 2.45,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 1.9000000000000004,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 1.3500000000000005,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 0.8000000000000007,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 0.2500000000000009,
+                  "gate_position": 0.2,
+                  "release_total": 2.0,
+                  "controlled_release": 2.0,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 9.36,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.1,
+                  "release_total": 6.0,
+                  "controlled_release": 0.5,
+                  "spill": 5.5,
+                  "inflow_local": 6.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 0.0,
+                  "gate_position": 0.2,
+                  "release_total": 1.7000000000000008,
+                  "controlled_release": 1.7000000000000008,
+                  "spill": 0.0,
+                  "inflow_local": 1.0,
+                  "inflow_routed": 0.45,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4,
+                  "release_total": 11.7,
+                  "controlled_release": 11.7,
+                  "spill": 0.0,
+                  "inflow_local": 10.0,
+                  "inflow_routed": 1.7,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 9.36,
+                  "controlled_release": 9.36,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 9.36,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 136.0,
+            "storage_change": -154.18,
+            "total_terminal_outflow": 204.16000000000008,
+            "total_nonterminal_spill": 43.18,
+            "total_routing_loss": 28.43999999999999,
+            "water_in_transit": 14.4,
+            "accounted": 136.00000000000009,
+            "residual_error": -8.526512829121202e-14
+          }
+        }
+      },
+      "comparisons": {
+        "legacy__vs__network_legacy_equivalent": {
+          "storage_max_abs_diff": 20.76,
+          "release_total_max_abs_diff": 5.0,
+          "inflow_routed_max_abs_diff": 5.5,
+          "downstream_flow_max_abs_diff": 5.0,
+          "numerically_identical": false
+        },
+        "network_legacy_equivalent__vs__authoritative": {
+          "storage_max_abs_diff": 0.7499999999999991,
+          "release_total_max_abs_diff": 12.0,
+          "inflow_routed_max_abs_diff": 12.0,
+          "downstream_flow_max_abs_diff": 12.0,
+          "numerically_identical": false
+        },
+        "legacy__vs__authoritative": {
+          "storage_max_abs_diff": 21.26,
+          "release_total_max_abs_diff": 12.0,
+          "inflow_routed_max_abs_diff": 12.0,
+          "downstream_flow_max_abs_diff": 12.0,
+          "numerically_identical": false
+        }
+      }
+    },
+    {
+      "scenario": "S3_authoritative_full",
+      "description": "Mixed storm scenario exercising delay (2/1/1) and attenuation (0.90/0.85/0.80) together with a terminal flow near the downstream capacity limit.",
+      "initial_storages": {
+        "Virtual Reservoir A": 8.0,
+        "Virtual Reservoir B": 15.0,
+        "Virtual Reservoir C": 120.0,
+        "Virtual Reservoir D": 150.0
+      },
+      "inflows": {
+        "Virtual Reservoir A": 5.0,
+        "Virtual Reservoir B": 8.0,
+        "Virtual Reservoir C": 60.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "gates_pct": {
+        "Virtual Reservoir A": 60.0,
+        "Virtual Reservoir B": 50.0,
+        "Virtual Reservoir C": 70.0,
+        "Virtual Reservoir D": 100.0
+      },
+      "n_days": 12,
+      "traces": {
+        "legacy": {
+          "engine": "legacy",
+          "days": [
+            {
+              "downstream_flow": 150.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.0,
+                  "gate_position": 0.6,
+                  "release_total": 3.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 18.0,
+                  "gate_position": 0.5,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 75.0,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.75,
+                  "release_total": 150.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 105.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.836,
+                  "release_total": 4.18,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.7739999999999998,
+                  "release_total": 7.739999999999998,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir C": {
+                  "storage": 35.0,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.525,
+                  "release_total": 105.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 105.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 105.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 12.179999999999996,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 4.18,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.6849333333333333,
+                  "release_total": 102.74,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 7.739999999999998,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.525,
+                  "release_total": 105.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 105.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 102.74,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.48119999999999996,
+                  "release_total": 72.17999999999999,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 12.179999999999996,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.5136999999999999,
+                  "release_total": 102.74,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 102.74,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 72.17999999999999,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.36089999999999994,
+                  "release_total": 72.17999999999999,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 72.17999999999999,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 11
+            },
+            {
+              "downstream_flow": 73.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 1.0,
+                  "release_total": 5.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 11
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 1.0,
+                  "release_total": 13.000000000000004,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 11
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.4866666666666667,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 13.000000000000004,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 0.365,
+                  "release_total": 73.0,
+                  "controlled_release": null,
+                  "spill": null,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 73.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 12
+            }
+          ]
+        },
+        "network_legacy_equivalent": {
+          "engine": "network_legacy_equivalent",
+          "days": [
+            {
+              "downstream_flow": 150.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.0,
+                  "gate_position": 0.6,
+                  "release_total": 3.0,
+                  "controlled_release": 3.0,
+                  "spill": 0.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 18.0,
+                  "gate_position": 0.5,
+                  "release_total": 5.0,
+                  "controlled_release": 5.0,
+                  "spill": 0.0,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 75.0,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 150.0,
+                  "controlled_release": 150.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 105.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 4.18,
+                  "controlled_release": 3.0,
+                  "spill": 1.1799999999999997,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 7.739999999999998,
+                  "controlled_release": 5.0,
+                  "spill": 2.7399999999999984,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir C": {
+                  "storage": 35.0,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 105.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 105.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 100.0,
+                  "controlled_release": 100.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 105.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 100.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 100.0,
+                  "controlled_release": 100.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 100.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 11
+            },
+            {
+              "downstream_flow": 65.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 11
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 11.000000000000004,
+                  "controlled_release": 5.0,
+                  "spill": 6.0000000000000036,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 3.0,
+                  "overflow_events": 11
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 5.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 65.0,
+                  "controlled_release": 65.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 65.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 12
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 876.0,
+            "storage_change": -260.92,
+            "total_terminal_outflow": 980.0,
+            "total_nonterminal_spill": 83.92000000000002,
+            "total_routing_loss": 0.0,
+            "water_in_transit": 73.0,
+            "accounted": 876.0,
+            "residual_error": 0.0
+          }
+        },
+        "authoritative": {
+          "engine": "authoritative",
+          "days": [
+            {
+              "downstream_flow": 150.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.0,
+                  "gate_position": 0.6,
+                  "release_total": 3.0,
+                  "controlled_release": 3.0,
+                  "spill": 0.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir B": {
+                  "storage": 18.0,
+                  "gate_position": 0.5,
+                  "release_total": 5.0,
+                  "controlled_release": 5.0,
+                  "spill": 0.0,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 75.0,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 150.0,
+                  "controlled_release": 150.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 1
+            },
+            {
+              "downstream_flow": 84.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 4.18,
+                  "controlled_release": 3.0,
+                  "spill": 1.1799999999999997,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.0,
+                  "gate_position": 0.5,
+                  "release_total": 5.0,
+                  "controlled_release": 5.0,
+                  "spill": 0.0,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir C": {
+                  "storage": 34.25,
+                  "gate_position": 0.7,
+                  "release_total": 105.0,
+                  "controlled_release": 105.0,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 84.0,
+                  "controlled_release": 84.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 84.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 2
+            },
+            {
+              "downstream_flow": 84.0,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.439999999999998,
+                  "controlled_release": 5.0,
+                  "spill": 5.439999999999998,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 1
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 98.5,
+                  "controlled_release": 98.5,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 84.0,
+                  "controlled_release": 84.0,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 84.0,
+                  "overflow_events": 0
+                }
+              },
+              "day": 3
+            },
+            {
+              "downstream_flow": 78.80000000000001,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 2
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 78.80000000000001,
+                  "controlled_release": 78.80000000000001,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 78.80000000000001,
+                  "overflow_events": 0
+                }
+              },
+              "day": 4
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 3
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 5
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 4
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 6
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 5
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 7
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 6
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 8
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 7
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 9
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 8
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 10
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 9
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 11
+            },
+            {
+              "downstream_flow": 51.400000000000006,
+              "reservoirs": {
+                "Virtual Reservoir A": {
+                  "storage": 10.82,
+                  "gate_position": 0.6,
+                  "release_total": 5.0,
+                  "controlled_release": 3.0,
+                  "spill": 2.0,
+                  "inflow_local": 5.0,
+                  "inflow_routed": 0.0,
+                  "overflow_events": 11
+                },
+                "Virtual Reservoir B": {
+                  "storage": 21.26,
+                  "gate_position": 0.5,
+                  "release_total": 10.7,
+                  "controlled_release": 5.0,
+                  "spill": 5.699999999999999,
+                  "inflow_local": 8.0,
+                  "inflow_routed": 2.7,
+                  "overflow_events": 10
+                },
+                "Virtual Reservoir C": {
+                  "storage": 0.0,
+                  "gate_position": 0.7,
+                  "release_total": 64.25,
+                  "controlled_release": 64.25,
+                  "spill": 0.0,
+                  "inflow_local": 60.0,
+                  "inflow_routed": 4.25,
+                  "overflow_events": 0
+                },
+                "Virtual Reservoir D": {
+                  "storage": 0.0,
+                  "gate_position": 1.0,
+                  "release_total": 51.400000000000006,
+                  "controlled_release": 51.400000000000006,
+                  "spill": 0.0,
+                  "inflow_local": 0.0,
+                  "inflow_routed": 51.400000000000006,
+                  "overflow_events": 0
+                }
+              },
+              "day": 12
+            }
+          ],
+          "mass_balance": {
+            "total_external_inflow": 876.0,
+            "storage_change": -260.92,
+            "total_terminal_outflow": 807.9999999999999,
+            "total_nonterminal_spill": 77.92000000000002,
+            "total_routing_loss": 175.75000000000003,
+            "water_in_transit": 75.25,
+            "accounted": 876.0,
+            "residual_error": 0.0
+          }
+        }
+      },
+      "comparisons": {
+        "legacy__vs__network_legacy_equivalent": {
+          "storage_max_abs_diff": 0.0,
+          "release_total_max_abs_diff": 8.0,
+          "inflow_routed_max_abs_diff": 8.000000000000004,
+          "downstream_flow_max_abs_diff": 8.0,
+          "numerically_identical": false
+        },
+        "network_legacy_equivalent__vs__authoritative": {
+          "storage_max_abs_diff": 0.75,
+          "release_total_max_abs_diff": 21.19999999999999,
+          "inflow_routed_max_abs_diff": 21.19999999999999,
+          "downstream_flow_max_abs_diff": 21.19999999999999,
+          "numerically_identical": false
+        },
+        "legacy__vs__authoritative": {
+          "storage_max_abs_diff": 0.75,
+          "release_total_max_abs_diff": 23.939999999999984,
+          "inflow_routed_max_abs_diff": 23.939999999999984,
+          "downstream_flow_max_abs_diff": 23.939999999999984,
+          "numerically_identical": false
+        }
+      }
+    }
+  ],
+  "attribution": {
+    "s1_legacy_backed_network_matches_virtualcascade": true,
+    "s2_spill_semantics_diverge": true,
+    "s3_authoritative_differs_from_legacy": true
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-09-15T09:48:59.731740",
+  "script": "scripts/stage3_phase15_3_reproduction.py",
+  "protected_dir": "results\\phase15_v3_validation",
+  "reproduction_dir": "results\\phase15_stage3_reproduction\\phase15_3_reproduction",
+  "protected_hashes_before": {
+    "daily_simulation_baseline.csv": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+    "daily_simulation_mpc.csv": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+    "PHASE_15_3_V3_VALIDATION_REPORT.md": "49ef558cf586922f9ecb2f2b2a27368b70f74b0937b9d79d6eae3c83760b893a",
+    "provenance_audit.json": "4927e3cb713ed74860abe55d4f9bbe925d444c7ba5e57c47be4b9669d977da31",
+    "v3_integrity_check.json": "eeae387162c9bec0c5816e64288072356c65511609976a7e60fe64c3a6b5daf9",
+    "validation_metrics.csv": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a"
+  },
+  "protected_hashes_after": {
+    "daily_simulation_baseline.csv": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+    "daily_simulation_mpc.csv": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+    "PHASE_15_3_V3_VALIDATION_REPORT.md": "49ef558cf586922f9ecb2f2b2a27368b70f74b0937b9d79d6eae3c83760b893a",
+    "provenance_audit.json": "4927e3cb713ed74860abe55d4f9bbe925d444c7ba5e57c47be4b9669d977da31",
+    "v3_integrity_check.json": "eeae387162c9bec0c5816e64288072356c65511609976a7e60fe64c3a6b5daf9",
+    "validation_metrics.csv": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a"
+  },
+  "protected_artifacts_untouched": true,
+  "fidelity": {
+    "validation_metrics.csv": {
+      "protected_sha256": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+      "reproduced_sha256": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+      "identical": true
+    },
+    "daily_simulation_baseline.csv": {
+      "protected_sha256": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+      "reproduced_sha256": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+      "identical": true
+    },
+    "daily_simulation_mpc.csv": {
+      "protected_sha256": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+      "reproduced_sha256": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+      "identical": true
+    }
+  },
+  "all_reproduced_identical": true
+}

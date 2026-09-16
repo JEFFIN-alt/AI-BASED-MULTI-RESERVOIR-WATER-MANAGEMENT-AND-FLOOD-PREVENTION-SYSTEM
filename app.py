@@ -34,6 +34,13 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent
 
 # Packages required by the 3D twin backend (import name, pip name)
+#
+# NOTE: the import-name -> pip-name mapping matters. Two of these are imported
+# at module scope by the backend import chain and will abort startup if absent:
+#   * yaml            -> src/network_env/reservoir_network.py (top-level import)
+#   * torch_geometric -> src/modeling/gnn_inference.py (top-level import), which
+#                        is imported by src/dashboard/api/state_manager.py
+# Order is preserved so that heavy downloads (torch, torch_geometric) come last.
 REQUIRED_PACKAGES = [
     ("fastapi", "fastapi"),
     ("uvicorn", "uvicorn"),
@@ -42,7 +49,9 @@ REQUIRED_PACKAGES = [
     ("sklearn", "scikit-learn"),
     ("networkx", "networkx"),
     ("joblib", "joblib"),
+    ("yaml", "PyYAML"),
     ("torch", "torch"),
+    ("torch_geometric", "torch-geometric"),
 ]
 
 BANNER = r"""

@@ -137,7 +137,7 @@
 <script>
   window.addEventListener('load', () => {
     setTimeout(() => {
-      if (!window.__twin) {
+      if (!window.__twinReady) {
         const b = document.getElementById('boot');
         if (b) b.textContent = 'FAILED TO INITIALIZE DIGITAL TWIN';
       }
@@ -173,6 +173,34 @@ const smooth01 = t => { t = clamp01(t); return t * t * (3 - 2 * t); };
 const numv = v => (typeof v === 'number' && isFinite(v)) ? v : 0;
 const fracv = v => { v = numv(v); return v > 1.001 ? v / 100 : v; };
 const RISKS = ['normal', 'warning', 'danger', 'critical'];
+/* STAGE 12 — presentation map from the BACKEND risk string to a CSS class +
+   label. Mapping ONLY: it never computes risk from level, gate or inflow. */
+const RISK_UI = {
+  'normal':    { cls: 'normal',    label: 'NORMAL'    },
+  'watch':     { cls: 'watch',     label: 'WATCH'     },
+  'warning':   { cls: 'warning',   label: 'WARNING'   },
+  'alert':     { cls: 'alert',     label: 'ALERT'     },
+  'danger':    { cls: 'danger',    label: 'DANGER'    },
+  'critical':  { cls: 'critical',  label: 'CRITICAL'  },
+  'high risk': { cls: 'high-risk', label: 'HIGH RISK' },
+  'high-risk': { cls: 'high-risk', label: 'HIGH RISK' },
+};
+const riskUi = v => RISK_UI[String(v || '').toLowerCase().trim()] || null;
+
+/* STAGE 12 — purely VISUAL interpolation between the BACKEND's authoritative
+   forecast horizons, for the weather sparkline. It draws a line between two
+   given numbers; it never invents a forecast value. */
+function visualInterpDay(day, pts) {
+  if (!pts || !pts.length) return null;
+  if (day <= pts[0][0]) return pts[0][1];
+  const last = pts[pts.length - 1];
+  if (day >= last[0]) return last[1];
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1], b = pts[i];
+    if (day <= b[0]) return a[1] + (b[1] - a[1]) * ((day - a[0]) / (b[0] - a[0]));
+  }
+  return last[1];
+}
 
 function mulberry32(seed) {
   let a = seed >>> 0;
@@ -541,21 +569,22 @@ const PRESETS = {
   downstream: { p: [ 140,  90,  760], t: [ 40, -25,  520] },
 };
 
-const INITIAL_STATE = {
-  reservoirs: {
-    reservoir_1: { water_level: 0.65, storage: 0.72, inflow: 45, release: 30, gate: 0.40, risk: 'normal'  },
-    reservoir_2: { water_level: 0.58, storage: 0.65, inflow: 35, release: 25, gate: 0.35, risk: 'normal'  },
-    reservoir_3: { water_level: 0.75, storage: 0.80, inflow: 40, release: 20, gate: 0.50, risk: 'warning' },
-  },
-  storm_intensity: 0.7,
-  downstream_flow: 65,
-  controller_mode: 'AI',
-  simulation_time: new Date().toISOString(),
-  hardware_status: {
+/* STAGE 12 — NO browser-side initial state.
+   This block used to hardcode water levels, storages, inflows, releases, gates,
+   a storm intensity and a downstream flow, and the constructor applied it before
+   the backend had said anything. The viewer now starts in an explicit NO-DATA
+   state and shows `--` until the authoritative payload arrives. */
+const NO_AUTHORITATIVE_STATE = Object.freeze({
+  state_identity: null,
+  reservoirs: {},
+  downstream: null,
+  storm: null,
+  forecast_summary: null,
+  hardware_status: Object.freeze({
     esp32: 'NOT_CONNECTED', water_level_sensor: 'NOT_CONNECTED',
     flow_sensor: 'NOT_CONNECTED', gate_actuator: 'NOT_CONNECTED',
-  },
-};
+  }),
+});
 
 /* ================================================================
    THE RENDERER
@@ -587,14 +616,17 @@ class ReservoirTwinRenderer {
         levelCur: 0.6, levelTgt: 0.6,
         gateCur: 0.4, gateTgt: 0.4,
         jetFlow: 0, jetTgt: 0, waterY: 0,
-        data: { level: 0.6, storage: 0.6, inflow: 0, release: 0, gate: 0.4, risk: 'normal' },
+        /* STAGE 12 — null means "not known"; the HUD renders `--`. */
+        data: { level: null, storage: null, inflow: null, release: null, gate: null, risk: null },
       };
     });
-    this.storm = { cur: 0.5, tgt: 0.7 };
+    this.storm = { cur: 0.0, tgt: 0.0 };
     this.data = {
-      downstream: 65, mode: 'AI',
-      simTime: INITIAL_STATE.simulation_time,
-      hardware: INITIAL_STATE.hardware_status,
+      hasState: false, stateId: null,
+      downstream: null, downstreamStatus: null,
+      downstreamCapacity: null, downstreamUtil: null,
+      mode: null, simTime: null, stormLevel: null, forecastSummary: null,
+      hardware: NO_AUTHORITATIVE_STATE.hardware_status,
     };
 
     this._initCore();
@@ -608,7 +640,7 @@ class ReservoirTwinRenderer {
     this._initControls();
     if (opts.testControls !== false) this._initHUD();
 
-    this.updateState(INITIAL_STATE);
+    this.updateState(NO_AUTHORITATIVE_STATE);
     for (const r of this.R) { r.levelCur = r.levelTgt; r.gateCur = r.gateTgt; }
 
     this._onResize = () => {
@@ -628,12 +660,32 @@ class ReservoirTwinRenderer {
     this._tick = this._tick.bind(this);
     this._raf = requestAnimationFrame(this._tick);      /* the ONLY loop start */
     
+    /*
+     * STAGE 4 / STAGE 12 — NON-AUTHORITATIVE MIRROR (one-way).
+     *
+     * This HTML is the Streamlit-embedded VIEWER. It holds no simulation. The
+     * Streamlit page is a read-only client that fetches the authoritative state
+     * from the FastAPI Digital Twin (GET /api/state) and mirrors it here.
+     * The authoritative Twin is src/dashboard/web/index.html, whose only state
+     * source is the /ws/state WebSocket.
+     *
+     * STAGE 12 HARDENING: the channel accepts ONLY a payload that carries the
+     * backend's authoritative marker (`state_identity`, or the reservoir block
+     * for a pre-Stage-12 backend). An arbitrary object pushed by any frame or
+     * script is IGNORED rather than rendered as authoritative state, and there
+     * is no write-back path of any kind — this viewer cannot alter the
+     * authoritative simulation.
+     */
     window.addEventListener("message", (event) => {
-      if (event.data.type === "streamlit:render") {
-        if (event.data.args && event.data.args.state) {
-          this.updateState(event.data.args.state);
-        }
-      }
+      const data = event && event.data;
+      if (!data || data.type !== "streamlit:render") return;
+      const state = data.args && data.args.state;
+      if (!state || typeof state !== 'object') return;
+      const hasAuthoritativeMarker = !!state.state_identity
+        || !!state.mass_balance
+        || (state.reservoirs && Object.keys(state.reservoirs).length > 0);
+      if (!hasAuthoritativeMarker) return;   /* not backend state — ignore it */
+      this.updateState(state);
     });
   }
 
@@ -641,6 +693,7 @@ class ReservoirTwinRenderer {
   updateState(state) {
     if (!state || this._disposed) return;
     const rs = state.reservoirs || {};
+    const prev = r => (r.data && typeof r.data.storage === 'number' ? r.data.storage : r.levelTgt);
     for (let i = 0; i < 3; i++) {
       const r = this.R[i];
       const src = rs['reservoir_' + (i + 1)] || {};
@@ -650,14 +703,28 @@ class ReservoirTwinRenderer {
       r.gateTgt = clamp01(fracv(src.gate !== undefined ? src.gate : r.gateTgt));
       r.data = {
         level: r.levelTgt,
-        storage: clamp01(fracv(src.storage !== undefined ? src.storage : r.data.storage)),
+        storage: clamp01(fracv(src.storage !== undefined ? src.storage : prev(r))),
         inflow: numv(src.inflow), release: numv(src.release),
         gate: r.gateTgt,
-        risk: RISKS.includes(src.risk) ? src.risk : 'normal',
+        /* backend string verbatim — never derived here */
+        risk: (typeof src.risk === 'string' && src.risk.trim()) ? src.risk.toLowerCase().trim() : null,
       };
     }
-    this.storm.tgt = clamp01(fracv(state.storm_intensity !== undefined ? state.storm_intensity : this.storm.tgt));
+    /* STAGE 12 — authoritative identity + backend display verdicts. */
+    const ident = state.state_identity || null;
+    this.data.hasState = Object.keys(rs).length > 0;
+    this.data.stateId = ident && ident.state_id ? String(ident.state_id) : null;
+    const down = state.downstream || null;
     this.data.downstream = numv(state.downstream_flow);
+    this.data.downstreamCapacity = (down && typeof down.capacity_m3_s === 'number') ? down.capacity_m3_s : null;
+    this.data.downstreamUtil = (down && typeof down.utilisation === 'number') ? down.utilisation : null;
+    this.data.downstreamStatus = (down && typeof down.status === 'string') ? down.status : null;
+    const storm = state.storm || null;
+    this.data.stormLevel = (storm && typeof storm.level === 'string') ? storm.level : null;
+    this.storm.tgt = clamp01(fracv(
+      (storm && storm.intensity !== undefined) ? storm.intensity
+      : (state.storm_intensity !== undefined ? state.storm_intensity : this.storm.tgt)));
+    this.data.forecastSummary = state.forecast_summary || null;
     if (typeof state.controller_mode === 'string') this.data.mode = state.controller_mode;
     if (state.simulation_time) this.data.simTime = String(state.simulation_time);
     if (state.hardware_status) this.data.hardware = state.hardware_status;
@@ -1298,7 +1365,7 @@ class ReservoirTwinRenderer {
     panel('hud-live', '', `
       <div class="r1"><span class="dot ok pulse" style="display:inline-block;margin-right:5px"></span>LIVE SIMULATION</div>
       <div class="r2" id="live-time">--:--:--</div>
-      <div class="r2" id="live-wx">RAIN — HEAVY · 24°C</div>
+      <div class="r2" id="live-wx">RAIN — -- · 24°C</div>
       <div class="r3">KERALA, INDIA · 9.5°N 76.9°E</div>`);
 
     panel('hud-system', '', `
@@ -1324,7 +1391,7 @@ class ReservoirTwinRenderer {
     panel('hud-downstream', '', `
       <div class="hp-title">DOWNSTREAM FLOW</div>
       <div class="hp-row"><span class="lbl">CURRENT</span><span class="val" data-ref="dsval">-- m³/s</span></div>
-      <div class="hp-row"><span class="lbl">SAFE LIMIT</span><span class="val">150 m³/s</span></div>
+      <div class="hp-row"><span class="lbl">SAFE LIMIT</span><span class="val" data-ref="dslimit">-- m³/s</span></div>
       <div class="bar"><div class="fill" data-ref="dsbar"></div></div>
       <div class="hp-row"><span class="lbl">STATUS</span><span class="val" data-ref="dsstat" style="color:var(--ok)">NORMAL</span></div>`);
 
@@ -1400,6 +1467,8 @@ class ReservoirTwinRenderer {
       wlevel: q(hud, '[data-ref="wlevel"]'),
       dsval: q(hud, '[data-ref="dsval"]'), dsbar: q(hud, '[data-ref="dsbar"]'),
       dsstat: q(hud, '[data-ref="dsstat"]'),
+      /* Stage 12 — backend-supplied downstream limit. */
+      dslimit: q(hud, '[data-ref="dslimit"]'),
       tn: [q(hud, '[data-ref="tn1"]'), q(hud, '[data-ref="tn2"]'), q(hud, '[data-ref="tn3"]'), q(hud, '[data-ref="tnds"]')],
       hw: [q(hud, '[data-ref="hw1"]'), q(hud, '[data-ref="hw2"]'), q(hud, '[data-ref="hw3"]'), q(hud, '[data-ref="hw4"]')],
       res: rPanels.map(p => {
@@ -1451,45 +1520,75 @@ class ReservoirTwinRenderer {
     const el = this.el;
     if (!el) return;
 
+    const hasState = this.data.hasState === true;
     for (let i = 0; i < 3; i++) {
       const d = this.R[i].data, e = el.res[i];
-      e.level.textContent = (d.level * 100).toFixed(1) + '%';
-      e.storage.textContent = (d.storage * 100).toFixed(1) + '%';
-      e.inflow.textContent = d.inflow.toFixed(1) + ' m³/s';
-      e.release.textContent = d.release.toFixed(1) + ' m³/s';
-      e.gate.textContent = (d.gate * 100).toFixed(0) + '%';
-      e.barL.style.width = (d.level * 100) + '%';
-      e.barS.style.width = (d.storage * 100) + '%';
-      e.risk.textContent = d.risk.toUpperCase();
-      e.risk.className = 'chip ' + d.risk;
+      /* STAGE 12 — `ok` is true only when the BACKEND supplied a level. */
+      const ok = !!(hasState && d && typeof d.level === 'number');
+      e.level.textContent   = ok ? (d.level * 100).toFixed(1) + '%' : '--';
+      e.storage.textContent = (ok && typeof d.storage === 'number') ? (d.storage * 100).toFixed(1) + '%' : '--';
+      e.inflow.textContent  = (ok && typeof d.inflow === 'number') ? d.inflow.toFixed(1) + ' m³/s' : '--';
+      e.release.textContent = (ok && typeof d.release === 'number') ? d.release.toFixed(1) + ' m³/s' : '--';
+      e.gate.textContent    = (ok && typeof d.gate === 'number') ? (d.gate * 100).toFixed(0) + '%' : '--';
+      e.barL.style.width    = ok ? (clamp01(d.level) * 100) + '%' : '0%';
+      e.barS.style.width    = (ok && typeof d.storage === 'number') ? (clamp01(d.storage) * 100) + '%' : '0%';
+      const ru = riskUi(ok ? d.risk : null) || RISK_UI.normal;
+      e.risk.textContent = ok ? ru.label : 'NO DATA';
+      e.risk.className = 'chip ' + (ok ? ru.cls : 'normal');
     }
     const s = this.storm.cur;
-    el.wint.textContent = (s * 100).toFixed(0) + '%';
-    el.wbar.style.width = (s * 100) + '%';
-    const lvl = s < 0.25 ? 'LIGHT' : s < 0.55 ? 'NORMAL' : s < 0.85 ? 'HEAVY' : 'SEVERE';
-    el.wlevel.textContent = lvl;
-    el.wlevel.style.color = s < 0.55 ? 'var(--ok)' : 'var(--warn)';
+    el.wint.textContent = hasState ? (s * 100).toFixed(0) + '%' : '--';
+    el.wbar.style.width = hasState ? (s * 100) + '%' : '0%';
+    /* STAGE 12 — the storm LEVEL is the backend's classification. */
+    const lvl = this.data.stormLevel;
+    el.wlevel.textContent = lvl || '--';
+    el.wlevel.style.color = lvl === 'HEAVY' ? 'var(--warn)'
+                          : lvl === 'SEVERE' ? 'var(--bad)'
+                          : lvl ? 'var(--ok)' : 'var(--ink-faint)';
+    /* STAGE 12 — the bars interpolate the BACKEND's forecast horizons. The
+     * sine-of-the-render-clock fabrication is gone. */
+    const fs2 = this.data.forecastSummary;
+    const horizons2 = fs2 && fs2.horizons ? fs2.horizons : null;
+    const fPts = [];
+    if (horizons2) {
+      if (typeof horizons2['1d'] === 'number' && isFinite(horizons2['1d'])) fPts.push([1, horizons2['1d']]);
+      if (typeof horizons2['3d'] === 'number' && isFinite(horizons2['3d'])) fPts.push([3, horizons2['3d']]);
+      if (typeof horizons2['7d'] === 'number' && isFinite(horizons2['7d'])) fPts.push([7, horizons2['7d']]);
+    }
+    const fPeak = fPts.length ? Math.max.apply(null, fPts.map(p => p[1])) : 0;
     for (let i = 0; i < this.fcBars.length; i++) {
-      const t = clamp01(s + 0.14 * Math.sin(this._time * 0.2 + i * 1.9) - 0.04);
+      const v = visualInterpDay(i + 1, fPts);
+      const t = (fPeak > 0 && v !== null) ? clamp01(v / fPeak) : 0;
       this.fcBars[i].style.height = (3 + t * 23) + 'px';
-      this.fcBars[i].style.opacity = 0.4 + t * 0.6;
+      this.fcBars[i].style.opacity = fPts.length ? (0.3 + t * 0.7) : 0.15;
     }
+    /* STAGE 12 — downstream flow + AUTHORITATIVE limit + backend severity. */
     const ds = this.data.downstream;
-    el.dsval.textContent = ds.toFixed(1) + ' m³/s';
-    el.dsbar.style.width = (clamp01(ds / 150) * 100) + '%';
-    const st = ds < 120 ? 'NORMAL' : ds < 150 ? 'WARNING' : 'CRITICAL';
+    const dsKnown = hasState && typeof ds === 'number';
+    const st = hasState ? String(this.data.downstreamStatus || 'UNKNOWN') : 'UNKNOWN';
+    const util = (hasState && typeof this.data.downstreamUtil === 'number')
+      ? clamp01(this.data.downstreamUtil) : 0;
+    el.dsval.textContent = dsKnown ? ds.toFixed(1) + ' m³/s' : '--';
+    el.dsbar.style.width = (util * 100) + '%';
     el.dsstat.textContent = st;
-    el.dsstat.style.color = ds < 120 ? 'var(--ok)' : ds < 150 ? 'var(--warn)' : 'var(--bad)';
+    el.dsstat.style.color = st === 'NORMAL' ? 'var(--ok)' : st === 'WARNING' ? 'var(--warn)'
+                          : st === 'CRITICAL' ? 'var(--bad)' : 'var(--ink-faint)';
+    if (el.dslimit) el.dslimit.textContent = (hasState && typeof this.data.downstreamCapacity === 'number')
+      ? this.data.downstreamCapacity.toFixed(1) + ' m³/s' : '--';
     for (let i = 0; i < 3; i++) {
-      el.tn[i].className = 'tnode' + (this.R[i].data.risk === 'normal' ? '' : ' ' + this.R[i].data.risk);
+      const rd = this.R[i].data;
+      const known = hasState && rd && typeof rd.level === 'number';
+      const ru = riskUi(rd && rd.risk ? rd.risk : null) || RISK_UI.normal;
+      el.tn[i].className = 'tnode' + (!known ? '' : ru.cls === 'normal' ? '' : ' ' + ru.cls);
     }
-    el.tn[3].className = 'tnode' + (st === 'NORMAL' ? '' : ' ' + (st === 'WARNING' ? 'warn' : 'bad'));
-    el.mode.textContent = this.data.mode === 'MANUAL' ? 'MANUAL' : 'AI / MPC';
-    const t = new Date(this.data.simTime);
+    el.tn[3].className = 'tnode' + (st === 'NORMAL' ? '' : st === 'WARNING' ? ' warn' : st === 'CRITICAL' ? ' bad' : '');
+    el.mode.textContent = !this.data.hasState ? '--'
+                        : this.data.mode === 'MANUAL' ? 'MANUAL' : 'AI / MPC';
+    const t = new Date(this.data.hasState ? this.data.simTime : NaN);
     el.liveTime.textContent = isFinite(t.getTime())
       ? t.toLocaleTimeString('en-GB') + ' · ' + t.toLocaleDateString('en-GB')
-      : String(this.data.simTime);
-    el.liveWx.textContent = 'RAIN — ' + lvl + ' · 24°C';
+      : (this.data.hasState ? String(this.data.simTime) : '--');
+    el.liveWx.textContent = 'RAIN — ' + (lvl || '--') + ' · 24°C';
     const hwKeys = ['esp32', 'water_level_sensor', 'flow_sensor', 'gate_actuator'];
     for (let i = 0; i < 4; i++) {
       el.hw[i].textContent = String(this.data.hardware[hwKeys[i]] || 'NOT_CONNECTED')
@@ -1508,7 +1607,8 @@ try {
   /* boot overlay already shows the failure reason; nothing further to do */
 }
 if (app) {
-  window.__twin = app;                       /* console: __twin.updateState({...}), __twin.dispose() */
+  /* STAGE 12 — read-only readiness flag; no console state-push handle exists. */
+  window.__twinReady = true;
   window.ReservoirTwinRenderer = ReservoirTwinRenderer;
 }
 </script>

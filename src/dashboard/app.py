@@ -11,15 +11,60 @@ import json
 import time
 from pathlib import Path
 
+import urllib.error
+import urllib.request
+
 from data_bridge import assess_all_reservoirs, V3_PERFORMANCE
-from sim_bridge import SimBridge
-from twin_component.state_adapter import adapt_state_for_twin
 
 # Setup paths
 _THIS_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _THIS_DIR.parent.parent
-CONFIG_PATH = _PROJECT_ROOT / "configs" / "simulation" / "four_reservoir_demo.json"
-THRESH_PATH = _PROJECT_ROOT / "data" / "processed" / "historical_inflow_thresholds.json"
+
+# ---------------------------------------------------------------------------
+# STAGE 4 — SINGLE AUTHORITATIVE SIMULATION
+# ---------------------------------------------------------------------------
+# Streamlit is a READ-ONLY client of the Digital Twin.
+#
+# It deliberately does NOT import `sim_bridge.SimBridge` or
+# `simulator.engine.SimulationEngine`. It owns no simulation, holds no
+# simulation parameters, and can neither produce nor overwrite Digital Twin
+# state. The ONE authoritative simulation lives in the FastAPI backend
+# (`src/dashboard/api/state_manager.py::sim_state`) — the same instance the
+# WebSocket publishes from. Streamlit only *reads* it over HTTP.
+#
+# `data_bridge` is retained: it is read-only analytics over frozen artifacts
+# (forecast + risk assessment) and produces no Digital Twin state.
+# ---------------------------------------------------------------------------
+
+#: The authoritative Digital Twin backend (FastAPI + Three.js).
+TWIN_HOST = "127.0.0.1"
+TWIN_PORT = 8000
+TWIN_URL = f"http://{TWIN_HOST}:{TWIN_PORT}"
+STATE_URL = f"{TWIN_URL}/api/state"
+
+#: Live-name -> twin reservoir key, for read-only display only.
+_VIRTUAL_TO_TWIN_KEY = {
+    "Virtual Reservoir A": "reservoir_1",
+    "Virtual Reservoir B": "reservoir_2",
+    "Virtual Reservoir C": "reservoir_3",
+}
+
+
+def fetch_authoritative_state(timeout: float = 2.0):
+    """
+    Read the ONE authoritative Digital Twin state over HTTP.
+
+    Returns
+    -------
+    ``(state, None)`` on success; ``(None, error_message)`` when the
+    authoritative backend is unreachable. On failure NOTHING is fabricated —
+    the caller renders an explicit "backend offline" notice instead.
+    """
+    try:
+        with urllib.request.urlopen(STATE_URL, timeout=timeout) as resp:
+            return json.loads(resp.read().decode("utf-8")), None
+    except (urllib.error.URLError, OSError, ValueError) as exc:
+        return None, str(exc)
 
 # ---------------------------------------------------------------------------
 # Page Configuration
@@ -50,28 +95,13 @@ st.markdown("""<style>
 # ---------------------------------------------------------------------------
 # Session State Initialization
 # ---------------------------------------------------------------------------
-if "sim_bridge" not in st.session_state:
-    st.session_state.sim_bridge = SimBridge(str(CONFIG_PATH), str(THRESH_PATH))
+# STAGE 4: Streamlit holds NO simulation state. There is no local `sim_bridge`,
+# `sim_running`, `sim_tick` or reset — the authoritative simulation is owned
+# exclusively by the FastAPI backend.
 
-if "sim_running" not in st.session_state:
-    st.session_state.sim_running = False
-
-if "sim_tick" not in st.session_state:
-    st.session_state.sim_tick = 0
-
-if "sim_history" not in st.session_state:
-    st.session_state.sim_history = []
-    
 @st.cache_data(ttl=60)
 def get_reservoir_data():
     return assess_all_reservoirs()
-
-def reset_simulation():
-    init_pct = st.session_state.get("init_storage", 50.0)
-    st.session_state.sim_bridge.init_cascade(init_pct)
-    st.session_state.sim_tick = 0
-    st.session_state.sim_history = []
-    st.session_state.sim_running = False
 
 # ---------------------------------------------------------------------------
 # Helpers for the data view charts
@@ -124,8 +154,6 @@ def create_forecast_bar_chart(res_data: dict) -> go.Figure:
 # MAIN APPLICATION RENDER
 # ===================================================================
 def main():
-    bridge = st.session_state.sim_bridge
-
     with st.spinner("Loading LSTM V3 inference engine and assessing reservoirs..."):
         try:
             data = get_reservoir_data()
@@ -206,14 +234,11 @@ def main():
     # ---------------------------------------------------------------
     # Full-Screen Digital Twin Link
     # ---------------------------------------------------------------
-    # The standalone FastAPI + Three.js Digital Twin is the PRIMARY
-    # immersive 3D interface. Streamlit is the secondary analytics UI.
-    # They run SEPARATE SimBridge instances by design — Streamlit owns
-    # its own simulation state in st.session_state, while FastAPI owns
-    # its own via state_manager.GlobalSimulationState.
-    _fastapi_host = "127.0.0.1"
-    _fastapi_port = 8000
-    _twin_url = f"http://{_fastapi_host}:{_fastapi_port}"
+    # The FastAPI + Three.js Digital Twin is the ONE authoritative
+    # simulation and the primary immersive interface. This Streamlit page
+    # is a READ-ONLY analytics client: it fetches the authoritative state
+    # over HTTP and mirrors it. It never owns or advances a simulation.
+    _twin_url = TWIN_URL
     st.markdown(
         f'<div style="margin-bottom:12px;">'
         f'<a href="{_twin_url}" target="_blank" '
@@ -239,110 +264,91 @@ def main():
         components.html(twin_html, height=650, scrolling=False)
 
     # ---------------------------------------------------------------
-    # RIGHT AREA (Controls & AI)
+    # RIGHT AREA (read-only authoritative status)
     # ---------------------------------------------------------------
+    # STAGE 4: the simulation controls that used to live here advanced a
+    # SECOND, competing simulation owned by Streamlit. They are gone.
+    # Control now exists in exactly one place: the authoritative Digital
+    # Twin (FastAPI). This panel only READS its state.
     with col_right:
-        st.markdown("#### Simulation Controls")
-        
-        # Buttons only SET flags in session_state.
-        # The actual simulation advance runs AFTER advance_simulation()
-        # and all its dependencies (manual_inflows, gate_commands) are
-        # fully constructed — see "DEFERRED BUTTON ACTIONS" section below.
-        c1, c2, c3 = st.columns(3)
-        if c1.button("▶ Play" if not st.session_state.sim_running else "⏸ Pause"):
-            st.session_state.sim_running = not st.session_state.sim_running
-        if c2.button("⏭ Step"):
-            st.session_state.sim_running = False
-            st.session_state["_pending_step"] = True
-        if c3.button("↻ Reset"):
-            reset_simulation()
-            
-        sim_speed = st.selectbox("Playback Speed", [0.25, 0.5, 1.0, 2.0], index=2)
-        
+        st.markdown("#### Authoritative Simulation")
+        auth_state, auth_error = fetch_authoritative_state()
+
+        if auth_error:
+            st.error(
+                "Authoritative Digital Twin backend is not reachable.\n\n"
+                f"`{STATE_URL}`\n\n"
+                "This page is a read-only viewer and holds no simulation of "
+                "its own, so no state can be shown until the backend is running."
+            )
+            st.code("python app.py", language="bash")
+        else:
+            st.success("Connected — read-only")
+            st.caption(
+                "State is produced by the ONE authoritative simulation "
+                "(`GlobalSimulationState`) and published over `/ws/state`. "
+                "All control is delegated to the Digital Twin."
+            )
+            _mode = auth_state.get("controller_mode", "UNKNOWN")
+            _storm = auth_state.get("storm_intensity", 0.0)
+            _ds = auth_state.get("downstream_flow", 0.0)
+            st.metric("Controller mode", str(_mode))
+            st.metric("Storm intensity", f"{float(_storm):.2f}")
+            st.metric("Downstream flow", f"{float(_ds):.1f} m³/s")
+
+            # Stage 5/6 — DEMONSTRATION provenance banner.
+            # Shown unless the authoritative backend explicitly reports that live
+            # forecasts are validated, so a missing provenance block errs on the
+            # side of caution rather than implying validity.
+            _fp = auth_state.get("forecast_provenance", {}) or {}
+            if _fp.get("live_forecasts_are_validated") is not True:
+                st.warning(
+                    "**DEMONSTRATION — MODEL INPUTS SIMULATED**\n\n"
+                    "Live forecasts use simulation-derived inputs and explicitly "
+                    "labelled synthetic placeholders for quantities the live "
+                    "simulation cannot produce (`water_level` in metres, `rainfall` "
+                    "in mm). The validated V3 test metrics do **not** apply."
+                )
+
+            # Stage 7/8 — authoritative controller + safety provenance (read-only).
+            _ctl = auth_state.get("control", {}) or {}
+            st.markdown("---")
+            st.caption("AUTHORITATIVE CONTROL PATH")
+            st.metric("Controller", f"{_ctl.get('controller_type', 'UNKNOWN')} · "
+                                    f"{_ctl.get('controller_status', 'UNKNOWN')}")
+            st.metric("Forecast eligible", "YES" if _ctl.get("forecast_control_eligible") else "NO")
+            st.metric("Safety layer", str(_ctl.get("safety_layer_status", "UNKNOWN")))
+            if _ctl.get("safety_modified"):
+                st.caption("Safety layer MODIFIED the MPC proposal before it was applied.")
+
         st.markdown("---")
-        control_mode = st.radio("Control Mode", ["Manual Control", "AI/MPC Control"], horizontal=True)
-        storm_intensity = st.slider("Storm Mode Intensity", 0.0, 1.0, 0.0, 0.1)
-        
-        st.markdown("---")
-        st.markdown("#### Reservoir Operators")
-        
-        manual_inflows = {}
-        manual_gates = {}
-        
-        # Show controls for A, B, C
-        for res in ["Virtual Reservoir A", "Virtual Reservoir B", "Virtual Reservoir C"]:
-            # If the user selected a corresponding real reservoir in the sidebar, keep it expanded
-            is_expanded = (res == virtual_target)
-            
-            with st.expander(f"⚙️ {res}", expanded=is_expanded):
-                default_inflow = 10.0 if "A" in res else (20.0 if "B" in res else 100.0)
-                current_inflow = default_inflow * (1.0 + (storm_intensity * 3.0))
-                manual_inflows[res] = st.slider(f"Inflow", 0.0, default_inflow*5, float(current_inflow), key=f"inf_{res}")
-                
-                if "Manual" in control_mode:
-                    current_gate = bridge.cascade.reservoirs[res].state.gate_position_pct
-                    manual_gates[res] = st.slider(f"Gate %", 0.0, 100.0, float(current_gate), key=f"gate_{res}")
-                else:
-                    st.info("Controlled by AI/MPC")
+        auto_refresh = st.checkbox(
+            "Live follow", value=False,
+            help="Re-read the authoritative state once per second (read-only).",
+        )
 
     # ---------------------------------------------------------------
-    # SIMULATION TICK LOGIC
+    # MIRROR AUTHORITATIVE STATE INTO THE EMBEDDED 3D VIEWER
     # ---------------------------------------------------------------
-    # We need mock forecasts to feed the AI controller and Risk Engine
-    forecasts = {}
-    for res in manual_inflows.keys():
-        f_base = manual_inflows[res]
-        forecasts[res] = {"forecast_1d": f_base, "forecast_3d": f_base, "forecast_7d": f_base}
-        
-    ai_recommendations = bridge.compute_ai_recommendation(forecasts)
-
-    if "AI" in control_mode:
-        gate_commands = {r: ai_recommendations.get(r, 0.0) for r in manual_inflows.keys()}
-        gate_commands["Virtual Reservoir D"] = 100.0
+    # The payload is the authoritative twin schema, produced by the one
+    # simulation instance. It is forwarded VERBATIM — Streamlit neither
+    # fabricates nor modifies any physical value, and it cannot write back.
+    if auth_error:
+        st.info(
+            "3D viewer is showing its idle state; start the authoritative "
+            "backend to mirror live data."
+        )
     else:
-        gate_commands = manual_gates
-        gate_commands["Virtual Reservoir D"] = 100.0
-        
-    def advance_simulation(b):
-        """Advance the real simulation by one step via SimBridge."""
-        inflows = manual_inflows.copy()
-        inflows["Virtual Reservoir D"] = 0.0
-        b.step(inflows, gate_commands)
-        st.session_state.sim_tick += 1
-
-    # ---------------------------------------------------------------
-    # DEFERRED BUTTON ACTIONS
-    # ---------------------------------------------------------------
-    # The STEP button sets _pending_step = True earlier in the render.
-    # Now that advance_simulation() and its captured variables are ready
-    # we can safely execute the deferred step.
-    if st.session_state.pop("_pending_step", False):
-        advance_simulation(bridge)
-
-    if st.session_state.sim_running:
-        advance_simulation(bridge)
-        
-    current_state = bridge.get_state(forecasts)
-    current_state["storm_intensity"] = storm_intensity
-    
-    # Inject real-time slider values for instant visual feedback on gates
-    for res, gate_val in gate_commands.items():
-        if res in current_state["reservoirs"]:
-            current_state["reservoirs"][res]["gate_position_pct"] = gate_val
-
-    # INJECT 3D STATE
-    mode_str = "AI" if "AI" in control_mode else "MANUAL"
-    adapted_state = adapt_state_for_twin(current_state, mode_str, storm_intensity)
-    state_json = json.dumps(adapted_state)
-    js_injector = f"""
-    <script>
-        const frames = window.parent.frames;
-        for (let i = 0; i < frames.length; i++) {{
-            frames[i].postMessage({{type: "streamlit:render", args: {{state: {state_json}}}}}, "*");
-        }}
-    </script>
-    """
-    components.html(js_injector, height=0, width=0)
+        state_json = json.dumps(auth_state)
+        js_injector = f"""
+        <script>
+            const frames = window.parent.frames;
+            for (let i = 0; i < frames.length; i++) {{
+                frames[i].postMessage({{type: "streamlit:render", args: {{state: {state_json}}}}}, "*");
+            }}
+        </script>
+        """
+        components.html(js_injector, height=0, width=0)
 
     # ---------------------------------------------------------------
     # BOTTOM AREA (Telemetry & Forecast)
@@ -372,15 +378,19 @@ def main():
         </div>
         """, unsafe_allow_html=True)
         
-        # If virtual equivalent exists, show its simulation state
-        if virtual_target:
-            virt = current_state["reservoirs"][virtual_target]
-            rec = ai_recommendations.get(virtual_target, 0)
-            st.markdown(f"""
+        # Read-only view of the AUTHORITATIVE gate for the mapped reservoir.
+        # Streamlit holds no simulation, so this is the Digital Twin's value.
+        twin_key = _VIRTUAL_TO_TWIN_KEY.get(virtual_target) if virtual_target else None
+        if twin_key and not auth_error:
+            twin_res = auth_state.get("reservoirs", {}).get(twin_key, {})
+            gate_ratio = twin_res.get("gate")
+            if isinstance(gate_ratio, (int, float)):
+                gate_pct = gate_ratio * 100.0
+                st.markdown(f"""
             <div class="metric-card">
-                <h5 style="margin:0;">AI/MPC Recommendation</h5>
-                <p style="font-size:12px; margin-bottom:0">Simulated Gate: {virt['gate_position_pct']:.0f}%</p>
-                <p style="font-size:12px; font-weight:bold; color:#4a9eff">Optimal Target: {rec:.0f}%</p>
+                <h5 style="margin:0;">Authoritative Gate</h5>
+                <p style="font-size:12px; margin-bottom:0">{virtual_target} · from the Digital Twin</p>
+                <p style="font-size:18px; font-weight:bold; color:#4a9eff">{gate_pct:.0f}%</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -394,8 +404,11 @@ def main():
             st.markdown(f"**+{h_label}**: MAE {metrics['MAE']:.2f} | R² {metrics['R2']:.3f}")
         st.markdown("</div>", unsafe_allow_html=True)
 
-    if st.session_state.sim_running:
-        time.sleep(1.0 / sim_speed)
+    # STAGE 4: no local simulation loop exists here any more. "Live follow"
+    # merely re-reads the authoritative state (read-only) — it never advances
+    # anything. The authoritative backend runs its own loop.
+    if auto_refresh:
+        time.sleep(1.0)
         st.rerun()
 
 if __name__ == "__main__":

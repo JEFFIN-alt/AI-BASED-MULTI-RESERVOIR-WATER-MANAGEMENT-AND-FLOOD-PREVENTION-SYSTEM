@@ -1,0 +1,336 @@
+{
+  "stage": 11,
+  "title": "Live mass-balance integrity",
+  "timestamp": "2026-09-15T09:46:12.622355",
+  "tolerance_mcm": 1e-09,
+  "timestep_days": 1.0,
+  "live_run": {
+    "steps": [
+      {
+        "step": 1,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": -2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": 2.842170943040401e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 0.0,
+        "audit_latency_ms": 0.14220003504306078
+      },
+      {
+        "step": 2,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.524999999999997,
+        "audit_latency_ms": 0.09889999637380242
+      },
+      {
+        "step": 3,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": -8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.07579999510198832
+      },
+      {
+        "step": 4,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.06799999391660094
+      },
+      {
+        "step": 5,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.06719998782500625
+      },
+      {
+        "step": 6,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 0.5899999999999999,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -2.842170943040401e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.07799995364621282
+      },
+      {
+        "step": 7,
+        "status": "PASS",
+        "residual_mcm": 5.684341886080802e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 2.842170943040401e-14
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 1.870000000000001,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -5.684341886080802e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.07250002818182111
+      },
+      {
+        "step": 8,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 2.3000000000000007,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.07050001295283437
+      },
+      {
+        "step": 9,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 2.3000000000000007,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.06829999620094895
+      },
+      {
+        "step": 10,
+        "status": "PASS",
+        "residual_mcm": 2.842170943040401e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": 2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 2.3000000000000007,
+          "Virtual Reservoir C": 2.630000000000166,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": -1.4210854715202004e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.06849999772384763
+      },
+      {
+        "step": 11,
+        "status": "PASS",
+        "residual_mcm": 4.263256414560601e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": -2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 2.3000000000000007,
+          "Virtual Reservoir C": 17.974999999999966,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": 4.263256414560601e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.0706000137142837
+      },
+      {
+        "step": 12,
+        "status": "PASS",
+        "residual_mcm": 4.263256414560601e-14,
+        "reservoirs_checked": 4,
+        "per_reservoir_residuals": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 8.881784197001252e-16,
+          "Virtual Reservoir C": -2.842170943040401e-14,
+          "Virtual Reservoir D": 0.0
+        },
+        "per_reservoir_spill_mcm": {
+          "Virtual Reservoir A": 1.0,
+          "Virtual Reservoir B": 2.3000000000000007,
+          "Virtual Reservoir C": 17.974999999999966,
+          "Virtual Reservoir D": 0.0
+        },
+        "network_residual_mcm": 4.263256414560601e-14,
+        "terminal_outflow_mcm_day": 50.0,
+        "routing_loss_mcm": 15.724999999999996,
+        "audit_latency_ms": 0.07100001676008105
+      }
+    ],
+    "checks": 12,
+    "violations": 0,
+    "all_pass": true,
+    "max_abs_residual_mcm": 5.684341886080802e-14,
+    "max_abs_network_residual_mcm": 5.684341886080802e-14
+  },
+  "corruption_probe": {
+    "clean_step_status": "PASS",
+    "clean_step_residual_mcm": 0.0,
+    "corrupted_state_status": "VIOLATION",
+    "corrupted_state_residual_mcm": 0.5000000000000142,
+    "corrupted_state_reason": "RESERVOIR_MASS_BALANCE_VIOLATION: Virtual Reservoir C residual 0.5000000000000142 MCM (tolerance 1e-09 MCM) [Virtual Reservoir C: storage 129.145 -> 87.19500000000002 MCM, in 0.0 (local) + 2.55 (routed) MCM/day, out 45.0 (release) + 0.0 (spill) MCM/day]",
+    "corrupted_flow_status": "VIOLATION",
+    "corrupted_flow_residual_mcm": 1.25,
+    "corrupted_flow_reason": "RESERVOIR_MASS_BALANCE_VIOLATION: Virtual Reservoir D residual 1.25 MCM (tolerance 1e-09 MCM) [Virtual Reservoir D: storage 200.715 -> 140.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 61.25 (release) + 0.0 (spill) MCM/day]"
+  },
+  "applied_action": {
+    "gates_given_to_step_and_audit": {
+      "Virtual Reservoir A": 0.25,
+      "Virtual Reservoir B": 0.25,
+      "Virtual Reservoir C": 0.25,
+      "Virtual Reservoir D": 0.25
+    },
+    "gates_audited": {
+      "Virtual Reservoir A": 0.25,
+      "Virtual Reservoir B": 0.25,
+      "Virtual Reservoir C": 0.25,
+      "Virtual Reservoir D": 0.25
+    },
+    "gates_identical": true,
+    "action_source": "DOWNSTREAM_CAPACITY_GUARD",
+    "status": "PASS",
+    "orchestrator_in_path": "LiveMPCOrchestrator"
+  },
+  "performance": {
+    "iterations": 300,
+    "bare_step_ms": 0.015269000044402977,
+    "step_with_audit_ms": 0.09882833323596667,
+    "overhead_ms": 0.0835593331915637,
+    "overhead_ratio": 6.472482346490875,
+    "last_audit_latency_ms": 0.05770003190264106,
+    "unit": "ms"
+  },
+  "frozen_artifact_sha256_before": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094"
+  },
+  "frozen_artifact_sha256_after": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094"
+  },
+  "frozen_artifacts_unchanged": true,
+  "protected_phase15_3_dir": "results\\phase15_v3_validation",
+  "protected_artifacts_unchanged": true,
+  "phase15_3_manifest_match": {
+    "models/lstm_pytorch_v3_logtarget/best_model.pt": true,
+    "models/lstm_pytorch_v3_logtarget/log_target_scaler.pkl": true,
+    "results/lstm_pytorch_v3_logtarget/test_predictions_original_units.csv": true
+  },
+  "hardware_connected": false
+}

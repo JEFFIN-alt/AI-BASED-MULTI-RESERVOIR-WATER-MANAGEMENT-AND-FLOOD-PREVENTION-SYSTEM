@@ -4,6 +4,7 @@ pandas
 scikit-learn
 networkx
 joblib
+PyYAML
 
 # Visualization & Interactive Dashboards
 matplotlib
@@ -12,6 +13,22 @@ streamlit
 
 # Deep Learning Inference
 torch
+# Required by src/modeling/gnn_inference.py (live GNN advisory inference)
+# and src/modeling/train_gcn_lstm_*.py. Without it the FastAPI backend
+# cannot be imported at all, because state_manager imports LiveGNNForecaster
+# at module top level.
+torch-geometric
+
+# Live Digital Twin backend (FastAPI + WebSocket)
+# Note: app.py installs these automatically at launch, but they are declared
+# here so `pip install -r requirements.txt` also produces a runnable backend.
+fastapi
+uvicorn
+
+# Testing
+pytest
+# Required by fastapi.testclient.TestClient used in tests/
+httpx
 
 # Development & Exploration
 jupyter

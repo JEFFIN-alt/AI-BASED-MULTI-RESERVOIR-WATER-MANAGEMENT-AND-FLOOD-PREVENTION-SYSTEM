@@ -74,9 +74,15 @@ def test_gate_command_all_three_reservoirs():
 
 # ── 2. Invalid reservoir IDs still rejected ─────────────────────────────────
 
-@pytest.mark.parametrize("bad_id", ["invalid_res", "reservoir_4", "reservoir_99"])
+@pytest.mark.parametrize("bad_id", ["invalid_res", "reservoir_5", "reservoir_99"])
 def test_invalid_reservoir_id_returns_400(bad_id):
-    """Unknown reservoir IDs must still return 400 and not touch state."""
+    """Unknown reservoir IDs must still return 400 and not touch state.
+
+    NOTE (Stage 9): ``reservoir_4`` used to appear in this list. Reservoir D
+    (Idukki) is now a first-class, commandable reservoir, so the guard is
+    exercised with ids that are genuinely unknown instead. The intent — an
+    unknown id is rejected and mutates nothing — is unchanged.
+    """
     before = dict(sim_state.manual_gates)
     response = client.post(f"/api/gate/{bad_id}", json={"value": 50.0})
     assert response.status_code == 400

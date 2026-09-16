@@ -167,20 +167,59 @@ def test_8_update_state_present():
 
 def test_9_no_js_fake_simulation_in_production():
     """
-    The production integration path (app.py → state_adapter → HTML) must not
-    contain JavaScript that fabricates reservoir telemetry. The TestDriver is
-    acceptable only as a temporary standalone test, not wired into production.
+    STAGE 4 — SINGLE AUTHORITATIVE SIMULATION.
+
+    ``src/dashboard/app.py`` (Streamlit) must be a READ-ONLY viewer:
+      * it must NOT import the live bridge (``sim_bridge.SimBridge``),
+      * it must NOT import the offline research engine (``simulator.engine``),
+      * it must NOT contain JavaScript that fabricates reservoir telemetry.
+
+    The state adapter (``adapt_state_for_twin``) moved to the AUTHORITATIVE
+    side (``src/dashboard/api/state_manager.py``) — it is asserted there, since
+    Streamlit now forwards the backend payload verbatim instead of adapting it.
+
+    The import/usage checks are AST-based so that documentation may still
+    *name* the components without creating a runtime dependency.
     """
+    import ast
+
     app_content = APP_PATH.read_text(encoding="utf-8")
-    # app.py must use state_adapter, not generate fake JS values
-    assert "adapt_state_for_twin" in app_content, \
-        "app.py must use the state adapter, not fake JS values"
-    # app.py must NOT contain inline JS reservoir value generation
+    tree = ast.parse(app_content, filename=str(APP_PATH))
+
+    forbidden_modules = {"sim_bridge", "simulator.engine", "src.simulator.engine"}
+    forbidden_names = {"SimBridge", "SimulationEngine", "VirtualCascade"}
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            assert node.module not in forbidden_modules, (
+                f"app.py must not import {node.module} — Streamlit owns no simulation"
+            )
+            assert not any(a.name in forbidden_names for a in node.names), \
+                "app.py must not import a live simulation class"
+        elif isinstance(node, ast.Import):
+            assert not any(a.name in forbidden_modules for a in node.names), \
+                "app.py must not import a live simulation module"
+        elif isinstance(node, ast.Name):
+            assert node.id not in forbidden_names, (
+                f"app.py constructs/uses {node.id} — that would be a competing simulation"
+            )
+        elif isinstance(node, ast.Attribute):
+            assert node.attr not in forbidden_names, \
+                f"app.py references {node.attr} at runtime"
+
+    # Still no fabricated telemetry in the production path.
     assert "Math.random" not in app_content, \
         "app.py must not contain JS Math.random for fake telemetry"
     assert "Math.sin" not in app_content, \
         "app.py must not contain JS Math.sin for fake telemetry"
-    print("[PASS] Test 9: No JavaScript fake simulation in production path")
+
+    # The adapter now lives where the AUTHORITATIVE state is produced.
+    state_manager_path = _PROJECT_ROOT / "src" / "dashboard" / "api" / "state_manager.py"
+    state_manager_content = state_manager_path.read_text(encoding="utf-8")
+    assert "adapt_state_for_twin" in state_manager_content, \
+        "the authoritative backend must produce twin state through the state adapter"
+
+    print("[PASS] Test 9: Streamlit is read-only; adapter lives in the authoritative backend")
 
 
 if __name__ == "__main__":

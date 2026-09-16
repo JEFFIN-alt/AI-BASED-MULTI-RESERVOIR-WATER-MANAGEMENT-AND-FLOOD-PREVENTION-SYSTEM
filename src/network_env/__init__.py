@@ -14,3 +14,5 @@ Key design decisions vs. src/simulator/:
 
 from .reservoir_network import ReservoirNetwork, ReservoirNode
 from .provenance import Provenance, ProvenanceLevel
+from .live_cascade_adapter import LiveCascadeAdapter, LiveReservoirView
+from .live_forecast_adapter import LiveForecastAdapter, LiveForecastBundle

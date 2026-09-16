@@ -1,0 +1,87 @@
+﻿........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 36%]
+........................................................................ [ 48%]
+........................................................................ [ 60%]
+........................................................................ [ 72%]
+........................................................................ [ 84%]
+........................................................................ [ 97%]
+.................                                                        [100%]
+============================== warnings summary ===============================
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\jit\_script.py:1491
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\torch\jit\_script.py:1491: FutureWarning: `torch.jit.script` is deprecated. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+src\dashboard\api\app.py:60
+  C:\Users\JEFFIN\Music\mki\test-repo1\src\dashboard\api\app.py:60: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\applications.py:4681
+..\..\..\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\applications.py:4681
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\fastapi\applications.py:4681: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src\dashboard\api\app.py:64
+  C:\Users\JEFFIN\Music\mki\test-repo1\src\dashboard\api\app.py:64: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+src/simulator/test_simulator.py::test_synthetic_engine_graceful_degradation
+src/simulator/test_simulator.py::test_synthetic_engine_graceful_degradation
+src/simulator/test_simulator.py::test_synthetic_engine_graceful_degradation
+src/simulator/test_simulator.py::test_synthetic_engine_graceful_degradation
+src/simulator/test_simulator.py::test_synthetic_engine_graceful_degradation
+  C:\Users\JEFFIN\Music\mki\test-repo1\src\simulator\engine.py:24: DeprecationWarning: The 'generic' unit for NumPy timedelta is deprecated, and will raise an error in the future. This includes implicit conversion of bare integers (e.g. `+ 1`).Please use a specific unit instead.
+    dates = [pd.Timestamp("2025-01-01") + pd.Timedelta(days=i) for i in range(num_days)]
+
+tests/test_gnn_inference.py::test_checkpoint_loads
+tests/test_gnn_inference.py::test_inverse_transform_roundtrip
+tests/test_gnn_inference.py::test_metric_reproduction
+tests/test_gnn_inference.py::test_metric_reproduction
+tests/test_stage5_forecast_provenance.py::test_frozen_model_and_scalers_unchanged_by_loading_and_inference
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\sklearn\base.py:525: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.9.0 when using version 1.9.1. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+  https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+    warnings.warn(
+
+tests/test_twin_integration.py::test_water_level_rise
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_water_level_rise returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_twin_integration.py::test_gate_change
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_gate_change returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_twin_integration.py::test_full_json_contract
+  C:\Users\JEFFIN\AppData\Local\Programs\Python\Python312\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_full_json_contract returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+593 passed, 20 warnings in 108.67s (0:01:48)

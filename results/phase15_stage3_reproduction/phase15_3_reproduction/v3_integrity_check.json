@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-09-15T09:48:59.719564",
+  "pre_validation": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": {
+      "sha256": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "size_bytes": 85047
+    },
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": {
+      "sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "size_bytes": 639
+    },
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": {
+      "sha256": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+      "size_bytes": 86117
+    }
+  },
+  "post_validation": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": {
+      "sha256": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "size_bytes": 85047
+    },
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": {
+      "sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "size_bytes": 639
+    },
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": {
+      "sha256": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+      "size_bytes": 86117
+    }
+  },
+  "all_match": true,
+  "conclusion": "V3 artifacts UNCHANGED"
+}

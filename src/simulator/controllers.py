@@ -8,11 +8,24 @@ _THIS_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _THIS_DIR.parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 from src.management.risk_engine import assess_risk
+from src.common import units
+
+# UNIT CONTRACT (see src/common/units.py)
+# ---------------------------------------
+# These controllers operate on the LIVE path and therefore emit gate positions
+# in the EXTERNAL representation: PERCENT in [0, 100].
+# The validated MPCController emits FRACTIONS in [0.0, 1.0].
+# Convert only at the boundary, never inline.
+
 
 class BaseController:
     def __init__(self, config: Dict):
         self.config = config
-        self.min_flow = config["minimum_environmental_flow_percent"]["value"] * 100.0
+        # Config stores the environmental floor as a FRACTION (e.g. 0.05).
+        # Controllers speak PERCENT, so convert once here through the boundary.
+        self.min_flow = units.gate_fraction_to_percent(
+            config["minimum_environmental_flow_percent"]["value"]
+        )
 
     def compute_gate(self, env_state: Dict[str, Any], forecast_data: Dict[str, Any], historical_thresholds: Dict[str, float], downstream_status: str) -> Tuple[float, str]:
         raise NotImplementedError

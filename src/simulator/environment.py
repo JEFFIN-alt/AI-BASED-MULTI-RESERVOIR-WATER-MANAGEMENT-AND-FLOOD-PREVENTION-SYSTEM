@@ -3,6 +3,8 @@ import logging
 from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 
+from src.common import units
+
 @dataclass
 class ReservoirState:
     storage_mcm: float
@@ -29,19 +31,32 @@ class VirtualReservoir:
         Returns a generic 0-100% full metric. We use this to feed the risk engine
         instead of physical meters, since we lack elevation curves.
         SIMULATION ASSUMPTION.
+
+        IMPORTANT: this is a STORAGE PERCENTAGE, not a water level in metres.
+        It must never be passed to the LSTM as the ``water_level`` feature -- the
+        frozen V3 model was trained on water level in metres. See
+        ``src/common/units.py`` for the full contract note.
         """
-        return (self.state.storage_mcm / self.capacity_mcm) * 100.0
+        return units.storage_fraction_to_percent(
+            self.state.storage_mcm / self.capacity_mcm
+        )
 
     def step(self, local_inflow_mcm_day: float, routed_inflow_mcm_day: float, gate_command_pct: float):
         """
         Advances the reservoir state by one discrete daily timestep.
         new_storage = current_storage + inflow + upstream_routed_inflow - release
         """
-        # 1. Enforce gate bounds
-        gate_clamped = max(0.0, min(100.0, gate_command_pct))
-        
-        # 2. Calculate requested release (linear assumption)
-        requested_release = (gate_clamped / 100.0) * self.max_release_capacity_mcm_day
+        # 1-2. Convert the EXTERNAL gate command to the canonical internal gate
+        # FRACTION at the single conversion boundary (src/common/units.py),
+        # then realise the requested release.
+        #
+        # ``gate_command_pct`` is a PERCENT (0-100) -- that is the HTTP/UI and
+        # VirtualCascade contract, pinned by tests/test_gate_unit_regression.py.
+        # The validated MPC/ReservoirNetwork stack uses FRACTIONS (0.0-1.0).
+        # The conversion helper clamps finite input into range and raises on
+        # NaN/Inf rather than silently failing open.
+        gate_fraction = units.gate_percent_to_fraction(gate_command_pct)
+        requested_release = gate_fraction * self.max_release_capacity_mcm_day
         
         # 3. Calculate preliminary new storage
         total_inflow = local_inflow_mcm_day + routed_inflow_mcm_day
@@ -69,11 +84,20 @@ class VirtualReservoir:
         self.state.inflow_mcm_day = local_inflow_mcm_day
         self.state.upstream_routed_inflow = routed_inflow_mcm_day
         self.state.release_mcm_day = actual_release
-        # Recalculate actual effective gate position 
+        # Recalculate actual effective gate position.
+        # ``actual_release`` may exceed the commanded release when forced spill is
+        # added, so the effective fraction is capped at fully open. The result is
+        # reported back in the EXTERNAL percent representation via the boundary.
         if self.max_release_capacity_mcm_day > 0:
-             self.state.gate_position_pct = min(100.0, (actual_release / self.max_release_capacity_mcm_day) * 100.0)
+            effective_fraction = min(
+                units.GATE_FRACTION_MAX,
+                actual_release / self.max_release_capacity_mcm_day,
+            )
+            self.state.gate_position_pct = units.gate_fraction_to_percent(
+                effective_fraction
+            )
         else:
-             self.state.gate_position_pct = 0.0
+            self.state.gate_position_pct = 0.0
 
 class VirtualCascade:
     def __init__(self, config: Dict):

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-09-15T09:46:29.211674",
+  "script": "scripts/stage3_verify_frozen_artifacts.py",
+  "manifest": "results\\phase15_v3_validation\\v3_integrity_check.json",
+  "manifest_timestamp": "2026-09-10T15:04:00.918745",
+  "autocrlf": "true",
+  "verification_rule": "An artifact is INTACT if its raw SHA256 OR its LF-normalised SHA256 equals the manifest value. The LF-normalised comparison neutralises working-tree CRLF conversion introduced by core.autocrlf.",
+  "artifacts": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": {
+      "expected_sha256": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "expected_size_bytes": 85047,
+      "raw_sha256": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "raw_size_bytes": 85047,
+      "lf_normalised_sha256": "d0d847d902b0e4ef8ee746d5e30e31b97538be427e7b1f7354d7647a3a35cc11",
+      "lf_normalised_size_bytes": 85046,
+      "raw_matches": true,
+      "lf_normalised_matches": false,
+      "matched_via": "raw",
+      "status": "MATCH"
+    },
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": {
+      "expected_sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "expected_size_bytes": 639,
+      "raw_sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "raw_size_bytes": 639,
+      "lf_normalised_sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "lf_normalised_size_bytes": 639,
+      "raw_matches": true,
+      "lf_normalised_matches": true,
+      "matched_via": "raw",
+      "status": "MATCH"
+    },
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": {
+      "expected_sha256": "dadbfabab2e8ef6e0e15313a9c57af516f8523f0e8e850f29a6160fbac400c5c",
+      "expected_size_bytes": 85016,
+      "raw_sha256": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+      "raw_size_bytes": 86117,
+      "lf_normalised_sha256": "dadbfabab2e8ef6e0e15313a9c57af516f8523f0e8e850f29a6160fbac400c5c",
+      "lf_normalised_size_bytes": 85016,
+      "raw_matches": false,
+      "lf_normalised_matches": true,
+      "matched_via": "lf_normalised",
+      "status": "MATCH"
+    }
+  },
+  "directory_fingerprints": {
+    "models/lstm_pytorch_v3_logtarget": {
+      "best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781"
+    },
+    "results/lstm_pytorch_v3_logtarget": {
+      "lstm_v3_metrics_original_units.csv": "ab7b623b2014f997875d7c6d023cbcb4e5536b854ababe2adf86840660b96ce5",
+      "test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+      "training_history.csv": "f205f8156367463a51f2ae44c4e1c8c8532b6df9cbbc01c61340f7272b48bb88",
+      "v3_period_comparison.csv": "93cc480f1316b69924d64482abf13092dae434c217f39c0dd4ac10cba9daa03f",
+      "v3_vs_v2_comparison.csv": "b1d6540a964e0b4819314d39389fe5fa685db3a3ac3b8bb286ae31261c3db0c8"
+    }
+  },
+  "all_match": true,
+  "conclusion": "ALL FROZEN ARTIFACTS UNCHANGED"
+}
