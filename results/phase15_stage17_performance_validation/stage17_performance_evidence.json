@@ -1,0 +1,963 @@
+{
+  "stage": 17,
+  "timestamp": "2026-09-17T21:12:21.751518",
+  "measurement_only": true,
+  "code_modified": false,
+  "frozen_artifacts_before": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+    "models\\gcn_lstm_gated_v1\\best_model.pt": "5e3fc2ce00c4c9de8503101d272c5e2c905b9ea46c535f1566b294c24b708ace",
+    "data\\processed\\graph\\graph_D_correlation_v1_2\\edges.csv": "1b1909c268034da2404dd68176a4c71d079ffdf1e84536351c98ff102c6c8ce3"
+  },
+  "environment": {
+    "os": "Windows 11 10.0.26200",
+    "os_edition": "Windows-11-10.0.26200-SP0",
+    "python_version": "3.12.10",
+    "python_executable": "C:\\Users\\JEFFIN\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "pytorch_version": "2.14.0+cpu",
+    "numpy_version": "2.5.2",
+    "psutil_version": "7.2.2",
+    "pytest_version": "9.1.1",
+    "cpu": {
+      "logical_cores": 12,
+      "physical_cores": 8,
+      "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+      "machine": "AMD64"
+    },
+    "ram_total_gb": 7.65,
+    "ram_available_gb": 1.45,
+    "gpu": {
+      "torch_cuda_available": false,
+      "device_used_by_live_models": "cpu",
+      "note": "no GPU is available; every measurement is CPU-only"
+    },
+    "repository": {
+      "branch": "main",
+      "head_commit": "e3e178830b6402002801042599a6e405fa4962cb",
+      "head_short": "e3e1788",
+      "head_subject": "added (2026-09-16T11:33:19+05:30)",
+      "working_tree_dirty_entries": 49,
+      "uncommitted_note": "Stages 12-17 are uncommitted working-tree changes; the Phase 15.3 scientific sources are CLEAN against HEAD (Stage 16 evidence)."
+    },
+    "test_configuration": {
+      "pyproject_pytest_section": true,
+      "pythonpath": [
+        "."
+      ],
+      "conftest_present": false,
+      "invocation": "py -m pytest -q --no-header -p no:cacheprovider"
+    },
+    "environment_modified_for_benchmarking": false
+  },
+  "components": {
+    "A_frozen_lstm_v3_inference": {
+      "label": "frozen LSTM V3 predict() (7-day window, 3 horizons)",
+      "warmup_iterations": 5,
+      "measured_iterations": 60,
+      "unit": "ms",
+      "mean": 7.316026666666667,
+      "median": 7.227600000000001,
+      "p95": 8.159394999999998,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 60 samples (<100)",
+      "min": 6.6114,
+      "max": 9.8197,
+      "stdev": 0.6041115602626205,
+      "total": 438.9616,
+      "clock": "time.perf_counter_ns",
+      "forecast_status_of_benchmark_input": "DEMONSTRATION_ONLY"
+    },
+    "B_gnn_advisory_inference": {
+      "label": "GNN advisory predict_all() (16 nodes, advisory only)",
+      "warmup_iterations": 5,
+      "measured_iterations": 60,
+      "unit": "ms",
+      "mean": 1.8988283333333333,
+      "median": 1.73105,
+      "p95": 3.0008999999999997,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 60 samples (<100)",
+      "min": 1.2285,
+      "max": 3.8982,
+      "stdev": 0.5375598467562777,
+      "total": 113.9297,
+      "clock": "time.perf_counter_ns",
+      "nodes_with_live_input": 4
+    },
+    "B2_gnn_node_representations": {
+      "label": "GNN advisory node_representations() (16 x 64 embeddings + gate)",
+      "warmup_iterations": 5,
+      "measured_iterations": 60,
+      "unit": "ms",
+      "mean": 1.4538666666666666,
+      "median": 1.2834,
+      "p95": 2.0353249999999994,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 60 samples (<100)",
+      "min": 1.0475,
+      "max": 2.7867,
+      "stdev": 0.39095019044940926,
+      "total": 87.232,
+      "clock": "time.perf_counter_ns"
+    },
+    "C_live_forecast_adapter": {
+      "label": "LiveForecastAdapter.build_bundle() (4 reservoirs)",
+      "warmup_iterations": 5,
+      "measured_iterations": 100,
+      "unit": "ms",
+      "mean": 0.035538,
+      "median": 0.0349,
+      "p95": 0.037925,
+      "p99": 0.04329000000000005,
+      "p99_note": null,
+      "min": 0.0342,
+      "max": 0.0522,
+      "stdev": 0.002145645343339374,
+      "total": 3.5538,
+      "clock": "time.perf_counter_ns"
+    },
+    "D_mpc_decide": {
+      "label": "MPCController.decide() (1296 coordinated candidates, 3-step lookahead)",
+      "warmup_iterations": 2,
+      "measured_iterations": 12,
+      "unit": "ms",
+      "mean": 846.0817666666667,
+      "median": 838.682,
+      "p95": 959.2056999999999,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 12 samples (<100)",
+      "min": 732.2236,
+      "max": 1052.0171,
+      "stdev": 78.44850515271246,
+      "total": 10152.9812,
+      "clock": "time.perf_counter_ns",
+      "per_candidate_mean_ms": 0.6528408693415638
+    },
+    "D2_mpc_decide_no_reset": {
+      "label": "MPCController.decide() (state left as-is between samples)",
+      "warmup_iterations": 1,
+      "measured_iterations": 8,
+      "unit": "ms",
+      "mean": 841.4515875,
+      "median": 831.7931,
+      "p95": 916.1385799999999,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 8 samples (<100)",
+      "min": 754.6506,
+      "max": 917.3815,
+      "stdev": 62.276291518188444,
+      "total": 6731.6127,
+      "clock": "time.perf_counter_ns",
+      "per_candidate_mean_ms": 0.6492682002314815
+    },
+    "E_safety_layer_validate": {
+      "label": "SafetyLayer.validate() (4 reservoirs)",
+      "warmup_iterations": 20,
+      "measured_iterations": 500,
+      "unit": "ms",
+      "mean": 0.0024378,
+      "median": 0.0024,
+      "p95": 0.0025,
+      "p99": 0.0027,
+      "p99_note": null,
+      "min": 0.0022,
+      "max": 0.0122,
+      "stdev": 0.00044774111293069445,
+      "total": 1.2188999999999999,
+      "clock": "time.perf_counter_ns"
+    },
+    "F_downstream_capacity_guard_safe": {
+      "label": "DownstreamCapacityGuard.evaluate() (Stage 15 fixture action)",
+      "warmup_iterations": 5,
+      "measured_iterations": 100,
+      "unit": "ms",
+      "mean": 1.040963,
+      "median": 0.85765,
+      "p95": 2.20565,
+      "p99": 2.527610000000001,
+      "p99_note": null,
+      "min": 0.5859,
+      "max": 2.7266,
+      "stdev": 0.5112551397395443,
+      "total": 104.0963,
+      "clock": "time.perf_counter_ns",
+      "observed_status": "PROTECTED",
+      "observed_modified": false
+    },
+    "F2_downstream_capacity_guard_corrected": {
+      "label": "DownstreamCapacityGuard.evaluate() (all gates 1.0 -> search + CORRECTED)",
+      "warmup_iterations": 3,
+      "measured_iterations": 25,
+      "unit": "ms",
+      "mean": 28.863208,
+      "median": 28.4837,
+      "p95": 41.35721999999999,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 25 samples (<100)",
+      "min": 20.417,
+      "max": 43.6692,
+      "stdev": 6.600250320752994,
+      "total": 721.5802,
+      "clock": "time.perf_counter_ns",
+      "observed_status": "CORRECTED",
+      "observed_modified": true,
+      "observed_action_pct": {
+        "Virtual Reservoir A": 100.0,
+        "Virtual Reservoir B": 100.0,
+        "Virtual Reservoir C": 100.0,
+        "Virtual Reservoir D": 25.0
+      }
+    },
+    "G_reservoir_network_step": {
+      "label": "ReservoirNetwork.step() (4 reservoirs, routing queues)",
+      "warmup_iterations": 20,
+      "measured_iterations": 500,
+      "unit": "ms",
+      "mean": 0.2733666,
+      "median": 0.1881,
+      "p95": 0.6985849999999999,
+      "p99": 1.0508829999999996,
+      "p99_note": null,
+      "min": 0.1033,
+      "max": 1.2358,
+      "stdev": 0.19941547384005512,
+      "total": 136.6833,
+      "clock": "time.perf_counter_ns"
+    },
+    "H_mass_balance_step_and_check": {
+      "label": "MassBalanceMonitor.step_and_check() (snapshot + physics + audit)",
+      "warmup_iterations": 20,
+      "measured_iterations": 500,
+      "unit": "ms",
+      "mean": 0.2978018,
+      "median": 0.23585,
+      "p95": 0.59251,
+      "p99": 0.7918819999999998,
+      "p99_note": null,
+      "min": 0.1975,
+      "max": 1.0052,
+      "stdev": 0.13099633191318533,
+      "total": 148.9009,
+      "clock": "time.perf_counter_ns"
+    },
+    "H2_mass_balance_verify_only": {
+      "label": "MassBalanceMonitor.verify() only (audit, no physics)",
+      "warmup_iterations": 5,
+      "measured_iterations": 300,
+      "unit": "ms",
+      "mean": 0.08193866666666667,
+      "median": 0.06434999999999999,
+      "p95": 0.1615850000000003,
+      "p99": 0.313836,
+      "p99_note": null,
+      "min": 0.0607,
+      "max": 0.3435,
+      "stdev": 0.04521480694912946,
+      "total": 24.5816,
+      "clock": "time.perf_counter_ns"
+    },
+    "I_state_adapter": {
+      "label": "adapt_state_for_twin() (twin payload construction)",
+      "warmup_iterations": 20,
+      "measured_iterations": 500,
+      "unit": "ms",
+      "mean": 0.0435856,
+      "median": 0.0431,
+      "p95": 0.058205,
+      "p99": 0.08304099999999996,
+      "p99_note": null,
+      "min": 0.032,
+      "max": 0.1472,
+      "stdev": 0.010095110457558183,
+      "total": 21.7928,
+      "clock": "time.perf_counter_ns"
+    },
+    "I2_payload_serialization": {
+      "label": "json.dumps(twin payload) (WebSocket/REST serialization)",
+      "warmup_iterations": 20,
+      "measured_iterations": 300,
+      "unit": "ms",
+      "mean": 0.06703966666666666,
+      "median": 0.0697,
+      "p95": 0.09269500000000003,
+      "p99": 0.11745399999999986,
+      "p99_note": null,
+      "min": 0.0504,
+      "max": 0.167,
+      "stdev": 0.01650009810112386,
+      "total": 20.1119,
+      "clock": "time.perf_counter_ns",
+      "payload_bytes": 9396
+    }
+  },
+  "mpc": {
+    "candidate_space": {
+      "gate_levels": [
+        0.0,
+        0.15,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "gate_levels_count": 6,
+      "reservoirs_included": 4,
+      "reservoir_ids": [
+        "Virtual Reservoir A",
+        "Virtual Reservoir B",
+        "Virtual Reservoir C",
+        "Virtual Reservoir D"
+      ],
+      "expected_candidate_vectors": 1296,
+      "independently_enumerated_candidate_vectors": 1296,
+      "decision_candidates_evaluated": 1296,
+      "orchestrator_reported_candidate_vectors": 1296,
+      "matches_1296": true,
+      "reduced_for_performance": false
+    },
+    "instrumented_run": {
+      "note": "this run is instrumented, so its wall time is HIGHER than the headline ``D_mpc_decide`` number; the decomposition is what is taken from it",
+      "total_decision_ms": 892.2756,
+      "trajectory_simulation_calls": 1296,
+      "trajectory_simulation_total_ms": 844.8591,
+      "trajectory_simulation_mean_ms": 0.6518974537037037,
+      "trajectory_simulation_max_ms": 18.476,
+      "objective_evaluation_calls": 1296,
+      "objective_evaluation_total_ms": 32.2926,
+      "objective_evaluation_mean_ms": 0.02491712962962963,
+      "network_clone_ctor_calls": 1297,
+      "network_clone_ctor_total_ms": 220.6219,
+      "network_clone_ctor_mean_ms": 0.1701016962220509,
+      "lookahead_steps": 3,
+      "physics_steps_simulated_per_decision": 3888
+    },
+    "decision_summary": {
+      "status": "CORRECTED",
+      "safety_status": "CORRECTED",
+      "forecast_used": true,
+      "forecast_status": "FORECAST_USED",
+      "objective_score": 94.59050000000049
+    }
+  },
+  "case_a": {
+    "case": "A",
+    "description": "real live behaviour: the live forecast provenance gate blocks the MPC, which therefore holds the current gates",
+    "is_fixture": false,
+    "cycle": {
+      "label": "CASE A live cycle (AI mode, MPC blocked)",
+      "warmup_iterations": 2,
+      "measured_iterations": 20,
+      "unit": "ms",
+      "mean": 100.536515,
+      "median": 97.94535,
+      "p95": 120.23582999999999,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 20 samples (<100)",
+      "min": 94.1739,
+      "max": 128.4862,
+      "stdev": 8.510249852864732,
+      "total": 2010.7303,
+      "clock": "time.perf_counter_ns"
+    },
+    "decomposition": {
+      "ml_pipeline_calls": 44,
+      "ml_pipeline_total_ms": 1976.7186,
+      "apply_ai_control_calls": 22,
+      "apply_ai_control_total_ms": 211.3767,
+      "physics_step_calls": 22,
+      "physics_step_total_ms": 9.4259,
+      "record_history_calls": 22,
+      "record_history_total_ms": 0.2205,
+      "ml_pipeline_calls_per_cycle": 2.0,
+      "ml_pipeline_total_ms_per_cycle": 89.85084545454545,
+      "observed_cost_note": "``GlobalSimulationState.step()`` calls ``_run_ml_pipeline()`` once itself and once more inside ``get_adapted_state()``, so the forecast + GNN advisory are computed TWICE per cycle. Measured, not inferred."
+    },
+    "chain_verdict": {
+      "controller_status": "BLOCKED",
+      "forecast_control_eligible": false,
+      "mpc_status": "NOT_INVOKED",
+      "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+      "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+      "final_safe_control_action_source": "HELD_CURRENT_GATES",
+      "control_applied": false,
+      "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL",
+      "forecast_summary_status_at_block_time": false,
+      "forecast_provenance_at_block_time": [
+        "SIMULATION_OR_SYNTHETIC_INPUTS_FROZEN_MODEL"
+      ],
+      "gnn_affects_control": false
+    },
+    "mass_balance_status": "PASS",
+    "mass_balance_checked": true,
+    "state_id": "step38-t30",
+    "gnn_advisory_status": "AVAILABLE",
+    "case_a2_manual_mode": {
+      "description": "the default live mode: operator gates are applied and no controller decision is produced at all",
+      "cycle": {
+        "label": "CASE A2 live cycle (MANUAL operator gates)",
+        "warmup_iterations": 2,
+        "measured_iterations": 20,
+        "unit": "ms",
+        "mean": 88.010685,
+        "median": 87.65755,
+        "p95": 93.00068,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 20 samples (<100)",
+        "min": 84.0345,
+        "max": 93.1504,
+        "stdev": 2.5939450215889934,
+        "total": 1760.2137,
+        "clock": "time.perf_counter_ns"
+      },
+      "action_source": "MANUAL_OPERATOR_GATES",
+      "mass_balance_status": "PASS"
+    }
+  },
+  "case_b": {
+    "case": "B",
+    "description": "CONTROLLED TEST FIXTURE (explicitly labelled VALIDATED payloads) driving forecast -> GNN advisory -> adapter -> MPC -> SafetyLayer -> guard -> physics -> mass balance -> state publication",
+    "is_fixture": true,
+    "fixture_declaration": {
+      "payload_forecast_status": "VALIDATED",
+      "payload_provenance": "REAL_MEASUREMENT_INPUTS_FROZEN_MODEL",
+      "is_live_telemetry": false,
+      "fed_to": "audit-local bundle on the authoritative LiveMPCOrchestrator",
+      "real_demonstration_only_forecasts_converted": false,
+      "live_pipeline_status_after_case_b": {
+        "forecast_control_eligible": false,
+        "final_safe_control_action_source": "HELD_CURRENT_GATES",
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL",
+        "gnn_affects_control": false
+      }
+    },
+    "phases": {
+      "gnn_advisory": {
+        "label": "GNN advisory inference (fixture cycle)",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 2.4476083333333336,
+        "median": 2.2481999999999998,
+        "p95": 3.3099049999999997,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 2.0918,
+        "max": 3.8065,
+        "stdev": 0.5137378699445385,
+        "total": 29.3713,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      },
+      "live_forecast_adapter": {
+        "label": "LiveForecastAdapter.build_bundle() (fixture cycle)",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 9.203816666666667,
+        "median": 9.0866,
+        "p95": 9.724984999999998,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 8.7062,
+        "max": 9.982,
+        "stdev": 0.36781843058605396,
+        "total": 110.44579999999999,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      },
+      "mpc_and_safety_and_guard": {
+        "label": "MPC + SafetyLayer + guard (one full decide())",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 614.9520916666667,
+        "median": 609.2433000000001,
+        "p95": 680.31356,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 570.3988,
+        "max": 688.0481,
+        "stdev": 43.762708934796784,
+        "total": 7379.4251,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      },
+      "physics_and_mass_balance": {
+        "label": "ReservoirNetwork.step() + mass-balance audit",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 0.19866666666666666,
+        "median": 0.18180000000000002,
+        "p95": 0.2914399999999999,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 0.1496,
+        "max": 0.3427,
+        "stdev": 0.05691418313939191,
+        "total": 2.384,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      },
+      "state_publication": {
+        "label": "get_adapted_state() (includes a second ML pipeline run)",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 68.02125833333334,
+        "median": 68.18594999999999,
+        "p95": 85.58230499999999,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 43.4793,
+        "max": 87.0029,
+        "stdev": 14.35533793196222,
+        "total": 816.2551,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      },
+      "total_cycle": {
+        "label": "complete fixture cycle",
+        "warmup_iterations": 0,
+        "measured_iterations": 12,
+        "unit": "ms",
+        "mean": 694.832625,
+        "median": 684.78445,
+        "p95": 753.43657,
+        "p99": null,
+        "p99_note": "NOT_REPORTED: 12 samples (<100)",
+        "min": 642.7586,
+        "max": 754.8944,
+        "stdev": 40.691127147889155,
+        "total": 8337.9915,
+        "clock": "time.perf_counter_ns",
+        "note": "reset between samples is NOT measured"
+      }
+    },
+    "chain_verdict": {
+      "forecast_control_eligible": true,
+      "mpc_status": "OPTIMAL",
+      "mpc_objective_score": 0.54,
+      "safety_layer_status": "SAFE",
+      "safety_modified": false,
+      "downstream_status": "PROTECTED",
+      "downstream_capacity_achieved": true,
+      "downstream_protection_modified": false,
+      "final_safe_control_action_pct": {
+        "Virtual Reservoir A": 30.0,
+        "Virtual Reservoir B": 15.0,
+        "Virtual Reservoir C": 0.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "final_safe_control_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+      "control_applied": true,
+      "candidates_evaluated": 1296
+    },
+    "physics_received_action_pct": {
+      "Virtual Reservoir A": 30.0,
+      "Virtual Reservoir B": 15.0,
+      "Virtual Reservoir C": 0.0,
+      "Virtual Reservoir D": 0.0
+    },
+    "mass_balance_status": "PASS",
+    "mass_balance_residual": 2.842170943040401e-14,
+    "state_id": "step72-t1"
+  },
+  "memory": {
+    "rss_baseline_mb": 409.33203125,
+    "rss_after_warmup_mb": 409.76171875,
+    "rounds": [
+      {
+        "round": 1,
+        "cycles": 15,
+        "rss_mb": 409.76171875
+      },
+      {
+        "round": 2,
+        "cycles": 15,
+        "rss_mb": 409.76171875
+      },
+      {
+        "round": 3,
+        "cycles": 15,
+        "rss_mb": 409.76171875
+      }
+    ],
+    "rss_growth_over_45_cycles_mb": 0.0,
+    "rss_after_tracemalloc_mb": 412.25390625,
+    "history_buffers": {
+      "Anayirankal": {
+        "length": 7,
+        "cap": 7
+      },
+      "Ponmudi": {
+        "length": 7,
+        "cap": 7
+      },
+      "Idamalayar": {
+        "length": 7,
+        "cap": 7
+      },
+      "Idukki": {
+        "length": 7,
+        "cap": 7
+      }
+    },
+    "history_buffers_bounded": true,
+    "websocket_clients_registered": 0,
+    "live_reservoir_network_objects_after_cycles": 2,
+    "tracemalloc_top_growth": [
+      {
+        "location": "C:\\Users\\JEFFIN\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\copy.py:208",
+        "size_diff_kb": 105.2734375,
+        "count_diff": 1925
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\src\\controller\\mpc_controller.py:182",
+        "size_diff_kb": 91.125,
+        "count_diff": 1296
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\src\\controller\\mpc_controller.py:201",
+        "size_diff_kb": 5.390625,
+        "count_diff": 46
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\copy.py:218",
+        "size_diff_kb": 3.0,
+        "count_diff": 48
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\pandas\\core\\internals\\managers.py:2210",
+        "size_diff_kb": 2.6796875,
+        "count_diff": 49
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\src\\controller\\downstream_capacity_guard.py:308",
+        "size_diff_kb": 2.609375,
+        "count_diff": 26
+      },
+      {
+        "location": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\src\\network_env\\v3_forecast_adapter.py:96",
+        "size_diff_kb": 1.708984375,
+        "count_diff": 35
+      },
+      {
+        "location": "<string>:32",
+        "size_diff_kb": 1.546875,
+        "count_diff": 2
+      }
+    ],
+    "note": "tracemalloc growth covers 3 GNN advisory runs + 3 full MPC decisions (3888 network clones) performed on purpose to test whether repeated cloning leaks",
+    "destructive_stress_tests_performed": false
+  },
+  "throughput": {
+    "cycles_requested": 40,
+    "cycles_completed": 40,
+    "failures": [],
+    "exceptions": [],
+    "timing": {
+      "label": "repeated live cycle (AI, MPC blocked)",
+      "warmup_iterations": 0,
+      "measured_iterations": 40,
+      "unit": "ms",
+      "mean": 100.53518249999999,
+      "median": 99.1101,
+      "p95": 105.74177999999999,
+      "p99": null,
+      "p99_note": "NOT_REPORTED: 40 samples (<100)",
+      "min": 94.1278,
+      "max": 144.9611,
+      "stdev": 7.839406766569595,
+      "total": 4021.4073,
+      "clock": "time.perf_counter_ns"
+    },
+    "mass_balance_status_counts": {
+      "PASS": 40
+    },
+    "sim_step_index_monotonic": true,
+    "rss_before_mb": 412.03515625,
+    "rss_after_mb": 412.04296875,
+    "rss_change_mb": 0.0078125,
+    "reset_every_10_cycles": true,
+    "reset_note": "storage is returned to 50 % every 10 cycles so the run cannot end in a saturated, spilling end-state; the reset is not part of any measured cycle",
+    "real_time_claim": "NOT CLAIMED. A fast benchmark on a shared desktop OS is not evidence of real-time capability; see the hardware-readiness implications in the report."
+  },
+  "concurrency": {
+    "performed": true,
+    "server": "uvicorn 127.0.0.1:8041",
+    "workers": 1,
+    "state_read_pressure": {
+      "reader_threads": 4,
+      "state_reads_completed": 15,
+      "uncontended_step_mean_ms": 95.56670000000001,
+      "pressured_step_mean_ms": 266.1466,
+      "slowdown_factor": 2.784930315685275,
+      "note": "a step is triggered one at a time in both measurements; the difference is contention between the control mutation and the state payload computation, which share one event loop"
+    },
+    "concurrent_steps": {
+      "requests": 8,
+      "http_200": 8,
+      "other_statuses": [],
+      "errors": [],
+      "sim_step_index_before": 15,
+      "sim_step_index_after": 23,
+      "steps_advanced": 8,
+      "expected_steps": 8,
+      "duplicate_or_lost_steps": false,
+      "burst_wall_ms": 816.1819,
+      "request_latency_ms_mean": 498.5519625,
+      "request_latency_ms_max": 811.1325,
+      "state_reads_during_burst": 4,
+      "distinct_state_ids_during_burst": 2,
+      "state_ids_all_succeeded": true,
+      "state_index_monotonic_nondecreasing": true,
+      "state_index_max_minus_min": 8
+    },
+    "rest_vs_websocket": {
+      "performed": true,
+      "frames_read": 1,
+      "ws_state_id": "step24-t24",
+      "rest_state_id": "step24-t24",
+      "same_state_id": true,
+      "reservoir_block_identical": true,
+      "mass_balance_status_identical": true,
+      "gnn_advisory_identical": false,
+      "payload_bytes": 27261
+    },
+    "background_loop": {
+      "running_flag_after_pause": false,
+      "steps_advanced_while_playing": 3,
+      "note": "the background loop steps the SAME one instance from the SAME event loop; it cannot overlap an HTTP step"
+    },
+    "in_process_concurrency": {
+      "step_suspension_points": [],
+      "step_is_synchronous_with_no_suspension_point": true,
+      "concurrent_decide_probe": {
+        "threads": 4,
+        "decide_calls": 4,
+        "max_simultaneous_decide": 4,
+        "errors": [],
+        "mutates_network": false,
+        "note": "``decide()`` is read-only with respect to the live network (it clones), so this probe is non-destructive"
+      },
+      "explicit_locks_in_live_path": {
+        "src/dashboard/api/state_manager.py": [
+          "import asyncio line 1"
+        ],
+        "src/dashboard/api/app.py": [
+          "import asyncio line 1"
+        ]
+      },
+      "explicit_lock_present": true,
+      "serialization_mechanism": "Every command handler in routes.py is ``async def`` and ``GlobalSimulationState.step()`` is a synchronous call with no ``await`` inside it, so the single asyncio event loop runs each mutation to completion: control commands are serialized by the event loop rather than by a lock.",
+      "authoritative_instance_count_in_this_process": 1,
+      "modules_constructing_GlobalSimulationState": [
+        "src/dashboard/api/state_manager.py:760"
+      ],
+      "single_owner_in_process": true,
+      "multi_worker_note": "ANALYTIC, NOT BENCHMARKED: ``sim_state`` is constructed at module import, so one uvicorn worker process owns one instance. Running uvicorn with more than one worker would create one owner PER process and the twin would read whichever worker answered. The measured evidence in this report is for a single-worker deployment."
+    }
+  },
+  "bottlenecks": {
+    "ordered_by_measured_mean_ms": [
+      {
+        "rank": 1,
+        "component": "MPC decision (1296 candidates, 3-step lookahead)",
+        "category": "scientific computation",
+        "measured_mean_ms": 846.0817666666667
+      },
+      {
+        "rank": 2,
+        "component": "MPC trajectory simulation (all candidates, instrumented)",
+        "category": "scientific computation",
+        "measured_mean_ms": 844.8591
+      },
+      {
+        "rank": 3,
+        "component": "Live cycle CASE B (fixture, complete chain)",
+        "category": "integration",
+        "measured_mean_ms": 694.832625
+      },
+      {
+        "rank": 4,
+        "component": "Live cycle CASE A (AI, MPC blocked)",
+        "category": "integration",
+        "measured_mean_ms": 100.536515
+      },
+      {
+        "rank": 5,
+        "component": "Live cycle CASE A2 (MANUAL)",
+        "category": "integration",
+        "measured_mean_ms": 88.010685
+      },
+      {
+        "rank": 6,
+        "component": "DownstreamCapacityGuard CORRECTED path",
+        "category": "safety computation",
+        "measured_mean_ms": 28.863208
+      },
+      {
+        "rank": 7,
+        "component": "Frozen LSTM V3 inference",
+        "category": "inference",
+        "measured_mean_ms": 7.316026666666667
+      },
+      {
+        "rank": 8,
+        "component": "GNN advisory inference",
+        "category": "inference",
+        "measured_mean_ms": 1.8988283333333333
+      },
+      {
+        "rank": 9,
+        "component": "GNN advisory embeddings",
+        "category": "inference",
+        "measured_mean_ms": 1.4538666666666666
+      },
+      {
+        "rank": 10,
+        "component": "DownstreamCapacityGuard PROTECTED path",
+        "category": "safety computation",
+        "measured_mean_ms": 1.040963
+      },
+      {
+        "rank": 11,
+        "component": "MassBalanceMonitor.step_and_check",
+        "category": "physics/audit",
+        "measured_mean_ms": 0.2978018
+      },
+      {
+        "rank": 12,
+        "component": "ReservoirNetwork.step",
+        "category": "physics",
+        "measured_mean_ms": 0.2733666
+      },
+      {
+        "rank": 13,
+        "component": "MassBalanceMonitor.verify only",
+        "category": "physics/audit",
+        "measured_mean_ms": 0.08193866666666667
+      },
+      {
+        "rank": 14,
+        "component": "Twin payload JSON serialization",
+        "category": "serialization",
+        "measured_mean_ms": 0.06703966666666666
+      },
+      {
+        "rank": 15,
+        "component": "adapt_state_for_twin",
+        "category": "serialization/UI",
+        "measured_mean_ms": 0.0435856
+      },
+      {
+        "rank": 16,
+        "component": "LiveForecastAdapter.build_bundle",
+        "category": "serialization/adapter",
+        "measured_mean_ms": 0.035538
+      },
+      {
+        "rank": 17,
+        "component": "SafetyLayer.validate",
+        "category": "safety computation",
+        "measured_mean_ms": 0.0024378
+      }
+    ],
+    "category_totals_ms": {},
+    "note": "ranking is by measured mean wall time only; no qualitative labels are applied"
+  },
+  "budget": {
+    "control_decision_period_ms": 60000.0,
+    "budget_basis": "one control decision per 60 s \u2014 a telemetry cadence this prototype is being assessed against, not a measured requirement of the plant",
+    "rows": [
+      {
+        "stage": "forecast (frozen LSTM V3, 3 reservoirs)",
+        "budget_ms": 60.0,
+        "measured_ms": 21.94808,
+        "within_budget": true,
+        "headroom_ms": 38.051919999999996
+      },
+      {
+        "stage": "GNN advisory + embeddings",
+        "budget_ms": 60.0,
+        "measured_ms": 3.3526949999999998,
+        "within_budget": true,
+        "headroom_ms": 56.647305
+      },
+      {
+        "stage": "forecast adapter (4 reservoirs)",
+        "budget_ms": 10.0,
+        "measured_ms": 0.035538,
+        "within_budget": true,
+        "headroom_ms": 9.964462
+      },
+      {
+        "stage": "MPC decision (1296 candidates)",
+        "budget_ms": 2000.0,
+        "measured_ms": 846.0817666666667,
+        "within_budget": true,
+        "headroom_ms": 1153.9182333333333
+      },
+      {
+        "stage": "SafetyLayer.validate",
+        "budget_ms": 5.0,
+        "measured_ms": 0.0024378,
+        "within_budget": true,
+        "headroom_ms": 4.9975622
+      },
+      {
+        "stage": "DownstreamCapacityGuard (worst measured path)",
+        "budget_ms": 50.0,
+        "measured_ms": 28.863208,
+        "within_budget": true,
+        "headroom_ms": 21.136792
+      },
+      {
+        "stage": "ReservoirNetwork.step",
+        "budget_ms": 1.0,
+        "measured_ms": 0.2733666,
+        "within_budget": true,
+        "headroom_ms": 0.7266334
+      },
+      {
+        "stage": "MassBalanceMonitor.step_and_check",
+        "budget_ms": 5.0,
+        "measured_ms": 0.2978018,
+        "within_budget": true,
+        "headroom_ms": 4.7021982
+      },
+      {
+        "stage": "state publication (adapter + JSON)",
+        "budget_ms": 5.0,
+        "measured_ms": 0.11062526666666667,
+        "within_budget": true,
+        "headroom_ms": 4.889374733333334
+      }
+    ],
+    "measured_total_ms": 900.9655191333334,
+    "budget_total_ms": 2196.0,
+    "utilization_of_period_fraction": 0.015016091985555556,
+    "meets_budget": true,
+    "not_met": [],
+    "budget_pass_forced_by_code_change": false
+  },
+  "frozen_artifacts_after": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+    "models\\gcn_lstm_gated_v1\\best_model.pt": "5e3fc2ce00c4c9de8503101d272c5e2c905b9ea46c535f1566b294c24b708ace",
+    "data\\processed\\graph\\graph_D_correlation_v1_2\\edges.csv": "1b1909c268034da2404dd68176a4c71d079ffdf1e84536351c98ff102c6c8ce3"
+  },
+  "frozen_artifacts_unchanged": true,
+  "limitations": [
+    "All measurements are CPU-only on a shared, non-realtime desktop OS; they are not deterministic and the host is not a control-grade machine.",
+    "No hardware is connected. No value in this evidence is plant telemetry.",
+    "The CASE B live cycle is a controlled fixture, not live operation.",
+    "The concurrency probe used a single-worker uvicorn deployment; multi-worker behaviour is described analytically and was NOT benchmarked.",
+    "MPC samples are 12 (and 20 for the live cycles), so p99 is reported as NOT_REPORTED where fewer than 100 samples were taken.",
+    "Memory figures are process RSS, which includes allocator retention and cannot distinguish a genuine leak from fragmentation on this host.",
+    "In-process direct multi-threaded step() calls were NOT benchmarked because they would corrupt the authoritative state and its audit."
+  ]
+}
