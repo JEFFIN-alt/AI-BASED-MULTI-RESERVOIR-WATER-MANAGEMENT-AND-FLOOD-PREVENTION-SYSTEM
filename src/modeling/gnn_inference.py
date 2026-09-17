@@ -1,9 +1,26 @@
 """
-GNN Inference Module — Gated GCN-LSTM V1 (Production)
-======================================================
+GNN Inference Module — Gated GCN-LSTM V1 (ADVISORY)
+===================================================
 
 Loads the trained Gated GCN-LSTM V1 checkpoint and provides live inference
 for all 16 canonical Kerala reservoirs simultaneously.
+
+STAGE 14 — ADVISORY SCOPE
+-------------------------
+This model is an EXPERIMENTAL spatial-dependency representation. It is NOT a
+production forecaster, NOT a controller and NOT a safety mechanism:
+
+  * the frozen LSTM V3 remains the validated forecasting baseline, and its
+    metrics do not apply here;
+  * a controlled experiment (``results/gcn_lstm_gated_v1/``) showed this model
+    underperforming that baseline, with the learned spatial gate collapsing to
+    ~0.015 — the model itself learned to ignore most of the graph signal;
+  * its output is published for DISPLAY as an advisory block, and the live
+    control path cannot read it.
+
+The graph it consumes is a STATISTICAL correlation graph, not a hydraulic or
+routing network, and nothing derived from it may be described as causal or as
+physical connectivity.
 
 EXACT TRAINING/INFERENCE PARITY
 --------------------------------
@@ -76,6 +93,11 @@ FEATURE_ORDER: List[str] = [
 
 TARGET_NAMES: List[str] = ["target_1d", "target_3d", "target_7d"]
 
+#: STAGE 14 — width of the fused per-node hidden representation that
+#: ``GatedGCNLSTM.forward`` builds before its FC head. It is the spatial/temporal
+#: relational representation of a node (ADVISORY only — never a control input).
+EMBEDDING_DIM = 64
+
 
 # ─── Model Architecture (exact copy from train_gcn_lstm_gated_v1.py) ─────────
 
@@ -143,7 +165,7 @@ class GatedGCNLSTM(nn.Module):
 
 class LiveGNNForecaster:
     """
-    Production inference interface for the Gated GCN-LSTM V1 model.
+    Live inference interface for the Gated GCN-LSTM V1 model (ADVISORY use).
 
     Usage::
 
@@ -250,6 +272,127 @@ class LiveGNNForecaster:
         """Latency of last inference call in milliseconds."""
         return self._last_inference_time * 1000.0
 
+    def _build_input_tensor(self, history_dict: Dict[str, np.ndarray]) -> torch.Tensor:
+        """
+        Build the (1, 16, 7, 5) model input from per-reservoir scaled windows.
+
+        Extracted verbatim from ``predict_all`` (STAGE 14) so that the advisory
+        representation accessor below cannot drift from the prediction path.
+        Reservoirs absent from ``history_dict`` are zero-padded, exactly as
+        during training.
+        """
+        X = np.zeros((1, NUM_NODES, SEQ_LEN, NUM_FEATURES), dtype=np.float32)
+
+        for res_name, idx in NODE_TO_IDX.items():
+            if res_name in history_dict:
+                arr = history_dict[res_name]
+                if arr.shape != (SEQ_LEN, NUM_FEATURES):
+                    raise ValueError(
+                        f"History for {res_name} has shape {arr.shape}, "
+                        f"expected ({SEQ_LEN}, {NUM_FEATURES})"
+                    )
+                if not np.isfinite(arr).all():
+                    raise ValueError(
+                        f"History for {res_name} contains NaN/Inf values"
+                    )
+                X[0, idx] = arr
+            # else: zero-padded (matches training missing-value handling)
+
+        return torch.from_numpy(X).to(self.device)
+
+    def node_representations(
+        self,
+        history_dict: Dict[str, np.ndarray],
+    ) -> Tuple[np.ndarray, float]:
+        """
+        STAGE 14 — the fused per-node representation (ADVISORY ONLY).
+
+        Returns
+        -------
+        ``(embeddings, gate)`` where ``embeddings`` has shape ``(16, 64)`` in
+        canonical node order and ``gate`` is ``sigmoid(alpha)``.
+
+        This computes the SAME arithmetic that ``GatedGCNLSTM.forward`` already
+        performs to obtain its fused hidden state
+
+            h = h_local + sigmoid(alpha) * h_spatial
+
+        which ``forward`` consumes but does not return. Nothing about the model
+        is changed: no weight, no architecture, no scaler, no training artefact.
+        ``forward`` itself is untouched, and a parity test asserts that
+        ``head(representations)`` reproduces ``forward``'s own output.
+
+        These vectors are a learned RELATIONAL representation. They are not
+        hydraulic influence, not causality and not physical connectivity.
+        """
+        X_t = self._build_input_tensor(history_dict)
+
+        with torch.no_grad():
+            B, N, T, F = X_t.shape
+
+            # LOCAL branch
+            local_in = X_t.view(B * N, T, F)
+            local_out, _ = self._model.local_lstm(local_in)
+            h_local = local_out[:, -1, :]
+
+            # SPATIAL branch
+            x_gcn = X_t.permute(0, 2, 1, 3)
+            gcn_out = self._model.gcn_relu(self._model.gcn(x_gcn, self._model.edge_index))
+            spatial_in = gcn_out.permute(0, 2, 1, 3).contiguous().view(B * N, T, 32)
+            spatial_out, _ = self._model.spatial_lstm(spatial_in)
+            h_spatial = spatial_out[:, -1, :]
+
+            # GATED FUSION (identical to forward)
+            gate = torch.sigmoid(self._model.alpha)
+            h = h_local + gate * h_spatial  # (B*N, 64)
+
+        embeddings = h.view(B, N, EMBEDDING_DIM)[0].cpu().numpy().astype(np.float32)
+        return embeddings, float(gate.item())
+
+    def graph_provenance(self) -> Dict:
+        """
+        STAGE 14 — what the graph IS, read from the graph artifacts themselves.
+
+        The graph is a STATISTICAL construction: an undirected edge exists when
+        the two reservoirs' inflow series have a positive Pearson correlation
+        at or above a threshold over a minimum number of shared TRAINING-period
+        dates. It is a correlation graph, not a hydraulic or routing network.
+        """
+        metadata_path = self.project_root / self.GRAPH_METADATA
+        edges_path = self.project_root / self.GRAPH_EDGES
+        if not metadata_path.exists() or not edges_path.exists():
+            return {
+                "available": False,
+                "reason": "GRAPH_ARTIFACTS_MISSING",
+                "graph": "Graph D (correlation_v1_2)",
+            }
+
+        import json as _json
+
+        meta = _json.loads(metadata_path.read_text(encoding="utf-8"))
+        undirected_edges = int(meta.get("edges", 0))
+        return {
+            "available": True,
+            "graph": "Graph D (correlation_v1_2)",
+            "graph_nodes": int(meta.get("nodes", NUM_NODES)),
+            "undirected_edges": undirected_edges,
+            "directed_edges": undirected_edges * 2,
+            "connected_components": int(meta.get("connected_components", 0)),
+            "isolated_reservoirs": list(meta.get("isolated_reservoirs", [])),
+            "construction_method": "statistical correlation",
+            "edge_rule": meta.get("edge_rule"),
+            "min_positive_correlation": meta.get("min_positive_correlation"),
+            "min_overlap_days": meta.get("min_overlap_days"),
+            "data_window": meta.get("data_window"),
+            "leakage_safe": meta.get("leakage_safe"),
+            "is_physical_topology": False,
+            "provenance_note": (
+                "Statistical inflow-correlation graph over training-period data. "
+                "It is NOT the physical hydraulic/routing topology of the live "
+                "simulation and must not be read as one."
+            ),
+        }
+
     def predict_all(
         self,
         history_dict: Dict[str, np.ndarray],
@@ -282,25 +425,7 @@ class LiveGNNForecaster:
         """
         t0 = time.perf_counter()
 
-        # Build input tensor (1, 16, 7, 5)
-        X = np.zeros((1, NUM_NODES, SEQ_LEN, NUM_FEATURES), dtype=np.float32)
-
-        for res_name, idx in NODE_TO_IDX.items():
-            if res_name in history_dict:
-                arr = history_dict[res_name]
-                if arr.shape != (SEQ_LEN, NUM_FEATURES):
-                    raise ValueError(
-                        f"History for {res_name} has shape {arr.shape}, "
-                        f"expected ({SEQ_LEN}, {NUM_FEATURES})"
-                    )
-                if not np.isfinite(arr).all():
-                    raise ValueError(
-                        f"History for {res_name} contains NaN/Inf values"
-                    )
-                X[0, idx] = arr
-            # else: zero-padded (matches training missing-value handling)
-
-        X_t = torch.from_numpy(X).to(self.device)
+        X_t = self._build_input_tensor(history_dict)
 
         # Run inference
         with torch.no_grad():

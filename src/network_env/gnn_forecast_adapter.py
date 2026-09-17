@@ -5,6 +5,18 @@ GNN Forecast Adapter — Bridges GNN inference to the application layer
 Provides structured forecast metadata from the Gated GCN-LSTM V1 model,
 keeping GNN and LSTM forecasts strictly separate.
 
+SCIENTIFIC POSITION (Stage 14)
+------------------------------
+The Gated GCN-LSTM V1 is an EXPERIMENTAL spatial-dependency model, not a
+production forecaster. A controlled experiment showed it underperforming the
+temporal LSTM V3 baseline, and its learned fusion gate collapsed to ~0.015
+(i.e. it learned to ignore most of the graph signal). It is retained and
+exposed as ADVISORY context only:
+
+  * it does not discover causal relationships;
+  * it does not prove hydraulic connectivity or routing;
+  * it never controls gates and is not a safety mechanism.
+
 DESIGN PRINCIPLES
 -----------------
 1. GNN forecasts are NEVER mixed with LSTM V3 forecasts.
@@ -16,10 +28,20 @@ DESIGN PRINCIPLES
 
 USAGE
 -----
-The application layer (SimBridge, FastAPI state_manager) calls this adapter
-once per simulation step to obtain the latest GNN forecasts. The results
-are then merged with LSTM forecasts into a combined forecast dict for the
-controller and risk engine.
+The application layer (FastAPI ``state_manager``) calls this adapter once per
+simulation step to obtain the latest GNN forecasts, which are cached and
+published as part of the Stage 14 DISPLAY-ONLY advisory block.
+
+STAGE 14 — ADVISORY SCOPE
+-------------------------
+GNN forecasts do **not** reach the controller or any risk evaluation in the
+live system. The methods below can BUILD alternative control forecasts
+(``gnn_primary``, ``risk_envelope``), but those policies are offline research
+affordances that have never been closed-loop validated; the live control path
+uses ``lstm_primary`` only, and ``GlobalSimulationState`` additionally refuses
+the cycle fail-closed if a control forecast ever differs from the validated
+frozen-LSTM value. The GNN is a spatial-dependency ADVISORY, not a controller
+and not a safety mechanism.
 """
 
 import math

@@ -875,6 +875,7 @@ class ReservoirTwinRenderer {
       mode: null, simTime: null, stormLevel: null, forecastSummary: null,
       hardware: NO_AUTHORITATIVE_STATE.hardware_status,
       cascade: null, control: null, reservoir4: null, massBalance: null,
+      gnnAdvisory: null, forecastProvenance: null,
     };
     /* Stage 9 — displayed reservoir names. Fallback only: the authoritative
      * names arrive in the payload's `cascade` block and overwrite these. */
@@ -990,6 +991,17 @@ class ReservoirTwinRenderer {
     /* Stage 11 — the backend's mass-balance audit of the last authoritative
      * step (display only; nothing about it is computed in JavaScript). */
     this.data.massBalance = state.mass_balance || null;
+    /* Stage 14 — the GNN advisory block (display only).
+     *
+     * The authoritative backend computes the spatial-dependency advisory and
+     * publishes it here. This page RENDERS it: it never runs the GNN, never
+     * computes an embedding or a similarity, and never derives a relationship.
+     * `advisory_only` / `affects_control` are read from the payload and shown
+     * as-is, so the badge cannot drift from what the backend actually reports. */
+    this.data.gnnAdvisory = state.gnn_advisory || null;
+    /* Stage 14 — which engine produces the forecast the controller consumes.
+     * The header no longer claims the GNN is part of the forecast path. */
+    this.data.forecastProvenance = state.forecast_provenance || null;
     if (state.simulation_time) this.data.simTime = String(state.simulation_time);
     if (state.hardware_status) this.data.hardware = state.hardware_status;
 
@@ -1773,7 +1785,7 @@ class ReservoirTwinRenderer {
       <div class="hd-sep"></div>
       <div class="hd-stat"><span class="k">Controller</span><span class="v" data-ref="mode">AI / MPC</span></div>
       <div class="hd-sep"></div>
-      <div class="hd-stat"><span class="k">Forecast</span><span class="v" data-ref="fceng">LSTM V3 + GNN</span></div>
+      <div class="hd-stat"><span class="k">Forecast</span><span class="v" data-ref="fceng">--</span></div>
       <div class="hd-right">
         <div class="hd-stat"><span class="k">Sim Clock</span><span class="v hd-clock" id="live-time">--:--:--</span></div>
         <div class="hd-sep"></div>
@@ -1809,7 +1821,9 @@ class ReservoirTwinRenderer {
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">RESERVOIRS</span><span class="val" data-ref="rescount">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">MPC ACTION</span><span class="val" data-ref="actdim">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">LSTM V3</span><span class="val">LIVE</span></div>
-      <div class="hp-row"><span class="dot cy"></span><span class="lbl">GCN-LSTM GNN</span><span class="val">LIVE</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN ADVISORY</span><span class="val" data-ref="gnnstat">--</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN GRAPH</span><span class="val" data-ref="gnngraph">--</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN EMB. SIM</span><span class="val" data-ref="gnnrel">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">RISK ENGINE</span><span class="val">ACTIVE</span></div>
       <div class="hp-row"><span class="dot warn"></span><span class="lbl">HARDWARE I/F</span><span class="val" style="color:var(--warn)">NOT CONNECTED</span></div>`);
 
@@ -2012,6 +2026,8 @@ class ReservoirTwinRenderer {
       /* Stage 11 — mass-balance integrity (display only). */
       mbstat: q(hud, '[data-ref="mbstat"]'), mbres: q(hud, '[data-ref="mbres"]'),
       mbchk: q(hud, '[data-ref="mbchk"]'), mbres4: q(hud, '[data-ref="mbres4"]'),
+      gnnstat: q(hud, '[data-ref="gnnstat"]'), gnngraph: q(hud, '[data-ref="gnngraph"]'),
+      gnnrel: q(hud, '[data-ref="gnnrel"]'),
       demoBadge: q(hud, '#demo-badge'), demoBadgeSub: q(hud, '#demo-badge [data-ref="dbsub"]'),
       res: rCards.map(p => {
         const g = k => q(p, `[data-k="${k}"]`);
@@ -2362,6 +2378,59 @@ class ReservoirTwinRenderer {
       el.mbres4.textContent = (typeof n === 'number') ? (n + ' CHECKED') : '--';
       el.mbres4.style.color = (typeof n === 'number' && n >= 4) ? 'var(--ok)'
                             : 'var(--ink-faint)';
+    }
+    /* Stage 14 — GNN ADVISORY (spatial dependency representation).
+     *
+     * DISPLAY ONLY. Every value below is printed from the authoritative payload.
+     * This page does NOT run the GNN, does NOT compute an embedding, does NOT
+     * compute a similarity and does NOT derive a relationship. `advisory_only`
+     * and `affects_control` are read from the payload rather than asserted here,
+     * so what the operator sees cannot drift from what the backend reports.
+     * The similarity shown is an EMBEDDING SIMILARITY between learned vectors —
+     * never hydraulic, causal or physical connectivity. */
+    const ga = this.data.gnnAdvisory || {};
+    const gaStatus = String(ga.status || 'UNAVAILABLE');
+    if (el.fceng) {
+      /* The forecast engine is named by the payload. It was previously a
+       * hardcoded "LSTM V3 + GNN", which implied the experimental GNN was part
+       * of the forecast path. It is not: the validated frozen LSTM V3 produces
+       * the control forecast and the GNN is advisory only. */
+      const fp = this.data.forecastProvenance || {};
+      const model = String(fp.model || '');
+      el.fceng.textContent = model.startsWith('LSTM_V3') ? 'LSTM V3' : (model || '--');
+      el.fceng.style.color = 'var(--ink-faint)';
+    }
+    if (el.gnnstat) {
+      if (this.data.hasState && ga.advisory_only === true) {
+        el.gnnstat.textContent = gaStatus.replace(/_/g, ' ');
+        el.gnnstat.style.color = (gaStatus === 'AVAILABLE') ? 'var(--ink)'
+                               : (gaStatus === 'WARMUP_INSUFFICIENT_HISTORY') ? 'var(--warn)'
+                               : 'var(--ink-faint)';
+      } else {
+        el.gnnstat.textContent = '--';
+        el.gnnstat.style.color = 'var(--ink-faint)';
+      }
+      el.gnnstat.title = 'Advisory only — affects control: '
+        + String(ga.affects_control === true);
+    }
+    if (el.gnngraph) {
+      const gn = ga.graph_nodes, ge = ga.graph_undirected_edges;
+      el.gnngraph.textContent = (typeof gn === 'number' && typeof ge === 'number')
+        ? (gn + 'N / ' + ge + 'E') : '--';
+      el.gnngraph.style.color = 'var(--ink-faint)';
+    }
+    if (el.gnnrel) {
+      const sim = ga.embedding_similarity || null;
+      const top = (sim && Array.isArray(sim.top_relationships)) ? sim.top_relationships[0] : null;
+      if (top && typeof top.embedding_similarity === 'number') {
+        el.gnnrel.textContent = top.source + '\u2194' + top.target
+          + ' ' + top.embedding_similarity.toFixed(2);
+        el.gnnrel.title = String(sim.label || '') + ' — ' + String(sim.matrix_note || '');
+      } else {
+        el.gnnrel.textContent = '--';
+        el.gnnrel.title = '';
+      }
+      el.gnnrel.style.color = 'var(--ink-faint)';
     }
     /* Stage 9 — coordination provenance, straight from the backend.
      * RESERVOIRS : how many reservoirs the authoritative cascade declares.

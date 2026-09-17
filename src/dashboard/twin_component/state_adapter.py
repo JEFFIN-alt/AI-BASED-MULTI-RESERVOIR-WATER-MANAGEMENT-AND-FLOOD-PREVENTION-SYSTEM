@@ -277,6 +277,55 @@ def _simulation_block(simulation: dict | None) -> dict:
     }
 
 
+def _gnn_advisory_block(advisory) -> dict:
+    """
+    STAGE 14 — carry the backend's GNN advisory block VERBATIM.
+
+    The advisory is computed by the authoritative backend from real model
+    inference. The twin adapter neither recomputes nor interprets it, and it
+    never invents a value: when no block is present an explicit
+    ``UNAVAILABLE`` block with the same schema is emitted, so no frontend ever
+    has to branch on its presence.
+
+    The import of the canonical default is local on purpose — this adapter must
+    stay importable without pulling the model stack (torch / torch_geometric)
+    into every process that reads a twin payload.
+    """
+    if isinstance(advisory, dict) and advisory:
+        block = dict(advisory)
+        block.setdefault("advisory_only", True)
+        block.setdefault("affects_control", False)
+        return block
+    try:
+        from src.modeling.gnn_advisory import default_block
+
+        return default_block()
+    except Exception:  # pragma: no cover - only if the modeling stack is absent
+        return {
+            "status": "UNAVAILABLE",
+            "reason": "NO_GNN_ADVISORY_PROVENANCE",
+            "model_name": "Gated GCN-LSTM V1",
+            "model_version": "gcn_lstm_gated_v1",
+            "graph": "Graph D (correlation_v1_2)",
+            "graph_nodes": None,
+            "graph_undirected_edges": None,
+            "graph_directed_edges": None,
+            "inference_timestamp": None,
+            "embedding_dimensions": None,
+            "node_embeddings": {},
+            "nodes_with_live_input": [],
+            "nodes_zero_padded": [],
+            "embedding_similarity": None,
+            "relationship_summary": None,
+            "gate_value": None,
+            "inference_latency_ms": None,
+            "graph_provenance": {"available": False},
+            "physical_control_topology": None,
+            "advisory_only": True,
+            "affects_control": False,
+        }
+
+
 def _forecast_summary_block(sim_state: dict) -> dict:
     """
     STAGE 12 — one backend-computed forecast series for the UI to draw.
@@ -457,6 +506,10 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
         "downstream": _downstream_block(sim_state),
         "storm": _storm_block(sim_state.get("storm_intensity")),
         "forecast_summary": _forecast_summary_block(sim_state),
+        # ── STAGE 14 — GNN ADVISORY (spatial dependency representation) ──
+        # Display-only. `advisory_only` is true and `affects_control` is false
+        # by construction; the control path never reads this block.
+        "gnn_advisory": _gnn_advisory_block(sim_state.get("gnn_advisory")),
         # ── STAGE 5 — FORECAST PROVENANCE (top level) ────────────────────
         # States plainly what the forecast numbers ARE. A demonstration
         # forecast (simulation / synthetic inputs) must never be presented as

@@ -9,6 +9,10 @@ from src.dashboard.sim_bridge import SimBridge
 from src.dashboard.twin_component.state_adapter import adapt_state_for_twin
 from src.modeling.inference import LiveForecaster, ForecastUnavailableError
 from src.modeling.gnn_inference import LiveGNNForecaster
+from src.modeling.gnn_advisory import (
+    build_gnn_advisory,
+    empty_block as empty_gnn_advisory,
+)
 from src.modeling.v3_feature_contract import (
     DEMO_PLACEHOLDERS,
     HISTORY_DAYS,
@@ -158,6 +162,9 @@ class GlobalSimulationState:
             self.lstm_ready = False
 
         self.gnn_adapter = GNNForecastAdapter(self.res_mapping)
+        #: STAGE 14 — the structured ADVISORY result. Displayed by the frontends,
+        #: never consumed by the controller (which does not read this attribute).
+        self.gnn_advisory = empty_gnn_advisory("NO_INFERENCE_YET")
         try:
             self.gnn_forecaster = LiveGNNForecaster(str(_PROJECT_ROOT))
             self.gnn_ready = True
@@ -416,17 +423,44 @@ class GlobalSimulationState:
             lstm_forecasts[v_name] = self._forecast_one_reservoir(v_name, p_name)
 
         # Advisory/experimental GNN — never feeds the control path.
+        # STAGE 14 — the inference result is now ADDRESSED as a structured
+        # advisory block that reaches the API/UI for display. It is stored on a
+        # separate attribute that the controller never reads.
         if self.gnn_ready:
             try:
                 gnn_history = self._build_gnn_history()
                 if gnn_history:
                     gnn_result = self.gnn_forecaster.predict_all(gnn_history)
-                    self.gnn_adapter.update_from_inference(gnn_result)
+                    self.gnn_adapter.update_from_inference(
+                        gnn_result,
+                        inference_time_ms=self.gnn_forecaster.last_inference_time_ms,
+                        gate_value=self.gnn_forecaster.gate_value,
+                    )
+                    # Learned per-node representations (advisory spatial context).
+                    # These reproduce the model's own fused hidden state; they are
+                    # not hydraulic, causal or control information.
+                    embeddings, gate = self.gnn_forecaster.node_representations(gnn_history)
+                    self.gnn_advisory = build_gnn_advisory(
+                        embeddings=embeddings,
+                        gate_value=gate,
+                        live_input_nodes=sorted(gnn_history),
+                        graph_provenance=self.gnn_forecaster.graph_provenance(),
+                        inference_latency_ms=self.gnn_forecaster.last_inference_time_ms,
+                    )
+                else:
+                    self.gnn_advisory = empty_gnn_advisory("INSUFFICIENT_HISTORY_FOR_GNN")
             except Exception as e:
                 print(f"[StateManager] GNN advisory inference failed: {e}")
+                self.gnn_advisory = empty_gnn_advisory(
+                    f"INFERENCE_ERROR:{type(e).__name__}"
+                )
+        else:
+            self.gnn_advisory = empty_gnn_advisory("MODEL_NOT_LOADED")
 
         # Production control policy (validated LSTM V3 baseline).
         ctrl_forecasts = self.gnn_adapter.get_control_forecasts(lstm_forecasts, policy="lstm_primary")
+        # STAGE 14 — FAIL-CLOSED proof that the advisory cannot leak into control.
+        self._assert_control_forecasts_are_lstm_only(ctrl_forecasts, lstm_forecasts)
 
         # Carry the Stage 5 provenance through to the control/display payload.
         for name, fc in lstm_forecasts.items():
@@ -445,6 +479,46 @@ class GlobalSimulationState:
     # ------------------------------------------------------------------
     # STAGE 7 — the ONE authoritative live controller path
     # ------------------------------------------------------------------
+
+    #: Forecast horizons that the controller consumes.
+    _CONTROL_HORIZONS = ("forecast_1d", "forecast_3d", "forecast_7d")
+
+    def _assert_control_forecasts_are_lstm_only(
+        self,
+        ctrl_forecasts: dict,
+        lstm_forecasts: dict,
+    ) -> None:
+        """
+        STAGE 14 — the advisory boundary, enforced fail-closed.
+
+        The GNN adapter is able to build control forecasts under other,
+        unvalidated policies; those paths exist for offline research and have
+        never been closed-loop validated. This guard re-reads every horizon the
+        controller is about to consume and refuses the cycle unless each one is
+        the validated frozen-LSTM value.
+
+        Failing loudly is deliberate: silently controlling with an unvalidated
+        forecast source would be a far worse outcome than a refused step, and
+        this is the mechanism that makes "the GNN cannot reach control" a
+        property of the running system rather than a reading of its source.
+        """
+        for name, fc in ctrl_forecasts.items():
+            reference = lstm_forecasts.get(name)
+            if reference is None:
+                continue
+            for horizon in self._CONTROL_HORIZONS:
+                used = fc.get(horizon)
+                validated = reference.get(horizon)
+                if used is None and validated is None:
+                    continue
+                if used != validated:
+                    raise RuntimeError(
+                        "CONTROL FORECAST NOT FROM THE VALIDATED MODEL: "
+                        f"{name}.{horizon} = {used!r} but the frozen LSTM V3 "
+                        f"forecast is {validated!r}. The experimental GNN is "
+                        "advisory only; refusing to control with an "
+                        "unvalidated forecast source."
+                    )
 
     def _forecast_date(self) -> str:
         """Issue date used for the live forecast snapshot."""
@@ -644,6 +718,11 @@ class GlobalSimulationState:
                 "action_check_note": "NO_AUDITED_STEP_YET",
             })
         current_state["mass_balance"] = mass_balance
+
+        # STAGE 14 — the GNN advisory reaches the API/WebSocket/twin for DISPLAY
+        # only. It is attached after the control path has already produced its
+        # forecast, and nothing downstream of this point feeds a decision.
+        current_state["gnn_advisory"] = self.gnn_advisory
 
         # Inject live manual gate state into current_state for immediate visual feedback
         if self.mode == "MANUAL":
