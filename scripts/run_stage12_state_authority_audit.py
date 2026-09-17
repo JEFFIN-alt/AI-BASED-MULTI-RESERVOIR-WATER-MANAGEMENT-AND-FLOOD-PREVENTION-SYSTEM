@@ -125,6 +125,23 @@ def frontend_audit() -> dict:
     }
 
 
+#: Top-level blocks that both transports must deliver identically.
+AGREEMENT_KEYS = (
+    "reservoirs", "cascade", "control", "mass_balance", "forecast_provenance",
+    "state_identity", "downstream", "forecast_summary", "storm", "simulation",
+    "hardware_status",
+)
+
+
+def field_agreement(a: dict, b: dict) -> dict:
+    """Field-by-field equality of two payloads of the SAME authoritative state.
+
+    ``simulation_time`` is a wall-clock stamp generated per payload and is
+    deliberately excluded; the identity is ``state_identity``.
+    """
+    return {key: (a.get(key) == b.get(key)) for key in AGREEMENT_KEYS}
+
+
 def live_flow_probe() -> dict:
     client = TestClient(app)
     client.post("/api/simulation/pause")
@@ -146,24 +163,27 @@ def live_flow_probe() -> dict:
         "state_id_after": after_step["state_identity"]["state_id"],
     })
 
-    # --- a real WebSocket client sees the pushed state ---
+    # --- REST and WebSocket deliver the SAME authoritative state ---
+    # Both transports are read for one and the same timestep. Comparing across a
+    # step would compare two different authoritative states (reservoirs,
+    # mass-balance counters and the state identity all advance), which is a
+    # property of the probe, not of the system.
     with client.websocket_connect("/ws/state") as ws:
-        ws_state = ws.receive_json()
+        ws_state = ws.receive_json()                 # initial authoritative push
+        rest_state = client.get("/api/state").json()  # same timestep, no step
+        agreement = field_agreement(rest_state, ws_state)
+
+        # --- a real WebSocket client sees the state the command produced ---
         client.post("/api/simulation/step")
         pushed = ws.receive_json()
+        rest_after_broadcast = client.get("/api/state").json()
+        pushed_agreement = field_agreement(pushed, rest_after_broadcast)
 
-    # --- REST and WebSocket agree on the same authoritative state ---
-    rest_state = client.get("/api/state").json()
-    agreement = {
-        key: (rest_state.get(key) == ws_state.get(key))
-        for key in ("reservoirs", "cascade", "control", "mass_balance",
-                    "forecast_provenance", "state_identity", "downstream",
-                    "forecast_summary", "storm", "simulation", "hardware_status")
-    }
-    agreement["pushed_timestep_is_backend_timestep"] = (
-        pushed["state_identity"]["network_timestep"]
-        == state_manager.sim_state.bridge.cascade.network.timestep
-    )
+        agreement["pushed_timestep_is_backend_timestep"] = (
+            pushed["state_identity"]["network_timestep"]
+            == state_manager.sim_state.bridge.cascade.network.timestep
+        )
+        rest_state = rest_after_broadcast
 
     # --- PLAY / PAUSE round-trip through the backend ---
     client.post("/api/simulation/play")
@@ -180,6 +200,7 @@ def live_flow_probe() -> dict:
         "owner_module_declaration_sites": state_owners(),
         "commands": command_log,
         "rest_websocket_agreement": agreement,
+        "pushed_payload_equals_rest_after_step": pushed_agreement,
         "play_state": play_state,
         "pause_state": pause_state,
         "reset_state_identity": reset_state["state_identity"],
@@ -242,6 +263,7 @@ def main() -> int:
     flow = live_flow_probe()
     print(f"\n[3] Command round-trip  : {flow['commands']}")
     print(f"    REST/WS agreement   : {flow['rest_websocket_agreement']}")
+    print(f"    pushed == REST      : {flow['pushed_payload_equals_rest_after_step']}")
     print(f"    PLAY/PAUSE state    : {flow['play_state']} -> {flow['pause_state']}")
     print(f"    mass balance        : {flow['mass_balance_after_step']} "
           f"({flow['mass_balance_reservoirs_checked']} reservoirs)")
@@ -317,7 +339,8 @@ def main() -> int:
     ok = (not left and not audit["console_state_push_handle"] and frozen_unchanged
           and protected_unchanged and all(manifest_match.values())
           and all(physics_intact.values())
-          and flow["rest_websocket_agreement"].get("mass_balance") is True)
+          and all(flow["rest_websocket_agreement"].values())
+          and all(flow["pushed_payload_equals_rest_after_step"].values()))
     print("VERDICT:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 

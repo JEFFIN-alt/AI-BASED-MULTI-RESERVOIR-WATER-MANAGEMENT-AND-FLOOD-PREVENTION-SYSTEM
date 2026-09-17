@@ -3,6 +3,10 @@
 
 **Status:** COMPLETE — Stage 12 only. **Stage 13 has NOT been started.**
 **Date:** 2026-09-15
+**Evidence finalized:** 2026-09-16 — §10, §11 and §12 filled with the measured
+results of `scripts/stage3_phase15_3_reproduction.py` (exit 0),
+`scripts/stage3_verify_frozen_artifacts.py` (all frozen artifacts unchanged) and
+`scripts/run_stage12_state_authority_audit.py` (VERDICT: PASS).
 **Goal:** make the Three.js Digital Twin a pure display/interaction client of ONE
 authoritative backend simulation state, rendered from the backend's own verdicts.
 
@@ -135,6 +139,14 @@ display, ratios → bar widths) and mapping a backend string to a CSS class.
   (compared field-by-field in the evidence: `reservoirs`, `cascade`, `control`,
   `mass_balance`, `forecast_provenance`, `state_identity`, `downstream`,
   `forecast_summary`, `storm`, `simulation`, `hardware_status` — all equal).
+  The evidence script compares the two transports **for one and the same
+  timestep**, and separately asserts that the payload pushed for a `STEP` equals
+  the REST snapshot of the state that step produced
+  (`pushed_payload_equals_rest_after_step`, all 11 blocks `true`). An earlier
+  revision of that probe stepped the simulation
+  *between* the WebSocket and REST reads, i.e. it compared two different
+  authoritative states; that probe defect was found by the Stage 12 audit and
+  fixed here — the system was never the problem, the measurement was.
 * No state-write endpoint exists: `POST`/`PUT /api/state` → `405`; forged fields
   posted to command endpoints are ignored; unknown reservoirs → `400`.
 
@@ -240,17 +252,59 @@ meaningful rather than being edited away.
 
 ## 10. Phase 15.3 reproduction
 
-STAGE_12_PHASE153_RESULT
+`py scripts/stage3_phase15_3_reproduction.py` (re-run after the Stage 12 edits) — **exit 0**:
+
+| Check | Result |
+|---|---|
+| VERDICT | `protected artifacts untouched; reproduction complete.` |
+| Protected artifacts re-hashed (SHA256) | **6/6 UNCHANGED** — `validation_metrics.csv`, `daily_simulation_baseline.csv`, `daily_simulation_mpc.csv`, `provenance_audit.json`, `v3_integrity_check.json`, `PHASE_15_3_V3_VALIDATION_REPORT.md` |
+| Re-derived outputs vs the frozen run | **3/3 IDENTICAL** — `validation_metrics.csv`, `daily_simulation_baseline.csv`, `daily_simulation_mpc.csv` |
+| V3 integrity | `PASSED` (`[OK] All V3 artifacts unchanged (SHA256 verified)`) |
+
+```text
+VERDICT: protected artifacts untouched; reproduction complete.
+```
+
+Stage 12 did not touch the V3 validation path (the Stage 12 test asserts it).
 
 ## 11. Frozen artifact integrity
 
-STAGE_12_FROZEN_RESULT
+`py scripts/stage3_verify_frozen_artifacts.py` — **VERDICT: ALL FROZEN
+ARTIFACTS UNCHANGED** (3 artifacts):
+
+| Artifact | Result |
+|---|---|
+| `models/lstm_pytorch_v3_logtarget/best_model.pt` | `MATCH` (raw SHA256) |
+| `models/lstm_pytorch_v3_logtarget/log_target_scaler.pkl` | `MATCH` (raw and LF-normalised) |
+| `results/lstm_pytorch_v3_logtarget/test_predictions_original_units.csv` | byte-identical (LF-normalised `MATCH`; the raw hash differs only by `core.autocrlf=true` working-tree line endings) |
+
+The Stage 12 evidence script additionally re-hashes everything before and after
+its own run and records: `frozen_artifacts_unchanged` = **True**,
+`protected_phase15_3_unchanged` = **True**, `phase15_3_manifest_match` = **3/3
+True**, and `frozen_physics_untouched` = **5/5 True**
+(`reservoir_network.py`, `mpc_controller.py`, `safety.py`,
+`downstream_capacity_guard.py`, `live_mpc_orchestrator.py` — none contains a
+twin / state-identity symbol).
 
 ---
 
 ## 12. Performance impact
 
-STAGE_12_PERF_RESULT
+`scripts/run_stage12_state_authority_audit.py` times the presentation adapter
+(`adapt_state_for_twin`, 300 iterations, payload pre-built):
+
+| Run | `adapt_state_for_twin` |
+|---|---|
+| Evidence run 1 | 0.0631 ms/call |
+| Evidence run 2 (the value stored in the evidence JSON) | **0.0317 ms/call** |
+
+Both are ~4 orders of magnitude below one `decide()` call (~660 ms), so the
+added backend-computed display blocks (`state_identity`, `simulation`,
+`downstream` incl. the authoritative limit, `storm`, `forecast_summary`,
+per-reservoir `net_flux_m3_s` / `trend`) are effectively free — **< 0.01 %** of a
+control cycle. The adapter runs **once per payload** (a WebSocket broadcast or an
+`/api/state` read), never inside the physics step: `ReservoirNetwork.step()` and
+`MassBalanceMonitor` are untouched by Stage 12.
 
 The per-command broadcasts added to PAUSE/PLAY/SET_SPEED are one state
 serialisation each (`json.dumps` of the twin payload) and only occur on operator

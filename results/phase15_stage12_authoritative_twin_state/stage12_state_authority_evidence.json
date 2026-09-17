@@ -1,0 +1,177 @@
+{
+  "stage": 12,
+  "title": "Authoritative Digital Twin state",
+  "timestamp": "2026-09-16T15:31:45.510207",
+  "architecture": [
+    "authoritative backend simulation (GlobalSimulationState)",
+    "ReservoirNetwork.step() audited by MassBalanceMonitor",
+    "StateAdapter (adapt_state_for_twin)",
+    "FastAPI /api/state + /ws/state",
+    "Three.js Digital Twin (DISPLAY ONLY)",
+    "REST commands -> backend -> broadcast -> display"
+  ],
+  "authoritative_owner": {
+    "module": "src/dashboard/api/state_manager.py",
+    "object": "sim_state (GlobalSimulationState)",
+    "instance_count": 1,
+    "declaration_sites": [
+      "src/dashboard/api/state_manager.py"
+    ]
+  },
+  "frontend_audit": {
+    "index_html_forbidden_patterns_present": {
+      "const INITIAL_STATE = {": false,
+      "150 m\u00b3/s": false,
+      "ds < 120": false,
+      "clamp01(ds / 150)": false,
+      "d.inflow - d.release": false,
+      "d4.inflow - d.release": false,
+      "d4.inflow - d4.release": false,
+      "0.14 * Math.sin": false,
+      "window.__twin = ": false,
+      "streamlit:render": false
+    },
+    "mirror_html_forbidden_patterns_present": {
+      "const INITIAL_STATE = {": false,
+      "150 m\u00b3/s": false,
+      "ds < 120": false,
+      "clamp01(ds / 150)": false,
+      "d.inflow - d.release": false,
+      "d4.inflow - d.release": false,
+      "d4.inflow - d4.release": false,
+      "0.14 * Math.sin": false
+    },
+    "index_html_consumes_backend_blocks": {
+      "state.downstream": true,
+      "state.forecast_summary": true,
+      "state.state_identity": true,
+      "state.simulation": true,
+      "state.mass_balance": true,
+      "state.control": true,
+      "src.trend": true,
+      "d4.trend": true
+    },
+    "console_state_push_handle": false,
+    "read_only_ready_flag": true,
+    "api_js_is_commands_only": {
+      "endpoints": [
+        "/gate/${reservoirId}"
+      ],
+      "pushes_state": false,
+      "websocket_feed": true
+    },
+    "mirror_accepts_only_authoritative_payloads": true,
+    "mirror_has_no_write_back": true
+  },
+  "live_flow_probe": {
+    "single_owner_instance_count": 1,
+    "owner_is_the_routes_owner": true,
+    "owner_module_declaration_sites": [
+      "src/dashboard/api/state_manager.py"
+    ],
+    "commands": [
+      {
+        "command": "POST /api/simulation/step",
+        "backend_network_timestep_before": 0,
+        "backend_network_timestep_after": 1,
+        "state_id_after": "step1-t1"
+      }
+    ],
+    "rest_websocket_agreement": {
+      "reservoirs": true,
+      "cascade": true,
+      "control": true,
+      "mass_balance": true,
+      "forecast_provenance": true,
+      "state_identity": true,
+      "downstream": true,
+      "forecast_summary": true,
+      "storm": true,
+      "simulation": true,
+      "hardware_status": true,
+      "pushed_timestep_is_backend_timestep": true
+    },
+    "pushed_payload_equals_rest_after_step": {
+      "reservoirs": true,
+      "cascade": true,
+      "control": true,
+      "mass_balance": true,
+      "forecast_provenance": true,
+      "state_identity": true,
+      "downstream": true,
+      "forecast_summary": true,
+      "storm": true,
+      "simulation": true,
+      "hardware_status": true
+    },
+    "play_state": {
+      "running": true,
+      "speed": 1.0,
+      "source": "GlobalSimulationState.running / sim_speed"
+    },
+    "pause_state": {
+      "running": false,
+      "speed": 1.0,
+      "source": "GlobalSimulationState.running / sim_speed"
+    },
+    "reset_state_identity": {
+      "sim_step_index": 2,
+      "network_timestep": 0,
+      "state_id": "step2-t0",
+      "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+    },
+    "reset_mass_balance": "NOT_CHECKED",
+    "mass_balance_after_step": "PASS",
+    "mass_balance_reservoirs_checked": 4,
+    "idukki": {
+      "repository_name": "Idukki",
+      "node_id": "Virtual Reservoir D",
+      "is_terminal": true
+    },
+    "downstream_block": {
+      "flow_m3_s": 0.0,
+      "capacity_m3_s": 578.7037037037037,
+      "utilisation": 0.0,
+      "status": "NORMAL",
+      "unit": "m3/s",
+      "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+    },
+    "state_identity": {
+      "sim_step_index": 2,
+      "network_timestep": 2,
+      "state_id": "step2-t2",
+      "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+    }
+  },
+  "performance": {
+    "iterations": 300,
+    "adapter_ms_per_call": 0.031720333333093244,
+    "unit": "ms",
+    "note": "presentation transform only; MPC decide() is ~660 ms"
+  },
+  "frozen_artifact_sha256_before": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094"
+  },
+  "frozen_artifact_sha256_after": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094"
+  },
+  "frozen_artifacts_unchanged": true,
+  "protected_phase15_3_unchanged": true,
+  "phase15_3_manifest_match": {
+    "models/lstm_pytorch_v3_logtarget/best_model.pt": true,
+    "models/lstm_pytorch_v3_logtarget/log_target_scaler.pkl": true,
+    "results/lstm_pytorch_v3_logtarget/test_predictions_original_units.csv": true
+  },
+  "frozen_physics_untouched": {
+    "src/network_env/reservoir_network.py": true,
+    "src/controller/mpc_controller.py": true,
+    "src/controller/safety.py": true,
+    "src/controller/downstream_capacity_guard.py": true,
+    "src/controller/live_mpc_orchestrator.py": true
+  },
+  "hardware_connected": false
+}
