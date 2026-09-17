@@ -1,0 +1,752 @@
+{
+  "stage": 15,
+  "timestamp": "2026-09-16T21:43:33.183070",
+  "single_authority": {
+    "live_instances": 1,
+    "live_owners": {
+      "ReservoirNetwork(": [
+        "src/controller/downstream_capacity_guard.py",
+        "src/controller/mpc_controller.py",
+        "src/network_env/live_cascade_adapter.py",
+        "src/network_env/mass_balance.py"
+      ],
+      "SimulationEngine(": [
+        "src/dashboard/simulation_page.py",
+        "src/simulator/run_simulation.py",
+        "src/simulator/test_simulator.py"
+      ],
+      "LiveCascadeAdapter(": [
+        "src/dashboard/sim_bridge.py"
+      ],
+      "GlobalSimulationState()": [
+        "src/dashboard/api/state_manager.py"
+      ],
+      "SimBridge(": [
+        "src/dashboard/api/state_manager.py"
+      ]
+    },
+    "offline_research_constructors": {
+      "VirtualCascade(": [
+        "src/simulator/engine.py",
+        "src/simulator/test_simulator.py"
+      ]
+    },
+    "single_live_bridge": true,
+    "single_live_state": true,
+    "offline_engine_imports_in_live_path": {},
+    "live_engines_are_isolated": true,
+    "legacy_controller_imports_in_live_path": {
+      "src/dashboard/sim_bridge.py": [
+        "src.simulator.controllers"
+      ]
+    },
+    "dormant_legacy_controller_helper": {
+      "symbol": "SimBridge.compute_ai_recommendation",
+      "imported_from": "src.simulator.controllers (offline research package)",
+      "callers": [],
+      "zero_callers": true,
+      "status": "dormant, documented NON-AUTHORITATIVE (Stage 7), not on any live path"
+    },
+    "authoritative_object_types": {
+      "cascade": "LiveCascadeAdapter",
+      "network": "ReservoirNetwork"
+    }
+  },
+  "live_ai_cycle": {
+    "mode": "AI",
+    "timestep_before": 8,
+    "timestep_after": 9,
+    "advanced_exactly_one": true,
+    "decision": {
+      "controller_type": "MPC",
+      "controller_status": "BLOCKED",
+      "forecast_control_eligible": false,
+      "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL",
+      "mpc_status": "NOT_INVOKED",
+      "mpc_objective_score": null,
+      "raw_mpc_proposal_fraction": {},
+      "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+      "safety_is_safe": false,
+      "safety_modified": false,
+      "safety_violations": [],
+      "safety_layer_output_pct": {},
+      "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+      "downstream_capacity_mcm_day": 50.0,
+      "downstream_predicted_flow_mcm_day": null,
+      "downstream_capacity_achieved": false,
+      "downstream_protection_modified": false,
+      "downstream_reason": "MPC blocked by the forecast-provenance gate; no downstream action was evaluated and no action was fabricated",
+      "final_action_pct": {
+        "Virtual Reservoir A": 40.0,
+        "Virtual Reservoir B": 35.0,
+        "Virtual Reservoir C": 50.0,
+        "Virtual Reservoir D": 50.0
+      },
+      "final_action_source": "HELD_CURRENT_GATES",
+      "applied_gates_pct": {
+        "Virtual Reservoir A": 40.0,
+        "Virtual Reservoir B": 35.0,
+        "Virtual Reservoir C": 50.0,
+        "Virtual Reservoir D": 50.0
+      },
+      "control_applied": false,
+      "action_space_dimension": 4,
+      "action_space_candidates": 1296
+    },
+    "network_before": {
+      "Virtual Reservoir A": {
+        "storage": 10.82,
+        "gate_position": 0.4,
+        "total_outflow": 3.0
+      },
+      "Virtual Reservoir B": {
+        "storage": 21.26,
+        "gate_position": 0.35,
+        "total_outflow": 5.8
+      },
+      "Virtual Reservoir C": {
+        "storage": 314.97,
+        "gate_position": 0.5,
+        "total_outflow": 75.0
+      },
+      "Virtual Reservoir D": {
+        "storage": 0.0,
+        "gate_position": 0.5,
+        "total_outflow": 60.0
+      }
+    },
+    "network_after": {
+      "Virtual Reservoir A": {
+        "storage": 10.82,
+        "gate_position": 0.4,
+        "total_outflow": 3.0
+      },
+      "Virtual Reservoir B": {
+        "storage": 21.26,
+        "gate_position": 0.35,
+        "total_outflow": 5.8
+      },
+      "Virtual Reservoir C": {
+        "storage": 332.945,
+        "gate_position": 0.5,
+        "total_outflow": 75.0
+      },
+      "Virtual Reservoir D": {
+        "storage": 0.0,
+        "gate_position": 0.5,
+        "total_outflow": 60.0
+      }
+    },
+    "mass_balance_status": "PASS",
+    "mass_balance_residual": 2.842170943040401e-14,
+    "gnn_advisory_status": "AVAILABLE",
+    "gnn_advisory_affects_control": false,
+    "forecast_sources": {
+      "reservoir_1": "FROZEN_LSTM_V3",
+      "reservoir_2": "FROZEN_LSTM_V3",
+      "reservoir_3": "FROZEN_LSTM_V3",
+      "reservoir_4": null
+    },
+    "applications": {
+      "Virtual Reservoir A": 40.0,
+      "Virtual Reservoir B": 35.0,
+      "Virtual Reservoir C": 50.0,
+      "Virtual Reservoir D": 50.0
+    },
+    "cycle_latency_ms": 177.685
+  },
+  "full_control_chain": {
+    "boundary_call_order": [
+      "mpc.decide",
+      "safety.validate",
+      "safety.validate",
+      "downstream_guard.evaluate"
+    ],
+    "required_relative_order": [
+      "mpc.decide",
+      "safety.validate",
+      "downstream_guard.evaluate"
+    ],
+    "order_is_correct": true,
+    "safety_validate_call_count": 2,
+    "safety_double_invocation_explained": "MPCController.decide() validates its own chosen gates internally (mpc_controller.py:222) and the orchestrator then validates the proposal it receives. Both calls precede the capacity guard, so the authoritative order MPC -> SafetyLayer -> DownstreamCapacityGuard holds; the orchestrator's own comment claiming the layer is called 'exactly ONCE per decision' is imprecise and was corrected.",
+    "forecast_snapshot": {
+      "forecast_date": "2026-09-14",
+      "nodes": [
+        "Virtual Reservoir A",
+        "Virtual Reservoir B",
+        "Virtual Reservoir C",
+        "Virtual Reservoir D"
+      ]
+    },
+    "decision": {
+      "controller_type": "MPC",
+      "controller_status": "ACTIVE",
+      "forecast_control_eligible": true,
+      "blocked_reason": "",
+      "mpc_status": "OPTIMAL",
+      "mpc_objective_score": 0.54,
+      "raw_mpc_proposal_fraction": {
+        "Virtual Reservoir A": 0.3,
+        "Virtual Reservoir B": 0.15,
+        "Virtual Reservoir C": 0.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "safety_layer_status": "SAFE",
+      "safety_is_safe": true,
+      "safety_modified": false,
+      "safety_violations": [],
+      "safety_layer_output_pct": {
+        "Virtual Reservoir A": 30.0,
+        "Virtual Reservoir B": 15.0,
+        "Virtual Reservoir C": 0.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "downstream_status": "PROTECTED",
+      "downstream_capacity_mcm_day": 50.0,
+      "downstream_predicted_flow_mcm_day": 0.0,
+      "downstream_capacity_achieved": true,
+      "downstream_protection_modified": false,
+      "downstream_reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 5 step(s); action applied unchanged",
+      "final_action_pct": {
+        "Virtual Reservoir A": 30.0,
+        "Virtual Reservoir B": 15.0,
+        "Virtual Reservoir C": 0.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "final_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+      "applied_gates_pct": {
+        "Virtual Reservoir A": 30.0,
+        "Virtual Reservoir B": 15.0,
+        "Virtual Reservoir C": 0.0,
+        "Virtual Reservoir D": 0.0
+      },
+      "control_applied": true,
+      "action_space_dimension": 4,
+      "action_space_candidates": 1296
+    },
+    "final_action_handed_to_physics_pct": {
+      "Virtual Reservoir A": 30.0,
+      "Virtual Reservoir B": 15.0,
+      "Virtual Reservoir C": 0.0,
+      "Virtual Reservoir D": 0.0
+    },
+    "gate_positions_physics_reports_pct": {
+      "Virtual Reservoir A": 30.0,
+      "Virtual Reservoir B": 15.0,
+      "Virtual Reservoir C": 0.0,
+      "Virtual Reservoir D": 0.0
+    },
+    "physics_received_exactly_the_final_action": true,
+    "network_before": {
+      "Virtual Reservoir A": {
+        "storage": 5.41,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir B": {
+        "storage": 10.63,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir C": {
+        "storage": 174.145,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir D": {
+        "storage": 200.715,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      }
+    },
+    "network_after": {
+      "Virtual Reservoir A": {
+        "storage": 5.41,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir B": {
+        "storage": 10.63,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir C": {
+        "storage": 174.145,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      },
+      "Virtual Reservoir D": {
+        "storage": 200.715,
+        "gate_position": 0.0,
+        "total_outflow": 0.0
+      }
+    },
+    "latency_ms": {
+      "decide_total": 659.87,
+      "safety_layer": 0.016,
+      "downstream_guard": 0.833,
+      "mpc_candidate_vectors": 1296
+    }
+  },
+  "forecast_integrity": {
+    "cases": {
+      "VALIDATED_all_four": {
+        "eligible": true,
+        "mpc_status": "OPTIMAL",
+        "controller_status": "ACTIVE",
+        "final_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "control_applied": true,
+        "blocked_reason": ""
+      },
+      "DEMONSTRATION_ONLY": {
+        "eligible": false,
+        "mpc_status": "NOT_INVOKED",
+        "controller_status": "BLOCKED",
+        "final_action_source": "HELD_CURRENT_GATES",
+        "control_applied": false,
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL"
+      },
+      "MISSING_RESERVOIR_D": {
+        "eligible": false,
+        "mpc_status": "NOT_INVOKED",
+        "controller_status": "BLOCKED",
+        "final_action_source": "HELD_CURRENT_GATES",
+        "control_applied": false,
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL"
+      },
+      "NAN_FORECAST": {
+        "eligible": false,
+        "mpc_status": "NOT_INVOKED",
+        "controller_status": "BLOCKED",
+        "final_action_source": "HELD_CURRENT_GATES",
+        "control_applied": false,
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL"
+      },
+      "INFINITE_FORECAST": {
+        "eligible": false,
+        "mpc_status": "NOT_INVOKED",
+        "controller_status": "BLOCKED",
+        "final_action_source": "HELD_CURRENT_GATES",
+        "control_applied": false,
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL"
+      },
+      "NEGATIVE_FORECAST": {
+        "eligible": false,
+        "mpc_status": "NOT_INVOKED",
+        "controller_status": "BLOCKED",
+        "final_action_source": "HELD_CURRENT_GATES",
+        "control_applied": false,
+        "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL"
+      }
+    },
+    "validated_is_the_only_eligible_case": true,
+    "no_invalid_case_ever_applied_control": true
+  },
+  "mpc_proof": {
+    "action_space": {
+      "dimension": 4,
+      "node_ids": [
+        "Virtual Reservoir A",
+        "Virtual Reservoir B",
+        "Virtual Reservoir C",
+        "Virtual Reservoir D"
+      ],
+      "gate_levels": [
+        0.0,
+        0.15,
+        0.3,
+        0.5,
+        0.7,
+        1.0
+      ],
+      "candidate_vectors": 1296,
+      "coordinated": true,
+      "goal": "jointly optimise ONE gate position per reservoir",
+      "source": "MPCController.config.gate_levels (validated Phase 15.3)"
+    },
+    "dimension_is_four": true,
+    "candidate_vectors_are_1296": true,
+    "nodes": [
+      "Virtual Reservoir A",
+      "Virtual Reservoir B",
+      "Virtual Reservoir C",
+      "Virtual Reservoir D"
+    ],
+    "node_repository_names": {
+      "Virtual Reservoir A": "Anayirankal",
+      "Virtual Reservoir B": "Ponmudi",
+      "Virtual Reservoir C": "Idamalayar",
+      "Virtual Reservoir D": "Idukki"
+    },
+    "reservoir_d_not_pinned": true,
+    "reservoir_d_gate_observed": [
+      0.5,
+      0.05
+    ]
+  },
+  "unsafe_proposal_trace": {
+    "raw_proposal_fraction": {
+      "Virtual Reservoir A": 5.0,
+      "Virtual Reservoir B": -3.0,
+      "Virtual Reservoir C": NaN,
+      "Virtual Reservoir D": 0.95
+    },
+    "safety_layer_status": "CORRECTED",
+    "safety_layer_is_safe": false,
+    "safety_layer_violations": [
+      "Virtual Reservoir A: gate 5.0000 clamped to 1.0000",
+      "Virtual Reservoir A: gate movement 1.0000 exceeds limit 0.5000 \u2014 rate-limited to 0.5000",
+      "Virtual Reservoir B: gate -3.0000 clamped to 0.0000",
+      "Virtual Reservoir C: invalid gate value nan \u2014 clamped to 0.1",
+      "Virtual Reservoir D: gate movement 0.9500 exceeds limit 0.5000 \u2014 rate-limited to 0.5000"
+    ],
+    "safety_layer_output_fraction": {
+      "Virtual Reservoir A": 0.5,
+      "Virtual Reservoir B": 0.0,
+      "Virtual Reservoir C": 0.1,
+      "Virtual Reservoir D": 0.5
+    },
+    "downstream_status": "CORRECTED",
+    "downstream_capacity_achieved": true,
+    "downstream_modified": true,
+    "downstream_output_fraction": {
+      "Virtual Reservoir A": 0.5,
+      "Virtual Reservoir B": 0.0,
+      "Virtual Reservoir C": 0.1,
+      "Virtual Reservoir D": 0.25
+    },
+    "downstream_reason": "proposed action predicted 100.000000 MCM/day > capacity 50.000000 MCM/day; replaced with the nearest admissible downstream-safe action (predicted 50.000000 MCM/day)",
+    "nan_proposal_never_reaches_physics": true,
+    "bounds_respected": true,
+    "rate_limit_respected": true,
+    "downstream_capacity_mcm_day": 50.0
+  },
+  "physics_proof": {
+    "engine": "src/network_env/reservoir_network.py",
+    "nodes": [
+      "Virtual Reservoir A",
+      "Virtual Reservoir B",
+      "Virtual Reservoir C",
+      "Virtual Reservoir D"
+    ],
+    "connections": [
+      {
+        "source": "Virtual Reservoir A",
+        "destination": "Virtual Reservoir B",
+        "delay": 2,
+        "attenuation": 0.9
+      },
+      {
+        "source": "Virtual Reservoir B",
+        "destination": "Virtual Reservoir C",
+        "delay": 1,
+        "attenuation": 0.85
+      },
+      {
+        "source": "Virtual Reservoir C",
+        "destination": "Virtual Reservoir D",
+        "delay": 1,
+        "attenuation": 0.8
+      }
+    ],
+    "delays_match": true,
+    "attenuation_match": true,
+    "downstream_capacity_mcm_day": 50.0,
+    "timestep_advances_once_per_step": true,
+    "files_with_physics_like_tokens": [
+      "src/modeling/gnn_advisory.py",
+      "src/network_env/live_cascade_adapter.py",
+      "src/network_env/mass_balance.py",
+      "src/simulator/environment.py",
+      "src/simulator/test_simulator.py"
+    ]
+  },
+  "mass_balance": {
+    "clean_step": {
+      "status": "PASS",
+      "residual": 0.0,
+      "tolerance": 1e-09,
+      "checked": true
+    },
+    "clean_control_same_protocol": {
+      "status": "PASS",
+      "residual": 0.0
+    },
+    "tolerance_preserved": true,
+    "corruption_cases": {
+      "storage": {
+        "status": "VIOLATION",
+        "detected": true,
+        "violations": [
+          "RESERVOIR_MASS_BALANCE_VIOLATION: Virtual Reservoir C residual 7.0 MCM (tolerance 1e-09 MCM) [Virtual Reservoir C: storage 174.145 -> 137.145 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 45.0 (release) + 0.0 (spill) MCM/day]",
+          "NETWORK_MASS_BALANCE_VIOLATION: residual -7.0 MCM (tolerance 1e-09 MCM)"
+        ]
+      },
+      "outflow": {
+        "status": "VIOLATION",
+        "detected": true,
+        "violations": [
+          "NETWORK_MASS_BALANCE_VIOLATION: residual -3.0 MCM (tolerance 1e-09 MCM)"
+        ]
+      },
+      "routing_queue": {
+        "status": "VIOLATION",
+        "detected": true,
+        "violations": [
+          "ROUTING_MASS_BALANCE_VIOLATION: Virtual Reservoir A->Virtual Reservoir B residual 0.0 MCM, queue_evolution_ok=False, delay_history_ok=None",
+          "NETWORK_MASS_BALANCE_VIOLATION: residual -2.0 MCM (tolerance 1e-09 MCM)"
+        ]
+      },
+      "non_finite": {
+        "status": "VIOLATION",
+        "detected": true,
+        "violations": [
+          "NON_FINITE_STATE_DETECTED: reservoir[Virtual Reservoir D] storage/inflow/outflow/spill",
+          "RESERVOIR_MASS_BALANCE_VIOLATION: Virtual Reservoir D residual nan MCM (tolerance 1e-09 MCM) [Virtual Reservoir D: storage 200.715 -> nan MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 60.0 (release) + 0.0 (spill) MCM/day]",
+          "NETWORK_MASS_BALANCE_VIOLATION: residual -59.0 MCM (tolerance 1e-09 MCM)"
+        ]
+      }
+    },
+    "all_corruptions_detected": true
+  },
+  "state_authority": {
+    "same_timestep_agreement": {
+      "reservoirs": true,
+      "cascade": true,
+      "control": true,
+      "mass_balance": true,
+      "downstream": true,
+      "forecast_summary": true,
+      "storm": true,
+      "simulation": true,
+      "state_identity": true,
+      "hardware_status": true,
+      "forecast_provenance": true
+    },
+    "same_timestep_advisory_content_agreement": true,
+    "same_timestep_advisory_volatile_fields": [
+      "inference_timestamp",
+      "inference_latency_ms"
+    ],
+    "identity_equal_same_timestep": true,
+    "pushed_equals_rest_after_step": {
+      "reservoirs": true,
+      "cascade": true,
+      "control": true,
+      "mass_balance": true,
+      "downstream": true,
+      "forecast_summary": true,
+      "storm": true,
+      "simulation": true,
+      "state_identity": true,
+      "hardware_status": true,
+      "forecast_provenance": true
+    },
+    "pushed_advisory_content_equals_rest": true,
+    "pushed_state_id": "step10-t10",
+    "rest_state_id": "step10-t10",
+    "timestep_delta_for_one_step": 1,
+    "no_state_write_endpoint": 405
+  },
+  "frontend_audit": {
+    "twin_model_runtime_tokens_found": [],
+    "api_js_model_runtime_tokens_found": [],
+    "streamlit_model_or_engine_imports": [],
+    "streamlit_direct_imports": [
+      "data_bridge",
+      "data_bridge.V3_PERFORMANCE",
+      "data_bridge.assess_all_reservoirs",
+      "json",
+      "math",
+      "os",
+      "pandas",
+      "pathlib",
+      "pathlib.Path",
+      "plotly.graph_objects",
+      "streamlit",
+      "streamlit.components.v1",
+      "time",
+      "urllib.error",
+      "urllib.request"
+    ],
+    "streamlit_runs_no_gnn": true,
+    "twin_reads_only_payload": true,
+    "streamlit_reads_only_api_state": true,
+    "streamlit_command_routes": [
+      "/api/controller/mode",
+      "/api/gate/reservoir_1",
+      "/api/gate/reservoir_2",
+      "/api/gate/reservoir_3",
+      "/api/gate/reservoir_4",
+      "/api/simulation/pause",
+      "/api/simulation/play",
+      "/api/simulation/reset",
+      "/api/simulation/speed",
+      "/api/simulation/step",
+      "/api/storm"
+    ]
+  },
+  "commands": {
+    "RESET": {
+      "identity_after": {
+        "sim_step_index": 10,
+        "network_timestep": 0,
+        "state_id": "step10-t0",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      }
+    },
+    "STEP": {
+      "timestep_before": 0,
+      "timestep_after": 1,
+      "pushed_state_id": "step11-t1",
+      "mass_balance_after": "PASS"
+    },
+    "GATE_D": {
+      "status_code": 200,
+      "authoritative_manual_gate": 20.0,
+      "payload_gate_fraction": 0.2,
+      "name": "Idukki"
+    },
+    "PLAY_PAUSE": {
+      "running_after_play": true,
+      "running_after_pause": false,
+      "backend_owner": true
+    }
+  },
+  "failure_paths": {
+    "malformed_body": {
+      "status_code": 422,
+      "safe": true
+    },
+    "invalid_gate_string": {
+      "status_code": 422,
+      "safe": true
+    },
+    "invalid_gate_nan": {
+      "status_code": 422,
+      "safe": true
+    },
+    "unknown_reservoir": {
+      "status_code": 400,
+      "safe": true
+    },
+    "invalid_speed": {
+      "status_code": 422,
+      "safe": true
+    },
+    "zero_speed": {
+      "status_code": 200,
+      "safe": true,
+      "handled_by": "clamped to 0.05"
+    },
+    "invalid_storm": {
+      "status_code": 422,
+      "safe": true
+    },
+    "invalid_storm_nan": {
+      "status_code": 422,
+      "safe": true
+    },
+    "invalid_mode": {
+      "status_code": 422,
+      "safe": true
+    },
+    "state_write_attempt": {
+      "status_code": 405,
+      "safe": true
+    },
+    "state_put_attempt": {
+      "status_code": 405,
+      "safe": true
+    },
+    "unknown_route": {
+      "status_code": 404,
+      "safe": true
+    },
+    "unavailable_gnn": {
+      "advisory_status": "UNAVAILABLE",
+      "control_status": "BLOCKED",
+      "safe": true
+    },
+    "modified_gnn_advisory": {
+      "mpc_proposal_unchanged": true,
+      "safety_layer_output_unchanged": true,
+      "downstream_output_unchanged": true,
+      "final_action_unchanged": true,
+      "safe": true
+    }
+  },
+  "performance": {
+    "forecast_plus_advisory_ms": 65.146,
+    "gnn_advisory_inference_ms": 2.721,
+    "mpc_safety_guard_decide_ms": 680.24,
+    "safety_layer_ms": 0.005,
+    "downstream_guard_ms": 0.534,
+    "physics_step_ms": 0.337,
+    "mass_balance_latency_ms": 0.19979999706265517,
+    "http_step_round_trip_ms": 187.724,
+    "total_live_ai_cycle_ms": 177.685,
+    "unit": "ms",
+    "note": "Phases are measured individually on CPU. The live AI cycle is dominated by the forecast + advisory pass; the physics step is sub-millisecond and the mass-balance audit adds ~0.08 ms."
+  },
+  "claim_audit": {
+    "hits": {},
+    "no_unsupported_claims_in_live_frontend": true,
+    "required_terminology": {
+      "advisory_only_label": true,
+      "embedding_similarity_label": true,
+      "demonstration_banner": true
+    }
+  },
+  "checks": {
+    "one_live_simulation_owner": true,
+    "only_state_manager_owns_the_live_bridge": true,
+    "only_state_manager_owns_the_live_state": true,
+    "offline_engines_are_not_reachable_from_the_live_path": true,
+    "live_cascade_is_the_validated_stack": true,
+    "live_cycle_advances_exactly_one_timestep": true,
+    "live_cycle_mass_balance_checked": true,
+    "boundary_order_is_mpc_safety_downstream": true,
+    "chain_reached_a_final_safe_control_action": true,
+    "physics_received_exactly_the_final_action": true,
+    "validated_forecast_is_the_only_eligible_case": true,
+    "invalid_forecasts_never_applied_control": true,
+    "mpc_action_space_is_1296": true,
+    "all_four_reservoirs_participate": true,
+    "unsafe_proposal_is_corrected_or_failed_closed": true,
+    "physics_topology_delays_attenuation_match": true,
+    "physics_advances_one_timestep_per_step": true,
+    "mass_balance_passes_on_a_clean_step": true,
+    "mass_balance_tolerance_is_1e-9": true,
+    "every_corruption_is_detected": true,
+    "rest_and_ws_agree_on_the_same_timestep": true,
+    "pushed_payload_equals_rest_after_step": true,
+    "one_step_advances_the_clock_by_exactly_one": true,
+    "no_state_write_endpoint": true,
+    "twin_reads_only_the_payload": true,
+    "no_model_runtime_in_the_browser_artifacts": true,
+    "streamlit_imports_no_model_or_engine": true,
+    "streamlit_runs_no_gnn": true,
+    "no_unsupported_scientific_claims_found": true,
+    "dormant_legacy_controller_helper_has_zero_callers": true,
+    "unavailable_gnn_does_not_stop_control": true,
+    "modified_gnn_advisory_leaves_every_control_output_unchanged": true,
+    "frozen_artifacts_unchanged": true
+  },
+  "frozen_artifact_sha256_before": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+    "models\\gcn_lstm_gated_v1\\best_model.pt": "5e3fc2ce00c4c9de8503101d272c5e2c905b9ea46c535f1566b294c24b708ace",
+    "data\\processed\\graph\\graph_D_correlation_v1_2\\edges.csv": "1b1909c268034da2404dd68176a4c71d079ffdf1e84536351c98ff102c6c8ce3"
+  },
+  "frozen_artifact_sha256_after": {
+    "models\\lstm_pytorch_v3_logtarget\\best_model.pt": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+    "models\\lstm_pytorch_v3_logtarget\\log_target_scaler.pkl": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+    "results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+    "models\\gcn_lstm_gated_v1\\best_model.pt": "5e3fc2ce00c4c9de8503101d272c5e2c905b9ea46c535f1566b294c24b708ace",
+    "data\\processed\\graph\\graph_D_correlation_v1_2\\edges.csv": "1b1909c268034da2404dd68176a4c71d079ffdf1e84536351c98ff102c6c8ce3"
+  },
+  "hardware_connected": false
+}

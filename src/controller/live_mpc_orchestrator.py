@@ -634,9 +634,18 @@ class LiveMPCOrchestrator:
         # SafetyLayer's own rules (bounds + per-step rate limit). It always is, by
         # construction — every candidate the boundary searches is filtered through
         # exactly that rule. This check recomputes the rule rather than invoking
-        # the layer again, so the SafetyLayer is still called exactly ONCE per
-        # decision (the Stage 8 invariant). If it ever fires, the check has found
-        # a real defect and the downstream guarantee is NOT claimed.
+        # the layer again, so it adds NO SafetyLayer invocation of its own.
+        #
+        # STAGE 15 correction — the layer IS invoked twice per decision overall:
+        # once inside ``MPCController.decide()`` on the gates that controller
+        # chose, and once here on the proposal it returns. Measured call order is
+        # mpc.decide -> safety.validate -> safety.validate -> downstream.evaluate,
+        # so the Stage 8 ordering invariant (every safety evaluation precedes the
+        # capacity boundary) holds, but the earlier claim that the layer runs
+        # "exactly ONCE per decision" was inaccurate.
+        #
+        # If the check below ever fires, it has found a real defect and the
+        # downstream guarantee is NOT claimed.
         applied_action_safety_layer_clean = self.downstream_guard.safety_layer_feasible(
             applied_fraction,
             node_ids,
