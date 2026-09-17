@@ -1,0 +1,88 @@
+{
+  "stage": 13,
+  "title": "Streamlit read-only / command-proxy runtime evidence",
+  "timestamp": "2026-09-16T19:50:33.732321",
+  "method": "real uvicorn authoritative backend + real Streamlit script executed by streamlit.testing.v1.AppTest + real widget clicks + real HTTP measurements of the authoritative state",
+  "backend_url": "http://127.0.0.1:8031",
+  "streamlit_app": "src/dashboard/app.py",
+  "streamlit_version": "1.64.0",
+  "checks": {
+    "streamlit_script_ran_without_exception": true,
+    "streamlit_connected_to_backend": true,
+    "state_identity_from_backend": true,
+    "all_four_reservoirs_displayed": true,
+    "step_advanced_backend_exactly_one": true,
+    "display_followed_backend_after_step": true,
+    "mass_balance_displayed_from_backend": true,
+    "gate_command_reached_authoritative_singleton": true,
+    "gate_command_did_not_advance_physics": true,
+    "all_four_gate_sliders_present": true,
+    "no_extra_simulation_instance_created": true,
+    "provenance_display_matches_backend": true
+  },
+  "step": {
+    "backend_network_timestep_before": 0,
+    "backend_network_timestep_after": 1,
+    "advanced_exactly_one": true,
+    "displayed_state_id": "step1-t1",
+    "backend_state_id": "step1-t1",
+    "display_matches_backend": true,
+    "flash": [
+      "STEP \u2192 accepted by the authoritative backend",
+      "Connected \u2014 read-only"
+    ]
+  },
+  "mass_balance": {
+    "backend_status": "PASS",
+    "displayed_status": "PASS",
+    "display_matches_backend": true,
+    "backend_residual": 2.842170943040401e-14,
+    "backend_reservoirs_checked": 4,
+    "backend_reservoirs_expected": 4
+  },
+  "gate_command": {
+    "target": "reservoir_4 / Virtual Reservoir D (Idukki)",
+    "displayed_gate_before": 0.5,
+    "displayed_gate_after": 0.2,
+    "authoritative_manual_gate_after": 20.0,
+    "reached_authoritative_singleton": true,
+    "physics_clock_unchanged_by_gate_command": true,
+    "four_gate_sliders_present": [
+      "cmd_gate_reservoir_1",
+      "cmd_gate_reservoir_2",
+      "cmd_gate_reservoir_3",
+      "cmd_gate_reservoir_4"
+    ],
+    "flash": [
+      "GATE COMMANDS (4) \u2192 accepted by the authoritative backend",
+      "Connected \u2014 read-only"
+    ]
+  },
+  "provenance": {
+    "control_controller_type": "MPC",
+    "control_controller_status": "UNAVAILABLE",
+    "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+    "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+    "downstream_block_status": "CRITICAL",
+    "downstream_capacity_m3_s": 578.7037037037037,
+    "forecast_provenance_live_validated": false,
+    "forecast_summary_status": "UNAVAILABLE",
+    "hardware_connected": false,
+    "displayed_safety_layer": "NOT_APPLIED_MPC_BLOCKED",
+    "displayed_downstream_guard": "NOT_APPLIED_MPC_BLOCKED",
+    "display_matches_backend": true
+  },
+  "owners": {
+    "authoritative_instance_count_after_running_streamlit": 1,
+    "expected": 1,
+    "streamlit_cannot_create_one": true
+  },
+  "performance": {
+    "authoritative_state_read_ms": 2.124539999931585,
+    "proxied_command_round_trip_ms": 67.72036000002117,
+    "full_streamlit_script_rerun_ms": 166.76150000057532,
+    "unit": "ms",
+    "note": "the page adds no physics work: a proxied command costs one HTTP round trip, and a state read costs one GET. A control cycle is ~660 ms (MPC decide()), so the proxy is overhead-free relative to it."
+  },
+  "hardware_connected": false
+}
