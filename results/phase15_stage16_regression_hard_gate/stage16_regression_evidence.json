@@ -1,0 +1,346 @@
+{
+  "stage": 16,
+  "timestamp": "2026-09-16T22:01:37.466979",
+  "title": "Phase 15.3 regression hard gate",
+  "frozen_artifact_checks": {
+    "models/lstm_pytorch_v3_logtarget/best_model.pt": {
+      "expected_sha256": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "actual_sha256_raw": "448cb9659a91ea213599edbeabc49380eef823e13aa140c083f0708c3758632d",
+      "actual_sha256_lf_normalised": "d0d847d902b0e4ef8ee746d5e30e31b97538be427e7b1f7354d7647a3a35cc11",
+      "size_bytes_expected": 85047,
+      "size_bytes_actual": 85047,
+      "match_raw": true,
+      "match_lf_normalised": false,
+      "verdict": "MATCH"
+    },
+    "models/lstm_pytorch_v3_logtarget/log_target_scaler.pkl": {
+      "expected_sha256": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "actual_sha256_raw": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "actual_sha256_lf_normalised": "63d7325e2ad61bde3110e6a97789819d25f09292d0f5e8f4e9fdebad63114781",
+      "size_bytes_expected": 639,
+      "size_bytes_actual": 639,
+      "match_raw": true,
+      "match_lf_normalised": true,
+      "verdict": "MATCH"
+    },
+    "results/lstm_pytorch_v3_logtarget/test_predictions_original_units.csv": {
+      "expected_sha256": "dadbfabab2e8ef6e0e15313a9c57af516f8523f0e8e850f29a6160fbac400c5c",
+      "actual_sha256_raw": "9231323c7ffdbdd3b5667ca60e1ce951ae0febb8a6e2e48b5ded56926a71e094",
+      "actual_sha256_lf_normalised": "dadbfabab2e8ef6e0e15313a9c57af516f8523f0e8e850f29a6160fbac400c5c",
+      "size_bytes_expected": 85016,
+      "size_bytes_actual": 86117,
+      "match_raw": false,
+      "match_lf_normalised": true,
+      "verdict": "MATCH (LF-NORMALISED)"
+    }
+  },
+  "manifest_timestamp": "2026-09-10T15:04:00.918745",
+  "protected_hashes_before": {
+    "validation_metrics.csv": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+    "daily_simulation_baseline.csv": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+    "daily_simulation_mpc.csv": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+    "provenance_audit.json": "4927e3cb713ed74860abe55d4f9bbe925d444c7ba5e57c47be4b9669d977da31",
+    "v3_integrity_check.json": "eeae387162c9bec0c5816e64288072356c65511609976a7e60fe64c3a6b5daf9",
+    "PHASE_15_3_V3_VALIDATION_REPORT.md": "49ef558cf586922f9ecb2f2b2a27368b70f74b0937b9d79d6eae3c83760b893a"
+  },
+  "protected_hashes_after": {
+    "validation_metrics.csv": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+    "daily_simulation_baseline.csv": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+    "daily_simulation_mpc.csv": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+    "provenance_audit.json": "4927e3cb713ed74860abe55d4f9bbe925d444c7ba5e57c47be4b9669d977da31",
+    "v3_integrity_check.json": "eeae387162c9bec0c5816e64288072356c65511609976a7e60fe64c3a6b5daf9",
+    "PHASE_15_3_V3_VALIDATION_REPORT.md": "49ef558cf586922f9ecb2f2b2a27368b70f74b0937b9d79d6eae3c83760b893a"
+  },
+  "reproduction": {
+    "command": "py scripts/stage3_phase15_3_reproduction.py",
+    "exit_code": 0,
+    "runtime_s": 147.701,
+    "stdout_tail": [
+      "  provenance_audit.json                      UNCHANGED",
+      "  v3_integrity_check.json                    UNCHANGED",
+      "  validation_metrics.csv                     UNCHANGED",
+      "",
+      "==========================================================================",
+      "REPRODUCTION FIDELITY",
+      "==========================================================================",
+      "  validation_metrics.csv                     IDENTICAL",
+      "  daily_simulation_baseline.csv              IDENTICAL",
+      "  daily_simulation_mpc.csv                   IDENTICAL",
+      "",
+      "[OK] results\\phase15_stage3_reproduction\\REPRODUCTION_CHECK.json",
+      "",
+      "VERDICT: protected artifacts untouched; reproduction complete."
+    ]
+  },
+  "output_identity": {
+    "validation_metrics.csv": {
+      "protected_sha256": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+      "reproduced_sha256": "d35c7e500c6f9b62cbc3912ae5173eaa23cfd6f3bde7138869a5974ea313f15a",
+      "identical": true
+    },
+    "daily_simulation_baseline.csv": {
+      "protected_sha256": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+      "reproduced_sha256": "3ffeb5ce93535f38aa8bf01ad8f641ef464e34a0445cb18ffa8c820bce1ad334",
+      "identical": true
+    },
+    "daily_simulation_mpc.csv": {
+      "protected_sha256": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+      "reproduced_sha256": "3aba273bc34a71a572676fb152a9afba2b16403cd843787fc69683347f38c199",
+      "identical": true
+    }
+  },
+  "hard_metrics": {
+    "overflow_events": {
+      "expected_baseline": "7",
+      "actual_baseline": "7",
+      "baseline_ok": true,
+      "expected_mpc": "0",
+      "actual_mpc": "0",
+      "mpc_ok": true
+    },
+    "overflow_volume_mcm": {
+      "expected_baseline": "10.75003168999999",
+      "actual_baseline": "10.75003168999999",
+      "baseline_ok": true,
+      "expected_mpc": "0.0",
+      "actual_mpc": "0.0",
+      "mpc_ok": true
+    },
+    "ds_violations": {
+      "expected_baseline": "8",
+      "actual_baseline": "8",
+      "baseline_ok": true,
+      "expected_mpc": "0",
+      "actual_mpc": "0",
+      "mpc_ok": true
+    },
+    "peak_ds_flow": {
+      "expected_baseline": "60.0",
+      "actual_baseline": "60.0",
+      "baseline_ok": true,
+      "expected_mpc": "30.0",
+      "actual_mpc": "30.0",
+      "mpc_ok": true
+    },
+    "total_release_mcm": {
+      "expected_baseline": "2017.25",
+      "actual_baseline": "2017.25",
+      "baseline_ok": true,
+      "expected_mpc": "2031.0",
+      "actual_mpc": "2031.0",
+      "mpc_ok": true
+    },
+    "total_steps": {
+      "expected_baseline": "74",
+      "actual_baseline": "74",
+      "baseline_ok": true,
+      "expected_mpc": "74",
+      "actual_mpc": "74",
+      "mpc_ok": true
+    },
+    "mass_balance_residual": {
+      "expected_baseline": "-6.821210263296962e-13",
+      "actual_baseline": "-6.821210263296962e-13",
+      "baseline_ok": true,
+      "expected_mpc": "-6.821210263296962e-13",
+      "actual_mpc": "-6.821210263296962e-13",
+      "mpc_ok": true
+    }
+  },
+  "canonical_residual": -6.821210263296962e-13,
+  "mass_balance_residual_exact": true,
+  "topology": {
+    "topology_file": "src/network_env/topology_config.yaml",
+    "node_ids": [
+      "Reservoir_A",
+      "Reservoir_B",
+      "Reservoir_C",
+      "Reservoir_D"
+    ],
+    "expected_node_ids": [
+      "Reservoir_A",
+      "Reservoir_B",
+      "Reservoir_C",
+      "Reservoir_D"
+    ],
+    "reservoir_names": {
+      "Reservoir_A": "Anayirankal",
+      "Reservoir_B": "Ponmudi",
+      "Reservoir_C": "Idamalayar",
+      "Reservoir_D": "Idukki"
+    },
+    "connections": [
+      {
+        "source": "Reservoir_A",
+        "destination": "Reservoir_B",
+        "delay": 2,
+        "attenuation": 0.9
+      },
+      {
+        "source": "Reservoir_B",
+        "destination": "Reservoir_C",
+        "delay": 1,
+        "attenuation": 0.85
+      },
+      {
+        "source": "Reservoir_C",
+        "destination": "Reservoir_D",
+        "delay": 1,
+        "attenuation": 0.8
+      }
+    ],
+    "delays": [
+      2,
+      1,
+      1
+    ],
+    "delays_ok": true,
+    "attenuation": [
+      0.9,
+      0.85,
+      0.8
+    ],
+    "attenuation_ok": true,
+    "chain_ok": true,
+    "terminal_node": "Reservoir_D",
+    "downstream_capacity_mcm_day": 50.0,
+    "node_ids_ok": true
+  },
+  "candidate_space": {
+    "gate_levels": [
+      0.0,
+      0.15,
+      0.3,
+      0.5,
+      0.7,
+      1.0
+    ],
+    "levels_per_reservoir": 6,
+    "reservoirs": 4,
+    "computed_candidates": 1296,
+    "expected_candidates": 1296,
+    "lookahead_steps": 3,
+    "max_gate_change": 0.5,
+    "is_1296": true
+  },
+  "d_optimisation": {
+    "days": 74,
+    "candidates_evaluated_logged": [
+      "1296"
+    ],
+    "candidates_are_1296_every_day": true,
+    "forecast_used_days": 74,
+    "mpc_status_values": [
+      "CORRECTED",
+      "OPTIMAL"
+    ],
+    "gates_by_reservoir": {
+      "Reservoir_A": [
+        0.0,
+        0.15,
+        0.3,
+        0.5
+      ],
+      "Reservoir_B": [
+        0.15,
+        0.3,
+        0.5,
+        0.65,
+        0.7,
+        1.0
+      ],
+      "Reservoir_C": [
+        0.0,
+        0.15
+      ],
+      "Reservoir_D": [
+        0.0,
+        0.15
+      ]
+    },
+    "reservoir_d_gate_values": [
+      0.0,
+      0.15
+    ],
+    "reservoir_d_is_optimised_not_pinned": true,
+    "all_four_reservoirs_vary": true,
+    "safety_layer_corrected_days": 2
+  },
+  "scientific_sources": {
+    "src/controller/mpc_controller.py": {
+      "sha256": "6199d942c7ca49503fe7789bd1f27362ccb59a425494eb4576a918b57d45e28c",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/controller/safety.py": {
+      "sha256": "0a2566b4d66f9f1f2d1b628fee0716c547945f1706f1742d3e6d94319c5438b4",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/controller/objective.py": {
+      "sha256": "73ae77f879bc44b46aedadccf29e7fb78c8c9ef9e59839b7417e9828efc2b73d",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/controller/baseline_controller.py": {
+      "sha256": "05750db1dec2d4ca4ed6a58c97752acbb58b2593f5452a2f90c89324cff5f706",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/network_env/reservoir_network.py": {
+      "sha256": "0f5304cde36e530d8993d4f9d19296945c34ded9e2d9835767d5fc6e2d76c83d",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/network_env/v3_forecast_adapter.py": {
+      "sha256": "3903da6708e91530acb6cdbbfee02199c32e462c2f3c65966a641d612e0f10f8",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "src/network_env/topology_config.yaml": {
+      "sha256": "793fe10ed42c161f9ba80286840eb608cbd189e78d2683b4bfebb4cc3b24abe5",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "scripts/run_phase15_3_validation.py": {
+      "sha256": "7c90c84f4ee09f707040eebb76433ab4c9d1b82b08f118e749f5be57477e4134",
+      "clean_vs_HEAD": true,
+      "last_commit": "2dbc3fc 2026-09-10 Complete Phase 15.3 Validation and Audits"
+    },
+    "scripts/stage3_phase15_3_reproduction.py": {
+      "sha256": "1d84527bca6979eb9ed2a451dd0cd07d8d4a0067addaf3ce80baa0d0d333eddd",
+      "clean_vs_HEAD": true,
+      "last_commit": "e3e1788 2026-09-16 added"
+    }
+  },
+  "live_provenance_gate": {
+    "mode": "AI",
+    "forecast_control_eligible": false,
+    "controller_status": "BLOCKED",
+    "final_safe_control_action_source": "HELD_CURRENT_GATES",
+    "blocked_reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL",
+    "live_forecasts_are_validated": false,
+    "gate_still_blocks": true,
+    "note": "Phase 15.3 regression validates the HISTORICAL research pipeline. It does NOT mean the live Digital Twin has a validated real-world forecast source, and the live provenance gate was not relaxed."
+  },
+  "checks": {
+    "canonical_reproduction_exit_zero": true,
+    "frozen_artifacts_match_manifest": true,
+    "frozen_artifacts_unchanged_by_this_run": true,
+    "protected_phase15_3_outputs_unchanged": true,
+    "reproduced_outputs_byte_identical": true,
+    "baseline_metrics_exact": true,
+    "mpc_metrics_exact": true,
+    "mass_balance_residual_exact": true,
+    "topology_delays_2_1_1": true,
+    "topology_attenuation_090_085_080": true,
+    "topology_chain_and_nodes": true,
+    "candidate_space_is_1296": true,
+    "candidates_logged_1296_every_day": true,
+    "all_four_reservoirs_optimised": true,
+    "reservoir_d_is_optimised_not_pinned": true,
+    "scientific_sources_unmodified": true,
+    "live_provenance_gate_not_relaxed": true
+  },
+  "final_verdict": "PASS"
+}

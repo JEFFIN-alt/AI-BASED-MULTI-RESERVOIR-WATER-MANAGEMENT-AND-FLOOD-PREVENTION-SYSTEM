@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-15T09:48:59.731740",
+  "timestamp": "2026-09-17T21:46:26.300570",
   "script": "scripts/stage3_phase15_3_reproduction.py",
   "protected_dir": "results\\phase15_v3_validation",
   "reproduction_dir": "results\\phase15_stage3_reproduction\\phase15_3_reproduction",
