@@ -276,12 +276,172 @@
   .chk{display:flex;align-items:center;gap:6px;color:var(--val);font-size:9px;font-weight:600;cursor:pointer}
   .chk input{accent-color:var(--accent);cursor:pointer;width:13px;height:13px}
 
+  /* — STAGE 18 — AUTO control badge, locked gate sliders, activity feed —
+   * Display only. The badge text/colour and the slider lock are driven from the
+   * BACKEND's `controller_mode` / `auto_control`, never from a local flag. */
+  .ai-lock{font-size:8px;font-weight:700;letter-spacing:.1em;color:var(--ink-faint);
+    border:1px solid var(--hairline);border-radius:999px;padding:3px 9px;background:var(--btn-bg);
+    transition:color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease)}
+  .ai-lock.auto{color:var(--accent);border-color:var(--accent-line)}
+  .sld input:disabled{opacity:.45;cursor:not-allowed;accent-color:var(--ink-faint)}
+  .sld input:disabled ~ b{color:var(--ink-faint)}
+  .auto-feed{display:flex;flex-direction:column;gap:5px;max-height:130px;overflow-y:auto;
+    scrollbar-width:thin;scrollbar-color:var(--hairline) transparent}
+  .auto-feed::-webkit-scrollbar{width:3px}
+  .auto-feed::-webkit-scrollbar-thumb{background:var(--hairline);border-radius:2px}
+  .auto-feed .ev{border-left:2px solid var(--hairline);padding-left:7px;
+    font-size:8.5px;line-height:1.4;color:var(--ink-soft);word-break:break-word}
+  .auto-feed .ev .ev-h{display:block;font-family:var(--mono);font-size:7.5px;
+    color:var(--ink-faint);letter-spacing:.06em}
+  .auto-feed .ev-empty{font-size:8.5px;color:var(--ink-faint);letter-spacing:.08em}
+  #hud-auto .hp-row .val{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #hud-auto .hp-row.reason .val{white-space:normal;text-align:right;line-height:1.3}
+
   @media (max-width:1100px),(max-height:760px){
     #hud-bottom{left:72px;right:240px}
     #hud-right{width:228px;bottom:180px}
     #hud-controls{left:72px;right:240px;bottom:128px}
     .res-card .rc-grid{grid-template-columns:1fr 1fr}
   }
+  .presentation-detail{font-size:9px;color:var(--ink-soft);margin-top:6px}
+  .presentation-detail summary{cursor:pointer}
+  .presentation-detail .rc-grid{margin-top:6px}
+  .presentation-note,.presentation-reason{font-size:9px;line-height:1.4;color:var(--ink-soft);margin-top:5px;overflow-wrap:anywhere}
+  .presentation-reason:empty{display:none}
+  .decision-chain{white-space:pre-wrap;font-family:var(--mono);font-size:9px;line-height:1.6;margin:8px 0}
+  .transport-status{font-size:8px;color:var(--ink-soft);max-width:220px}
+  .transport-status .prov{font-size:8px;color:var(--ink-faint);white-space:nowrap}
+  /* Shared desktop rhythm; retain the scene, rail, status column and telemetry dock. */
+  :root{--space:12px;--radius:10px;--status-width:300px;--dock-height:230px;--controls-height:150px}
+  #header{gap:12px;padding:0 16px}
+  #header .brand .tagline{letter-spacing:.08em}
+  #header .hd-right{gap:10px}
+  #hud-right{top:68px;right:var(--space);bottom:12px;width:var(--status-width);gap:var(--space)}
+  #hud-right > *{flex-shrink:0}
+  #hud-right > .res-card{flex:none}
+  #hud-auto{order:-2;border-top:2px solid var(--accent)}
+  #hud-ds{order:-1}
+  #hud-bottom{left:76px;right:calc(var(--status-width) + 24px);bottom:12px;display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch;max-height:36vh;overflow:auto}
+  #hud-controls{left:76px;right:calc(var(--status-width) + 24px);bottom:calc(var(--dock-height) + 24px);
+    padding:10px;gap:8px;border-radius:var(--radius)}
+  #hud-hint{bottom:calc(var(--dock-height) + var(--controls-height) + 36px);left:40%;font-size:8px}
+  #demo-badge{top:64px;left:80px;transform:none;max-width:calc(100% - var(--status-width) - 120px);
+    white-space:normal;letter-spacing:.05em;font-size:9px;padding:6px 10px;border-radius:6px}
+  .hp,.res-card{border-radius:var(--radius);padding:12px}
+  .hp-title{font-size:10px;letter-spacing:.1em;gap:8px}
+  .hp-title-em{font-size:9px;text-align:right}
+  #hud-auto .hp-row .val{width:148px;max-width:148px;white-space:normal;overflow-wrap:anywhere;text-align:right}
+  .res-card:hover{transform:none}
+  .res-card .rc-head{flex-wrap:wrap;gap:5px}
+  .res-card .rc-name{font-size:11px;letter-spacing:.025em;color:var(--ink);white-space:normal}
+  .res-card .rc-head .chip{font-size:8px;padding:2px 5px;letter-spacing:.03em}
+  .res-card .rc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 6px}
+  .rc-kv .k{font-size:9px;letter-spacing:.025em}
+  .rc-kv .v{font-family:var(--mono);font-size:11px;letter-spacing:-.025em;white-space:normal;overflow-wrap:anywhere}
+  .rc-grid > .rc-kv:first-child .v{font-size:19px;color:var(--accent)}
+  .res-card .presentation-reason{max-height:40px;overflow:auto;line-height:1.4;margin-top:2px}
+  .res-card .rc-foot{margin-top:auto}
+  .gate-feedback{min-height:15px;font-size:9px;color:var(--accent);font-weight:600}
+  .gate-feedback:empty{display:none}
+  .gate-applied{animation:gate-applied 1.6s var(--ease)}
+  @keyframes gate-applied{0%{box-shadow:0 0 0 2px var(--accent-line)}100%{box-shadow:var(--shadow)}}
+  .status-pill{display:inline-block;border:1px solid var(--hairline);border-radius:5px;padding:2px 6px;
+    font-size:9px;font-weight:600;color:var(--ink-soft);background:var(--btn-bg)}
+  .status-pill[data-tone="ok"]{color:var(--ok);border-color:var(--chip-ok-bd);background:var(--chip-ok-bg)}
+  .status-pill[data-tone="warn"]{color:var(--warn);border-color:var(--chip-warn-bd);background:var(--chip-warn-bg)}
+  .status-pill[data-tone="bad"]{color:var(--bad);border-color:var(--chip-bad-bd);background:var(--chip-bad-bg)}
+  .transport-status{font-size:9px;line-height:1.3;min-width:115px;max-width:190px}
+  .auto-feed{max-height:160px;gap:0}
+  .auto-feed .ev{padding:7px 8px;border-bottom:1px solid var(--hairline-soft);font-size:10px}
+  .auto-feed .ev .ev-h{font-size:8px;margin-bottom:3px;letter-spacing:0}
+  .auto-feed .ev-new{animation:event-enter .25s var(--ease)}
+  @keyframes event-enter{from{opacity:.4;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .cbtn:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .sld:has(input:disabled){opacity:.65}
+  .sld input{width:65px}
+  @media(max-width:1450px){
+    :root{--status-width:280px}
+    #header .brand .tagline{display:none}
+    #header .hd-clock{font-size:9px}
+    .res-card{padding:10px}.res-card .rc-grid{gap:6px}
+    .ctl-group{gap:6px}.cbtn{padding:5px 8px}
+  }
+  @media(max-width:1100px){
+    :root{--status-width:250px}
+    #hud-bottom{grid-template-columns:repeat(2,minmax(0,1fr));max-height:32vh}
+    #header .hd-right .hd-stat{display:none}
+    #hud-controls{max-height:26vh;overflow:auto}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .gate-applied,.ev-new,.dot.pulse{animation:none!important}
+    .bar .fill,.cbtn,.res-card{transition:none}
+  }
+  /* Scene-first layout: disclosure keeps secondary telemetry available. */
+  [hidden]{display:none!important}
+  :root{--status-width:252px;--space:8px}
+  #hud-right{gap:6px;top:62px;bottom:8px}
+  .hp,.res-card{padding:8px}
+  .hp-title{margin-bottom:5px;padding-bottom:5px}
+  .hp-row{min-height:0;padding:2px 0;gap:5px;font-size:10px}
+  #hud-auto .hp-row .val{max-width:155px;font-size:10px}
+  .auto-feed{max-height:85px}
+  .auto-feed .ev{padding:4px 6px}
+  #hud-bottom{bottom:8px;gap:6px;max-height:27vh}
+  .res-card .rc-head{margin-bottom:5px}
+  .res-card .rc-grid{gap:4px 6px}
+  .rc-grid > .rc-kv:first-child .v{font-size:16px}
+  .res-card .rc-foot{margin-top:5px}
+  #hud-controls{bottom:calc(var(--dock-height) + 16px);padding:6px;gap:5px 12px;
+    flex-direction:row;flex-wrap:wrap;transition:background .2s ease}
+  .ctl-group{gap:4px}.ctl-cap{letter-spacing:.06em}
+  .cbtn{padding:5px 7px}.sld input{width:48px}.sld{gap:3px}.sld b{width:22px}
+  #hud-controls .harness{order:2;flex-basis:100%}
+  .secondary-panels{order:1;border:1px solid var(--hairline);border-radius:8px;background:var(--panel)}
+  .secondary-panels > summary{padding:8px;cursor:pointer;font-size:10px;color:var(--ink)}
+  .secondary-panels .hp{border:0;box-shadow:none}
+  #reservoir-drawer{position:absolute;right:12px;top:62px;width:300px;max-height:calc(100% - 140px);
+    overflow:auto;z-index:30;pointer-events:auto;padding:10px;background:var(--panel);
+    border:1px solid var(--hairline);border-radius:10px;box-shadow:var(--shadow)}
+  .drawer-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  #reservoir-drawer .ctl-group{justify-content:flex-start;margin-bottom:8px}
+  #reservoir-drawer .res-card{box-shadow:none;border:0}
+  #hud-right,#hud-bottom,#rail{transition:opacity .2s ease,visibility .2s ease}
+  .reservoir-view #hud-right,.reservoir-view #hud-bottom{opacity:0;visibility:hidden;pointer-events:none}
+  .reservoir-view #hud-controls{bottom:12px}
+  .scene-focus #hud-right,.scene-focus #hud-bottom,.scene-focus #rail{opacity:0;visibility:hidden;pointer-events:none}
+  .scene-focus #hud-connectors,.reservoir-view #hud-connectors{visibility:hidden}
+  .scene-focus #hud-controls{left:16px;right:16px;bottom:12px}
+  .scene-focus #hud-controls > :not(:first-child){display:none}
+  .scene-focus #header{left:0}
+  .scene-focus #hud-hint,.reservoir-view #hud-hint{bottom:62px}
+  @media(max-width:1100px){:root{--status-width:230px}#hud-controls{max-height:28vh}}
+  @media(prefers-reduced-motion:reduce){#hud-controls,#hud-right,#hud-bottom,#rail{transition:none}}
+
+  /* The canvas owns a clear viewport; telemetry never covers a basin. */
+  #hud-connectors{display:none}
+  #hud-hint{top:88px;bottom:auto;left:80px;transform:none;font-size:10px;letter-spacing:0}
+  .flabel{padding:5px 7px;gap:4px;flex-wrap:wrap;width:148px;max-width:148px;white-space:normal;transform:translate(-50%,-110%)}
+  .flabel .fl-name,.flabel .fl-risk,.flabel .fl-gate{font-size:10px;letter-spacing:0}
+  .flabel .fl-id{font-size:13px}.flabel .fl-gate::before{font-size:9px}
+  .flabel .fl-risk{display:none}.flabel .fl-name{flex:1}.flabel .fl-lvl{margin-left:15px}.flabel .fl-gate{margin-left:auto}.flabel .fl-name{color:var(--ink)}
+  .rc-kv .k,.presentation-note,.presentation-detail,.presentation-reason,.status-pill{font-size:11px}
+  .hp-row .lbl,#hud-auto .hp-row .val{font-size:11px}
+  .rc-head{cursor:pointer}.forecast-horizons{display:flex;gap:12px;margin:8px 0}
+  .forecast-horizons>div{flex:1;min-width:0}.forecast-horizons span,.forecast-horizons b{display:block;font-size:11px}
+  .forecast-horizons i{display:block;height:4px;background:var(--accent);margin-top:4px}
+  #hud-bottom{max-height:25vh}.res-card .rc-grid{gap:3px 6px}
+  #hud-controls{font-size:11px}.ctl-cap{font-size:10px}.cbtn{font-size:11px}
+  #demo-badge{font-size:10px;top:59px}.scene-focus #hud-hint{top:88px;bottom:auto}
+  .scene-focus #demo-badge{left:16px}
+  @media(max-height:800px){.res-card .rc-grid{gap:2px 5px}.res-card .rc-foot{display:none}#hud-bottom{max-height:26vh}.cbtn{padding:4px 6px}#hud-controls{gap:3px 8px}}
+
+  #hud-ds{order:-3}
+  [data-ref="row-auto-enabled"],[data-ref="row-auto-mode"],[data-ref="row-auto-action"]{display:none!important}
+  .card-trend{font-size:11px;font-weight:600}
+  .res-card .presentation-detail{margin-top:2px}
+  #hud-bottom{max-height:25vh}
+  @media(max-height:800px){.gate-feedback{display:none}#hud-bottom{max-height:180px}.res-card .rc-foot{display:none}}
 </style>
 </head>
 <body>
@@ -330,11 +490,11 @@ const THEMES = {
     hemiSky: 0xdfe8e2, hemiGround: 0x4a5a44, hemiInt: 1.05,
     sunColor: 0xfff4e0, sunInt: 1.9,
     skyStops: ['#7d97a8', '#a8bcc6', '#cfd8d2', '#d8dfd9'],
-    waterDeep: 0x0e5a56, waterShallow: 0x2fa98c, waterSky: 0xcfd8d2,
+    waterDeep: 0x084b59, waterShallow: 0x238f83, waterSky: 0x87abb1,
     rainColor: 0xb8ccc4, exposure: 1.12,
   },
   dark: {
-    fogColor: 0x1a2320, fogDensity: 0.0011,
+    fogColor: 0x1a2320, fogDensity: 0.00065,
     hemiSky: 0x2a3a36, hemiGround: 0x141d18, hemiInt: 0.62,
     sunColor: 0x9fc4d8, sunInt: 0.68,
     skyStops: ['#0a1210', '#101b18', '#1a2622', '#1f2c28'],
@@ -343,7 +503,7 @@ const THEMES = {
   },
 };
 /* storm fog add-on — shared by applyTheme3D + _updateStorm so both stay in sync */
-const STORM_FOG = 0.0006;
+const STORM_FOG = 0.00015;
 const ThemeManager = {
   current: null,
   listeners: [],
@@ -410,6 +570,21 @@ const RISK_UI = {
   'high-risk': { cls: 'high-risk', label: 'HIGH RISK' },
 };
 const riskUi = v => RISK_UI[String(v || '').toLowerCase().trim()] || null;
+const setText = (el, value) => { if (el && el.textContent !== value) el.textContent = value; };
+const setStyle = (el, key, value) => { if (el && el.style[key] !== value) el.style[key] = value; };
+const setAttr = (el, key, value) => {
+  const text = String(value);
+  if (el && el.getAttribute(key) !== text) el.setAttribute(key, text);
+};
+const setStatus = (el, value) => {
+  if (!el) return;
+  const status = String(value || 'UNKNOWN');
+  const tone = ['ACTIVE','SAFE','PROTECTED','PASS','CONNECTED','ELIGIBLE'].includes(status) ? 'ok'
+    : ['BLOCKED','DISCONNECTED','FAILED_CLOSED','VIOLATION','AUTO_BLOCKED','AUTO_ERROR'].includes(status) ? 'bad'
+    : ['CORRECTED','WARNING','RECONNECTING','NOT ELIGIBLE'].includes(status) ? 'warn' : 'neutral';
+  el.classList.add('status-pill');
+  el.dataset.tone = tone;
+};
 
 /* STAGE 12 — purely VISUAL interpolation between the backend's authoritative
    forecast horizons, for the weather panel's 7-day sparkline. It interpolates
@@ -466,9 +641,10 @@ const valleyFloor = z => 150 - ((z - VALLEY_Z0) / (VALLEY_Z1 - VALLEY_Z0)) * 170
 const valleyCenterX = z => 70 * Math.sin(z * 0.0045) + 25 * Math.sin(z * 0.011 + 1.7);
 
 const BASINS = [
-  { id: 1, cz: -290, up: 135, dn: 112, rx: 88, depth: 44 },
-  { id: 2, cz:    0, up: 135, dn: 112, rx: 92, depth: 44 },
-  { id: 3, cz:  290, up: 135, dn: 112, rx: 88, depth: 44 },
+  { id: 1, cz: -380, up: 75, dn: 65, rx: 64, depth: 38 },
+  { id: 2, cz: -170, up: 95, dn: 75, rx: 85, depth: 44 },
+  { id: 3, cz:   65, up: 110, dn: 85, rx: 110, depth: 48 },
+  { id: 4, cz:  335, up: 125, dn: 105, rx: 136, depth: 58 },
 ];
 const DAMSITES = BASINS.map(B => ({ B, zd: B.cz + B.dn, xc: valleyCenterX(B.cz + B.dn) }));
 
@@ -514,7 +690,7 @@ function abutmentRaise(x, z) {
     if (Math.abs(z - D.zd) > 60) continue;
     const latT = clamp01(1 - Math.abs(lat - 130) / 75);
     const zT = clamp01(1 - Math.abs(z - D.zd) / 60);
-    r = Math.max(r, latT * smooth01(zT) * 28);
+    r = Math.max(r, latT * smooth01(zT) * (D.B.id === 4 ? 72 : 28));
   }
   return r;
 }
@@ -791,11 +967,12 @@ function jitterGeometry(geo, amp, yScale, yLift, seed) {
 
 /* ---------------- camera presets ---------------- */
 const PRESETS = {
-  overview:   { p: [ 480, 360,  620], t: [  0,  40,   30] },
-  reservoir1: { p: [-300, 240,  -40], t: [-92, 100, -290] },
-  reservoir2: { p: [ 260, 200,  260], t: [ 25,  52,    0] },
-  reservoir3: { p: [-220, 140,  540], t: [ 43,   4,  290] },
-  downstream: { p: [ 140,  90,  760], t: [ 40, -25,  520] },
+  overview:   { p: [-720, 780, 220], t: [0, 40, 0] },
+  reservoir1: { p: [180, 280, -170], t: [-70, 115, -380] },
+  reservoir2: { p: [230, 230, 50], t: [-65, 70, -170] },
+  reservoir3: { p: [350, 200, 290], t: [40, 25, 65] },
+  reservoir4: { p: [380, 200, 610], t: [50, -5, 335] },
+  downstream: { p: [250, 160, 740], t: [35, -30, 540] },
 };
 
 /* ================================================================
@@ -874,8 +1051,12 @@ class ReservoirTwinRenderer {
       running: null,
       mode: null, simTime: null, stormLevel: null, forecastSummary: null,
       hardware: NO_AUTHORITATIVE_STATE.hardware_status,
-      cascade: null, control: null, reservoir4: null, massBalance: null,
+      cascade: null, control: null, massBalance: null,
       gnnAdvisory: null, forecastProvenance: null,
+      /* STAGE 18 — AUTO control state, forecast source and the backend event
+       * log. Display-only: they are overwritten VERBATIM from each payload and
+       * never derived from anything the browser knows. */
+      autoControl: null, forecastSourceSelection: null, eventLog: null,
     };
     /* Stage 9 — displayed reservoir names. Fallback only: the authoritative
      * names arrive in the payload's `cascade` block and overwrite these. */
@@ -896,8 +1077,22 @@ class ReservoirTwinRenderer {
     for (const r of this.R) { r.levelCur = r.levelTgt; r.gateCur = r.gateTgt; }
 
     this._onResize = () => {
-      const w = this.container.clientWidth || window.innerWidth;
-      const h = this.container.clientHeight || window.innerHeight;
+      const focus = this.container.classList.contains('scene-focus');
+      const drawer = this.container.classList.contains('reservoir-view');
+      const right = focus ? 16 : drawer ? 328 : parseFloat(getComputedStyle(this.container).getPropertyValue('--status-width')) + 24;
+      const bottom = focus || drawer ? Math.max(72, (this.barRoot?.offsetHeight || 48) + 24) : (this.barRoot ? this.container.clientHeight - this.barRoot.offsetTop + 8 : 300);
+      const left = focus ? 16 : 76, top = 110;
+      const w = Math.max(300, this.container.clientWidth - left - right);
+      const h = Math.max(200, this.container.clientHeight - top - bottom);
+      this.renderer.domElement.style.left = left + 'px';
+      this.renderer.domElement.style.top = top + 'px';
+      if (!this._viewportReady || this.el?.camBtns.find(b => b.classList.contains('on'))?.dataset.cam === 'overview') {
+        const scale = Math.min(1, Math.max(0.62, h / 420));
+        const target = PRESETS.overview.t;
+        this.camera.position.set(...PRESETS.overview.p.map((v, i) => target[i] + (v - target[i]) * scale));
+        this.controls.target.set(...target);
+      }
+      this._viewportReady = true;
       this.camera.aspect = w / h;
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h);
@@ -934,25 +1129,22 @@ class ReservoirTwinRenderer {
   /* ================= public API ================= */
   updateState(state) {
     if (!state || this._disposed) return;
+    const signature = JSON.stringify(state);
+    if (signature === this._stateSignature) return;
+    this._stateSignature = signature;
+    this.renderer.shadowMap.needsUpdate = true;
     const rs = state.reservoirs || {};
-    const prev = r => (r.data && typeof r.data.storage === 'number' ? r.data.storage : r.levelTgt);
-    for (let i = 0; i < 3; i++) {
-      const r = this.R[i];
-      const src = rs['reservoir_' + (i + 1)] || {};
-      const lvlRaw = src.water_level !== undefined ? src.water_level
-                   : (src.storage !== undefined ? src.storage : r.levelTgt);
-      r.levelTgt = clamp01(fracv(lvlRaw));
-      r.gateTgt = clamp01(fracv(src.gate !== undefined ? src.gate : r.gateTgt));
-      r.data = {
-        level: r.levelTgt,
-        storage: clamp01(fracv(src.storage !== undefined ? src.storage : prev(r))),
-        inflow: numv(src.inflow), release: numv(src.release),
-        gate: r.gateTgt,
-        /* backend classification stored VERBATIM — display only, never derived */
-        risk: (typeof src.risk === 'string' && src.risk.trim()) ? src.risk.toLowerCase().trim() : null,
-        /* STAGE 12 — the trend is the BACKEND's verdict on the net flux. */
-        trend: (typeof src.trend === 'string' && src.trend.trim()) ? src.trend.trim() : null,
-      };
+    for (let i = 0; i < this.R.length; i++) {
+      const r = this.R[i], src = rs['reservoir_' + (i + 1)] || {};
+      const value = v => typeof v === 'number' && Number.isFinite(v) ? v : null;
+      const level = value(src.water_level), gate = value(src.gate);
+      if (level !== null) { r.levelTgt = clamp01(level); if (!this.data.hasState) r.levelCur = r.levelTgt; }
+      if (gate !== null) { r.gateTgt = clamp01(gate); if (!this.data.hasState) r.gateCur = r.gateTgt; }
+      r.waterMesh.visible = level !== null;
+      r.gateMesh.visible = gate !== null;
+      r.data = { level, gate, storage: value(src.storage), inflow: value(src.inflow),
+        release: value(src.release), controlledRelease: value(src.controlled_release),
+        spill: value(src.spill_mcm), risk: src.risk || null, trend: src.trend || null };
     }
     /* STAGE 12 — the authoritative state identity. `hasState` is the single
      * flag the renderers use to decide between a value and `--`. */
@@ -966,7 +1158,7 @@ class ReservoirTwinRenderer {
     /* STAGE 12 — downstream flow limit and severity come from the BACKEND.
      * The browser no longer owns a hardcoded "safe limit" or its thresholds. */
     const down = state.downstream || null;
-    this.data.downstream = numv(state.downstream_flow);
+    this.data.downstream = typeof down?.flow_m3_s === 'number' ? down.flow_m3_s : null;
     this.data.downstreamCapacity = (down && typeof down.capacity_m3_s === 'number')
       ? down.capacity_m3_s : null;
     this.data.downstreamUtil = (down && typeof down.utilisation === 'number')
@@ -977,6 +1169,7 @@ class ReservoirTwinRenderer {
      * intensity is interpolated here (visual). */
     const storm = state.storm || null;
     this.data.stormLevel = (storm && typeof storm.level === 'string') ? storm.level : null;
+    this.data.stormIntensity = typeof storm?.intensity === 'number' ? storm.intensity : null;
     this.storm.tgt = clamp01(fracv(
       (storm && storm.intensity !== undefined) ? storm.intensity
       : (state.storm_intensity !== undefined ? state.storm_intensity : this.storm.tgt)));
@@ -985,9 +1178,15 @@ class ReservoirTwinRenderer {
     /* STAGE 12 — the backend's answer to "is the simulation running?" */
     const sim = state.simulation || null;
     this.data.running = (sim && typeof sim.running === 'boolean') ? sim.running : null;
-    if (typeof state.controller_mode === 'string') this.data.mode = state.controller_mode;
+    this.data.mode = typeof state.controller_mode === 'string' ? state.controller_mode : null;
     /* Stage 7 — authoritative controller provenance (display only). */
     this.data.control = state.control || null;
+    /* STAGE 18 — AUTO control status, forecast-source selection and the
+     * backend's real event log, all stored VERBATIM. The control bar and the
+     * AUTO CONTROL panel render from these; nothing here is derived. */
+    this.data.autoControl = state.auto_control || null;
+    this.data.forecastSourceSelection = state.forecast_source_selection || null;
+    this.data.eventLog = Array.isArray(state.event_log) ? state.event_log : null;
     /* Stage 11 — the backend's mass-balance audit of the last authoritative
      * step (display only; nothing about it is computed in JavaScript). */
     this.data.massBalance = state.mass_balance || null;
@@ -1011,30 +1210,290 @@ class ReservoirTwinRenderer {
      * values are read from the payload verbatim; nothing is derived here. */
     this.data.cascade = state.cascade || null;
     this._applyCascadeNames(this.data.cascade);
-    const r4 = rs['reservoir_4'] || null;
-    this.data.reservoir4 = r4 ? {
-      level: clamp01(fracv(r4.water_level !== undefined ? r4.water_level : r4.storage)),
-      storage: clamp01(fracv(r4.storage)),
-      inflow: numv(r4.inflow), release: numv(r4.release),
-      gate: clamp01(fracv(r4.gate)),
-      risk: (typeof r4.risk === 'string' && r4.risk.trim()) ? r4.risk.toLowerCase().trim() : 'normal',
-      trend: (typeof r4.trend === 'string' && r4.trend.trim()) ? r4.trend.trim() : null,
-      name: r4.repository_name || null,
-      node_id: r4.node_id || null,
-    } : null;
-
     /* Stage 5/6 — DEMONSTRATION provenance badge.
      * The badge is driven ONLY by the backend provenance block; it is never
      * inferred client-side. It is shown UNLESS the backend explicitly states
      * that live forecasts are validated, so an absent provenance block errs on
      * the side of caution rather than silently implying validity. */
     const fp = state.forecast_provenance || {};
-    const anySimulated = ['reservoir_1', 'reservoir_2', 'reservoir_3'].some(k => {
+    const anySimulated = ['reservoir_1', 'reservoir_2', 'reservoir_3', 'reservoir_4'].some(k => {
       const r = (state.reservoirs || {})[k] || {};
       return r.forecast_is_simulated === true;
     });
     this._setDemoBadge(fp.live_forecasts_are_validated !== true, anySimulated);
+    const replay = state.forecast_source_selection?.replay_is_historical_not_live === true;
+    setText(this.el?.demoBadge?.querySelector('span:nth-child(2)'), replay
+      ? 'HISTORICAL FORECAST REPLAY · SIMULATED RESERVOIRS' : 'DEMONSTRATION — MODEL INPUTS SIMULATED');
+    if (replay) setText(this.el.demoBadgeSub, 'Not a forecast of this storm');
+    if (this.el && document.activeElement !== this.el.sliders.storm && typeof storm?.intensity === 'number') {
+      this.el.sliders.storm.value = storm.intensity * 100;
+      setText(this.el.sliderVals.storm, (storm.intensity * 100).toFixed(0));
+    }
+
+    /* STAGE 18 — mirror the BACKEND's control state into the control bar and
+     * the AUTO CONTROL panel. Display only: this method never sends commands
+     * and never writes authoritative state, so the frontend cannot override
+     * the backend — it can only reflect it. */
+    this._syncAutoControls();
+    this._syncPresentation(state);
+    this._hudDirty = true;
+    this._labelVersion = (this._labelVersion || 0) + 1;
+    for (const fm of this.flowMeshes) {
+      const src = rs['reservoir_' + fm.key.slice(-1)] || {};
+      const inflow = fm.key.startsWith('in');
+      const value = fm.key === 'ch4' ? down?.flow_m3_s : inflow ? src.inflow : src.release;
+      fm.mesh.visible = typeof value === 'number' && value > 0;
+      fm.mat.uniforms.uFlow.value = 0;
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        fm.mat.uniforms.uFlow.value = clamp01(value / (inflow ? 120 : 70));
+      }
+    }
   }
+
+  /* Values below are copied from the backend; no physical/control inference. */
+  _syncPresentation(state) {
+    if (!this.el) return;
+    const text = setText;
+    const number = (v, suffix) => typeof v === 'number' && Number.isFinite(v)
+      ? v.toFixed(1) + suffix : '--';
+    const pct = v => number(v, '%');
+    const actions = state.auto_control && state.auto_control.actions || [];
+    const rows = [];
+    for (let i = 0; i < 4; i++) {
+      const src = (state.reservoirs || {})['reservoir_' + (i + 1)] || {};
+      const card = this.el.res[i].panel;
+      text(card.querySelector('[data-k="requested"]'), pct(src.requested_gate_pct));
+      text(card.querySelector('[data-k="controlled"]'), number(src.controlled_release, ' m³/s'));
+      text(card.querySelector('[data-k="spill"]'), number(src.spill_mcm, ' MCM/step'));
+      text(card.querySelector('[data-k="reason"]'), src.risk_reason || '');
+      const peak = Math.max(0, ...['1d','3d','7d'].map(h => typeof src['forecast_' + h] === 'number' ? src['forecast_' + h] : 0));
+      for (const h of ['1d','3d','7d']) {
+        const v = src['forecast_' + h];
+        text(card.querySelector('[data-k="forecast-' + h + '"]'), number(v, ''));
+        const bar = card.querySelector('[data-k="forecast-bar-' + h + '"]');
+        if (bar?.style) bar.style.width = (typeof v === 'number' && peak > 0 ? v / peak * 100 : 0) + '%';
+      }
+      text(card.querySelector('[data-k="forecast-source"]'), (src.forecast_provenance || 'UNKNOWN') + ' · ' + (src.forecast_status || 'UNKNOWN'));
+      const action = actions.find(a => a.node === src.node_id);
+      text(card.querySelector('[data-k="gate-owner"]'), state.controller_mode === 'AI'
+        ? 'Gate / AUTO' : 'Physical gate');
+      text(card.querySelector('[data-k="decision"]'), action
+        ? 'MPC ' + pct(action.mpc_proposal_pct) + ' · SAFETY ' + pct(action.safety_pct)
+          + ' · FINAL ' + pct(action.final_pct) : '');
+      const slider = this.el.sliders.g[i];
+      const command = state.controller_mode === 'MANUAL' ? src.requested_gate_pct
+        : (typeof src.gate === 'number' ? src.gate * 100 : null);
+      if (slider && document.activeElement !== slider && typeof command === 'number') {
+        slider.value = command;
+        text(this.el.sliderVals.g[i], command.toFixed(0));
+      }
+      rows.push('R' + (i + 1) + ' · CURRENT ' + pct(typeof src.gate === 'number' ? src.gate * 100 : null)
+        + '\nMPC ' + pct(action && action.mpc_proposal_pct)
+        + ' → SAFETY ' + pct(action && action.safety_pct)
+        + ' → FINAL ' + pct(action && action.final_pct)
+        + (action && state.auto_control.downstream_protection_modified === true
+          && typeof action.safety_pct === 'number' && typeof action.final_pct === 'number'
+          && action.safety_pct !== action.final_pct ? '\nDownstream guard modified this action.' : ''));
+    }
+    const ac = state.auto_control || {};
+    text(this.el.autoChain, rows.join('\n\n'));
+    text(this.el.mpcStatus, ac.mpc_status || '--');
+    text(this.el.downstreamReason, (state.control || {}).downstream_reason || '');
+    text(this.el.autoBalance, (state.mass_balance || {}).status || '--');
+    setStatus(this.el.autoBalance, (state.mass_balance || {}).status);
+    text(this.el.autoEligible, typeof ac.forecast_control_eligible === 'boolean'
+      ? (ac.forecast_control_eligible ? 'ELIGIBLE' : 'NOT ELIGIBLE') : '--');
+    setStatus(this.el.autoEligible, this.el.autoEligible.textContent);
+    for (const [el, status] of [[this.el.autoVals.decision,ac.controller_status],
+      [this.el.autoVals.safety,ac.safety_layer_status],[this.el.autoVals.downstream,ac.downstream_status]]) {
+      setStatus(el, status);
+    }
+    // Replay identical backend transitions without restarting the visual cue.
+    const transitions = Array.isArray(ac.gate_transitions) ? ac.gate_transitions : [];
+    const transitionKey = JSON.stringify([state.state_identity && state.state_identity.state_id,
+      ac.control_mode, transitions]);
+    if (transitionKey !== this._transitionKey) {
+      for (const re of this.el.res) {
+        re.panel.classList.remove('gate-applied');
+        text(re.panel.querySelector('[data-k="gate-feedback"]'), '');
+      }
+      if (this._transitionKey !== undefined && ac.control_applied === true && ac.auto_enabled === true) {
+        for (let i = 0; i < 4; i++) {
+          const src = (state.reservoirs || {})['reservoir_' + (i + 1)] || {};
+          const transition = transitions.find(t => t.node === src.node_id);
+          if (!transition) continue;
+          const card = this.el.res[i].panel;
+          text(card.querySelector('[data-k="gate-feedback"]'), 'AUTO APPLIED · '
+            + pct(transition.previous_pct) + ' → ' + pct(transition.new_pct));
+          card.classList.add('gate-applied');
+        }
+      }
+      this._transitionKey = transitionKey;
+    }
+  }
+
+  /* ================= STAGE 18 — BACKEND → DOM CONTROL SYNCHRONISATION ======
+   * Mirrors the authoritative payload into the bottom control bar and the AUTO
+   * CONTROL panel:
+   *
+   *  - the MANUAL / AUTO buttons highlight exactly the BACKEND's
+   *    `controller_mode` (MANUAL ↔ MANUAL, AI ↔ AUTO);
+   *  - the forecast-source buttons highlight the BACKEND's
+   *    `forecast_source_selection.selected`;
+   *  - the G1–G4 gate sliders are DISABLED while the backend is in AI mode
+   *    and re-enabled in MANUAL;
+   *  - the gatelock badge reports the same backend truth;
+   *  - `auto_control` fields are printed verbatim — a field the backend did not
+   *    send hides its row instead of showing a fabricated default;
+   *  - the activity feed renders ONLY entries from `state.event_log`.
+   *
+   * This method READS state and writes presentation only. It never calls the
+   * API, never mutates `this.data`, and never lets a local flag win over the
+   * payload: the display is re-derived from every incoming state. */
+  _syncAutoControls() {
+    const el = this.el;
+    if (!el) return;
+    const ac = this.data.autoControl;
+    const fsSel = this.data.forecastSourceSelection;
+    const events = this.data.eventLog;
+    const hasState = this.data.hasState === true;
+    const mode = this.data.mode;                       /* 'MANUAL' | 'AI' | null */
+    const autoEnabled = !!(ac && ac.auto_enabled === true) || mode === 'AI';
+
+    /* — CONTROL MODE buttons: highlight from the backend's controller_mode. */
+    if (el.modeBtns) {
+      el.modeBtns.forEach(btn => {
+        const wantAuto = btn.dataset.mode === 'AUTO';
+        btn.classList.toggle('on', hasState && (wantAuto === autoEnabled));
+      });
+    }
+
+    /* — FORECAST SOURCE buttons: highlight the backend's selection. */
+    const selected = (fsSel && typeof fsSel.selected === 'string')
+      ? fsSel.selected : null;
+    if (el.srcBtns) {
+      el.srcBtns.forEach(btn => {
+        btn.classList.toggle('on',
+          hasState && selected !== null && btn.dataset.source === selected);
+      });
+    }
+
+    /* — Gate sliders: locked exactly while the backend is deciding gates. */
+    const lockGates = hasState && autoEnabled;
+    if (el.sliders && el.sliders.g) {
+      el.sliders.g.forEach(s => { if (s) s.disabled = lockGates; });
+    }
+
+    /* — Gatelock badge: same backend truth, as text. */
+    if (el.gatelock) {
+      el.gatelock.textContent = lockGates ? 'GATES · AUTO (LOCKED)' : 'GATES · OPERATOR';
+      el.gatelock.classList.toggle('auto', lockGates);
+    }
+
+    /* — AUTO CONTROL panel: print `auto_control` verbatim, hide missing fields.
+     * A row whose field the backend did not send is HIDDEN, never defaulted. */
+    const setRow = (row, val, value, color) => {
+      if (!row) return;
+      if (value === undefined || value === null || value === '') {
+        row.style.display = 'none';
+        if (val) val.textContent = '--';
+        return;
+      }
+      row.style.display = '';
+      if (val) {
+        val.textContent = String(value);
+        val.style.color = color || '';
+      }
+    };
+    if (el.autoState) {
+      if (ac && typeof ac.state === 'string') {
+        el.autoState.textContent = ac.state.replace(/_/g, ' ');
+        const ok = ac.state === 'AUTO_CONTROL_APPLIED' || ac.state === 'AUTO_RUNNING';
+        el.autoState.style.color = ok ? 'var(--ok)'
+          : (ac.state === 'AUTO_BLOCKED' || ac.state === 'AUTO_ERROR') ? 'var(--bad)'
+          : 'var(--accent)';
+      } else {
+        el.autoState.textContent = '--';
+        el.autoState.style.color = 'var(--ink-faint)';
+      }
+    }
+    const av = el.autoVals, ar = el.autoRows;
+    setRow(ar.enabled, av.enabled,
+      (ac && typeof ac.auto_enabled === 'boolean')
+        ? (ac.auto_enabled ? 'ENABLED' : 'DISABLED') : null,
+      (ac && ac.auto_enabled) ? 'var(--ok)' : 'var(--ink-faint)');
+    setRow(ar.mode, av.mode,
+      (ac && typeof ac.control_mode === 'string') ? ac.control_mode : null,
+      (ac && ac.control_mode === 'AI') ? 'var(--accent)' : '');
+    setRow(ar.decision, av.decision,
+      (ac && typeof ac.controller_status === 'string') ? ac.controller_status : null,
+      (ac && ac.control_applied === true) ? 'var(--ok)'
+        : (ac && ac.control_applied === false) ? 'var(--warn)' : '');
+    setRow(ar.safety, av.safety,
+      (ac && typeof ac.safety_layer_status === 'string') ? ac.safety_layer_status : null,
+      (ac && ac.safety_layer_status === 'SAFE') ? 'var(--ok)'
+        : (ac && String(ac.safety_layer_status).indexOf('CORRECTED') === 0) ? 'var(--warn)' : '');
+    setRow(ar.downstream, av.downstream,
+      (ac && typeof ac.downstream_status === 'string') ? ac.downstream_status : null,
+      (ac && ac.downstream_status === 'PROTECTED') ? 'var(--ok)'
+        : (ac && (ac.downstream_status === 'CORRECTED'
+                  || ac.downstream_status === 'FAILED_CLOSED')) ? 'var(--warn)' : '');
+    setRow(ar.forecast, av.forecast,
+      (ac && typeof ac.forecast_source === 'string') ? ac.forecast_source
+        : (selected !== null ? selected : null));
+    setRow(ar.action, av.action,
+      (ac && typeof ac.final_safe_control_action_source === 'string')
+        ? ac.final_safe_control_action_source : null);
+    setRow(ar.reason, av.reason,
+      (ac && typeof ac.reason === 'string' && ac.reason) ? ac.reason : null);
+    if (el.autoReasonSummary) {
+      const forecast = ac && ac.forecast_source ? ` Forecast: ${ac.forecast_source}.` : '';
+      el.autoReasonSummary.textContent = (ac && ac.reason ? ac.reason : 'Backend has not supplied a control reason.') + forecast;
+    }
+
+    /* — Activity feed: ONLY backend `event_log` entries, newest first.
+     * Rebuilt only when the log actually changes (length + last seq). The DOM
+     * is capped at the newest 20 entries; that is a display cap, not an event —
+     * every row rendered here came from the backend's array unchanged. */
+    if (el.autoFeed) {
+      const list = Array.isArray(events) ? events : [];
+      const last = list.length ? list[list.length - 1] : null;
+      const sig = JSON.stringify(list.slice(-20));
+      if (sig !== this._feedSig) {
+        const previousSeq = this._feedSeq;
+        this._feedSeq = last && last.seq;
+        this._feedSig = sig;
+        el.autoFeed.textContent = '';
+        if (!list.length) {
+          const empty = document.createElement('div');
+          empty.className = 'ev-empty';
+          empty.textContent = 'NO BACKEND EVENTS YET';
+          el.autoFeed.appendChild(empty);
+        } else {
+          for (let i = list.length - 1; i >= 0 && i >= list.length - 20; i--) {
+            const ev = list[i] || {};
+            const row = document.createElement('div');
+            row.className = 'ev';
+            if (typeof previousSeq === 'number' && ev.seq > previousSeq) row.classList.add('ev-new');
+            const head = document.createElement('span');
+            head.className = 'ev-h';
+            const t = typeof ev.timestamp === 'string' ? ev.timestamp : '';
+            head.textContent = (ev.seq !== undefined && ev.seq !== null ? '#' + ev.seq + ' ' : '')
+              + (t ? t.split('T').pop() : '')
+              + (ev.kind ? (t ? ' · ' : '') + String(ev.kind).toUpperCase() : '');
+            if (ev.reservoir) head.textContent += ' · ' + ev.reservoir;
+            if (ev.step_index !== undefined) head.textContent += ' · STEP ' + ev.step_index;
+            const body = document.createElement('span');
+            body.textContent = String(ev.text || '');
+            row.appendChild(head);
+            row.appendChild(body);
+            el.autoFeed.appendChild(row);
+          }
+        }
+      }
+    }
+  }
+
 
   /* Stage 9 — apply the AUTHORITATIVE reservoir names.
    *
@@ -1062,9 +1521,9 @@ class ReservoirTwinRenderer {
       }
     }
     if (Array.isArray(this.fLabels)) {
-      for (let i = 0; i < 3 && i < this.fLabels.length; i++) {
+      for (let i = 0; i < this.R.length && i < this.fLabels.length; i++) {
         const nm = this.fLabels[i].querySelector('.fl-name');
-        if (nm) nm.textContent = this.resNames[i];
+        if (nm) nm.textContent = this.resNames[i] + (i === 3 ? ' / TERMINAL' : '');
       }
     }
   }
@@ -1085,8 +1544,11 @@ class ReservoirTwinRenderer {
   }
 
   setCameraPreset(name) {
-    const p = PRESETS[name];
+    let p = PRESETS[name];
+    if (name === 'overview') { const scale = Math.min(1, Math.max(0.62, this.renderer.domElement.clientHeight / 420));
+      p = {t: p.t, p: p.p.map((v, i) => p.t[i] + (v - p.t[i]) * scale)}; }
     if (!p || this._disposed) return;
+    this.el?.camBtns.forEach(b => b.classList.toggle('on', b.dataset.cam === name));
     this._tween = {
       t: 0,
       fromP: this.camera.position.clone(),
@@ -1102,6 +1564,7 @@ class ReservoirTwinRenderer {
     this._disposed = true;
     cancelAnimationFrame(this._raf);
     window.removeEventListener('resize', this._onResize);
+    if (this._layoutObserver) this._layoutObserver.disconnect();
     this.controls.dispose();
 
     this.scene.traverse(obj => {
@@ -1134,21 +1597,34 @@ class ReservoirTwinRenderer {
   /* ================= THE central animation loop ================= */
   _tick(now) {
     if (this._disposed) return;
-    const dt = Math.min(0.05, Math.max(0.001, (now - this._last) / 1000));
+    const dt = Math.min(0.25, Math.max(0.001, (now - this._last) / 1000));
     this._last = now;
-    this._time += dt;
+    const live = this.connectionStatus === 'CONNECTED';
+    if (live) this._time += dt;
+    const visualDt = live ? dt : 0;
+    this._frameCount = (this._frameCount || 0) + 1;
+    if (!this._perfStart) this._perfStart = now;
+    if (now - this._perfStart >= 1000) {
+      this._fps = this._frameCount * 1000 / (now - this._perfStart);
+      this._frameCount = 0; this._perfStart = now;
+    }
 
     if (this.onTick) this.onTick(dt);        /* test driver / future Python bridge */
     this._updateCameraTween(dt);
-    this._updateStorm(dt);
-    this._updateWater(dt);
-    this._updateGatesAndJets(dt);
-    this._updateRain(dt);
-    this._updateMist(dt);
+    this._updateStorm(visualDt);
+    this._updateWater(visualDt);
+    this._updateGatesAndJets(visualDt);
+    this._updateRain(visualDt);
+    this._updateMist(visualDt);
+    this.controls.update();
     this._updateConnectors();
     this._updateHUD(dt);
-    this.controls.update();
     this.renderer.render(this.scene, this.camera);
+    if (this.connectionStatus !== 'CONNECTED' && this.el) {
+      setText(this.el.hstat, this.connectionStatus === 'STALE DATA' ? 'STALE DATA' : 'BACKEND DISCONNECTED');
+      setText(this.el.autoState, 'LAST RECEIVED STATE');
+      setText(this.el.mode, 'UNCONFIRMED');
+    }
     this._raf = requestAnimationFrame(this._tick);
   }
 
@@ -1166,17 +1642,19 @@ class ReservoirTwinRenderer {
       this._fail('WEBGL UNAVAILABLE — CANNOT RENDER DIGITAL TWIN');
       throw e;
     }
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.autoUpdate = false;
+    this.renderer.shadowMap.needsUpdate = true;
     this.renderer.domElement.addEventListener('contextmenu', e => e.preventDefault());
     this.container.appendChild(this.renderer.domElement);
 
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(55, 1, 1, 6000);
+    this.camera = new THREE.PerspectiveCamera(38, 1, 1, 6000);
     this.camera.position.set(...PRESETS.overview.p);
 
     this.scene.fog = new THREE.FogExp2(0xb9c3ca, 0.0016);
@@ -1185,7 +1663,7 @@ class ReservoirTwinRenderer {
     this.sun = new THREE.DirectionalLight(0xf2f6fa, 1.5);
     this.sun.position.set(250, 400, 150);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048, 2048);
+    this.sun.shadow.mapSize.set(1024, 1024);
     const sc = this.sun.shadow.camera;
     sc.left = -460; sc.right = 460; sc.top = 460; sc.bottom = -460; sc.near = 50; sc.far = 1400;
     this.sun.shadow.bias = -0.0004;
@@ -1233,6 +1711,10 @@ class ReservoirTwinRenderer {
         r.jetMat.uniforms.uFogColor.value.setHex(T.fogColor);
         r.jetMat.uniforms.uFogDensity.value = T.fogDensity;
       }
+      if (r.spillMat) {
+        r.spillMat.uniforms.uFogColor.value.setHex(T.fogColor);
+        r.spillMat.uniforms.uFogDensity.value = T.fogDensity;
+      }
     }
     if (this.flowMeshes) for (const f of this.flowMeshes) {
       f.mat.uniforms.uFogColor.value.setHex(T.fogColor);
@@ -1243,7 +1725,7 @@ class ReservoirTwinRenderer {
 
   /* ================= terrain (two-pass: heights grid, then slope+color) ================= */
   _initTerrain() {
-    const SIZE = 1400, SEG = 280, N = SEG + 1, cell = SIZE / SEG;
+    const SIZE = 1400, SEG = 160, N = SEG + 1, cell = SIZE / SEG;
     const geo = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
     geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position;
@@ -1353,22 +1835,22 @@ class ReservoirTwinRenderer {
     };
 
     /* trees: shared transform list drives trunk + canopy InstancedMesh pair */
-    const treePts = scatter(3000, { maxSlope: 0.5, maxH: 175, avoidChannel: true, avoidPlunge: true, gate: 0.34 });
+    const treePts = scatter(850, { maxSlope: 0.5, maxH: 175, avoidChannel: true, avoidPlunge: true, gate: 0.34 });
     const treeTf = transforms(treePts, 1.1, 2.9);
     const trunkGeo = new THREE.CylinderGeometry(0.13, 0.24, 2.6, 7).translate(0, 1.3, 0);
-    const canopyGeo = jitterGeometry(new THREE.SphereGeometry(1.5, 18, 12), 0.5, 0.85, 2.4, 3.7);
+    const canopyGeo = jitterGeometry(new THREE.SphereGeometry(1.5, 8, 6), 0.5, 0.85, 2.4, 3.7);
     instanced(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x4e3a2a, roughness: 0.95 }), treeTf, null, false);
     const canopy = instanced(canopyGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.88 }),
       treeTf, [0.30, 0.07, 0.55, 0.22, 0.10], true);
     canopy.name = 'FOREST_CANOPY';
 
-    const shrubPts = scatter(2400, { maxSlope: 0.8, maxH: 200, avoidChannel: true, avoidPlunge: true, gate: 0.30 });
-    instanced(jitterGeometry(new THREE.SphereGeometry(0.9, 12, 9), 0.4, 0.65, 0.45, 9.2),
+    const shrubPts = scatter(650, { maxSlope: 0.8, maxH: 200, avoidChannel: true, avoidPlunge: true, gate: 0.30 });
+    instanced(jitterGeometry(new THREE.SphereGeometry(0.9, 6, 4), 0.4, 0.65, 0.45, 9.2),
       new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 }),
       transforms(shrubPts, 0.8, 2.0), [0.27, 0.08, 0.50, 0.24, 0.10], false);
 
-    const grassPts = scatter(3200, { maxSlope: 0.95, maxH: 190, avoidChannel: true, avoidPlunge: true, gate: 0.25 });
-    instanced(jitterGeometry(new THREE.SphereGeometry(0.5, 8, 6), 0.45, 0.80, 0.22, 15.8),
+    const grassPts = scatter(900, { maxSlope: 0.95, maxH: 190, avoidChannel: true, avoidPlunge: true, gate: 0.25 });
+    instanced(jitterGeometry(new THREE.SphereGeometry(0.5, 5, 3), 0.45, 0.80, 0.22, 15.8),
       new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0 }),
       transforms(grassPts, 0.5, 1.2), [0.24, 0.08, 0.60, 0.28, 0.12], false);
 
@@ -1384,14 +1866,14 @@ class ReservoirTwinRenderer {
   /* ================= dams, gates, spillways ================= */
   _initDams() {
     this.concreteMat = new THREE.MeshStandardMaterial({ map: concreteTex, roughness: 0.85, metalness: 0.08 });
-    this.metalMat = new THREE.MeshStandardMaterial({ color: 0x5a6367, roughness: 0.4, metalness: 0.7 });
+    this.metalMat = new THREE.MeshStandardMaterial({ color: 0x86999b, roughness: 0.4, metalness: 0.5 });
     this.darkMat = new THREE.MeshStandardMaterial({ color: 0x14181b, roughness: 0.9 });
 
     for (const r of this.R) {
       const { D, base, crest, sill } = r;
       const H = crest - base;
       const parts = [];
-      const segs = 9, span = 300, radius = 900, segW = span / segs;
+      const segs = 9, span = r.B.rx * 2.4, radius = r.B.id === 4 ? 440 : 900, segW = span / segs;
 
       /* arched gravity wall (convex upstream) + crest road + railings */
       for (let s = 0; s < segs; s++) {
@@ -1441,16 +1923,16 @@ class ReservoirTwinRenderer {
       hoist.castShadow = true;
       dam.add(hoist);
 
-      /* dark gate opening on upstream face — revealed as the gate lifts */
+      /* dark gate opening on the visible downstream face — revealed as the gate lifts */
       const opening = new THREE.Mesh(new THREE.BoxGeometry(24, 8.5, 0.6), this.darkMat);
       opening.name = 'GATE_OPENING_0' + r.B.id;
-      opening.position.set(D.xc, sill + 3.5, D.zd - 6.4);
+      opening.position.set(D.xc, sill + 3.5, D.zd + 6.4);
       dam.add(opening);
 
       /* GATE — the only animated dam part; slide = gate opening */
       const gate = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.4), this.metalMat);
       gate.name = 'GATE_0' + r.B.id;
-      gate.position.set(D.xc, sill + 3.8, D.zd - 7.5);
+      gate.position.set(D.xc, sill + 3.8, D.zd + 7.5);
       gate.castShadow = true;
       dam.add(gate);
       r.gateMesh = gate;
@@ -1475,6 +1957,14 @@ class ReservoirTwinRenderer {
       jet.name = 'SPILLWAY_JET_0' + r.B.id;
       jet.renderOrder = 1;
       this.scene.add(jet);
+      r.jetMesh = jet;
+      // Local-spill ribbon, driven only by reported spill volume.
+      r.spillMat = r.jetMat.clone();
+      r.spillMesh = new THREE.Mesh(jet.geometry, r.spillMat);
+      r.spillMesh.position.x = 28;
+      r.spillMesh.visible = false;
+      r.spillMesh.renderOrder = 1;
+      this.scene.add(r.spillMesh);
       r.plunge = jBot;
 
       const sprayN = 320;
@@ -1509,9 +1999,9 @@ class ReservoirTwinRenderer {
     for (const r of this.R) {
       const B = r.B;
       const cx = valleyCenterX(B.cz);
-      const zC = B.cz - 16;                       /* asymmetric: upstream margin, ends inside dam wall */
+      const zC = B.cz + (B.dn - B.up) / 2;                       /* asymmetric: upstream margin, ends inside dam wall */
       const L = B.up + B.dn + 15;
-      const geo = new THREE.PlaneGeometry(380, L, 60, 88);
+      const geo = new THREE.PlaneGeometry(B.rx * 3, L, 40, 56);
       const pos = geo.attributes.position;
       const aTerrain = new Float32Array(pos.count);
       for (let i = 0; i < pos.count; i++) {
@@ -1563,16 +2053,22 @@ class ReservoirTwinRenderer {
       mesh.name = name;
       mesh.renderOrder = 1;
       this.scene.add(mesh);
-      this.flowMeshes.push({ mat, key });
+      this.flowMeshes.push({ mat, key, mesh });
     };
-    /* dam → next reservoir / final downstream */
-    addFlow(terrainRibbon(-150, -40, 6, 18), 'CHANNEL_01', 0.32, 'ch1');
-    addFlow(terrainRibbon( 140, 250, 6, 18), 'CHANNEL_02', 0.32, 'ch2');
-    addFlow(terrainRibbon( 430, 580, 6, 19), 'CHANNEL_03', 0.36, 'ch3');
-    /* upstream river + tributaries */
-    addFlow(terrainRibbon(-470, -408, 6, 16), 'INFLOW_01', 0.42, 'in1');
-    addFlow(waypointRibbon([[150, 80], [110, 45], [70, 10]], 10), 'INFLOW_02', 0.44, 'in2');
-    addFlow(waypointRibbon([[170, 330], [125, 312], [80, 295], [65, 285]], 10), 'INFLOW_03', 0.44, 'in3');
+    // A → B → C → D → downstream. Geometry is schematic, not routing physics.
+    this.R.forEach((r, i) => {
+      const next = this.R[i + 1];
+      const end = next ? next.B.cz - next.B.up + 20 : 590;
+      addFlow(terrainRibbon(r.D.zd + 20, end, 4, 20),
+        'CHANNEL_0' + (i + 1), 0.45, 'ch' + (i + 1));
+      const z = (r.D.zd + 20 + end) / 2, x = valleyCenterX(z);
+      const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1),
+        new THREE.Vector3(x, terrainHeight(x,z) + 9, z - 9), 22, 0xe9c86b, 9, 6);
+      arrow.name = 'TOPOLOGY_DIRECTION_0' + (i + 1);
+      this.scene.add(arrow);
+    });
+    addFlow(terrainRibbon(-520, -435, 4, 16), 'INFLOW_01', 0.42, 'in1');
+
   }
 
   /* ================= rain — ONE particle system ================= */
@@ -1671,30 +2167,33 @@ class ReservoirTwinRenderer {
       r.waterMat.uniforms.uLevelY.value = y;
       r.waterY = y;
     }
-    const flows = {
-      ch1: clamp01(this.R[0].data.release / 70), ch2: clamp01(this.R[1].data.release / 70),
-      ch3: clamp01(this.R[2].data.release / 70),
-      in1: clamp01(this.R[0].data.inflow / 120), in2: clamp01(this.R[1].data.inflow / 120),
-      in3: clamp01(this.R[2].data.inflow / 120),
-    };
     for (const fm of this.flowMeshes) {
-      fm.mat.uniforms.uFlow.value = flows[fm.key];
       fm.mat.uniforms.uTime.value = this._time;
     }
   }
 
   _updateGatesAndJets(dt) {
     for (const r of this.R) {
-      r.gateCur += (r.gateTgt - r.gateCur) * Math.min(1, dt * 2.5);
+      r.gateCur += (r.gateTgt - r.gateCur) * (1 - Math.exp(-dt * 2.5));
       r.gateMesh.position.y = r.gateClosedY + r.gateCur * r.gateTravel;
 
-      const head = clamp01((r.waterY - r.sill) / 5);          /* hydraulic head over the sill */
-      r.jetTgt = Math.max(head * r.gateCur, r.levelTgt > 0.995 ? 1 : 0);
+      // Normalization controls visual strength only, never physical flow.
+      // Unknown flow is hidden; no gate/head inference.
+      r.jetMesh.visible = false; r.spillMesh.visible = false; r.jetTgt = 0;
+      if (typeof r.data.controlledRelease === 'number' && Number.isFinite(r.data.controlledRelease)) {
+        r.jetTgt = clamp01(r.data.controlledRelease / 70);
+        r.jetMesh.visible = r.data.controlledRelease > 0;
+      }
+      if (typeof r.data.spill === 'number' && Number.isFinite(r.data.spill)) {
+        r.spillMesh.visible = r.data.spill > 0;
+        r.spillMat.uniforms.uFlow.value = clamp01(r.data.spill / 50);
+      }
+      r.spillMat.uniforms.uTime.value = this._time;
       r.jetFlow += (r.jetTgt - r.jetFlow) * Math.min(1, dt * 3);
       r.jetMat.uniforms.uFlow.value = r.jetFlow;
       r.jetMat.uniforms.uTime.value = this._time;
 
-      const active = r.jetFlow > 0.06;
+      const active = r.jetMesh.visible && r.jetFlow > 0.06;
       r.spray.visible = active;
       r.sprayMat.opacity = r.jetFlow * 0.7;
       if (active) {
@@ -1783,13 +2282,14 @@ class ReservoirTwinRenderer {
       <div class="hd-sep"></div>
       <div class="hd-stat"><span class="k">Simulation</span><span class="v"><span class="dot ok pulse" style="display:inline-block"></span><span data-ref="hstat">STANDBY</span></span></div>
       <div class="hd-sep"></div>
-      <div class="hd-stat"><span class="k">Controller</span><span class="v" data-ref="mode">AI / MPC</span></div>
+      <div class="hd-stat"><span class="k">Controller</span><span class="v" data-ref="mode">UNKNOWN</span></div>
       <div class="hd-sep"></div>
       <div class="hd-stat"><span class="k">Forecast</span><span class="v" data-ref="fceng">--</span></div>
       <div class="hd-right">
+        <div class="transport-status" role="status" aria-live="polite"><div data-ref="connection">VERIFYING BACKEND</div><div class="prov">REST <b data-ref="rest-health">CHECKING</b> · WEBSOCKET <b data-ref="ws-health">CONNECTING</b></div><div class="prov">SOURCE PYTHON AUTHORITATIVE SIMULATION</div><div class="prov">STATE <b data-ref="state-health">WAITING</b> · <span data-ref="state-received">NO STATE YET</span></div><div data-ref="command-feedback">Commands are requests; physical state comes from the backend.</div></div>
         <div class="hd-stat"><span class="k">Sim Clock</span><span class="v hd-clock" id="live-time">--:--:--</span></div>
         <div class="hd-sep"></div>
-        <div class="hd-stat"><span class="k">Weather</span><span class="v" id="live-wx">RAIN — -- · 24°C</span></div>
+        <div class="hd-stat"><span class="k">Storm</span><span class="v" id="live-wx">--</span></div>
         <button id="theme-toggle" aria-label="Toggle light / dark theme" title="Toggle light / dark theme">
           <div class="knob">
             <svg class="ico-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.5 4.5l1.4 1.4M18.1 18.1l1.4 1.4M19.5 4.5l-1.4 1.4M5.9 18.1l-1.4 1.4"/></svg>
@@ -1804,10 +2304,10 @@ class ReservoirTwinRenderer {
     right.id = 'hud-right';
 
     panel(right, 'hud-system', '', `
-      <div class="hp-title">System Status</div>
-      <div class="hp-row"><span class="dot ok pulse"></span><span class="lbl">SIMULATION</span><span class="val" data-ref="simstat">RUNNING</span></div>
+      <div class="hp-title">System Status</div><p class="presentation-note">LSTM forecasts → MPC chooses → SafetyLayer constrains → downstream guard checks → ReservoirNetwork executes.</p>
+      <div class="hp-row"><span class="dot ok pulse"></span><span class="lbl">SIMULATION</span><span class="val" data-ref="simstat">UNKNOWN</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">STATE #</span><span class="val" data-ref="stateid">--</span></div>
-      <div class="hp-row"><span class="dot cy"></span><span class="lbl">CONTROLLER</span><span class="val" data-ref="mode2">AI / MPC</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">CONTROLLER</span><span class="val" data-ref="mode2">UNKNOWN</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">MPC FORECAST</span><span class="val" data-ref="ctlstat">--</span></div>
       <div class="hp-row"><span class="dot warn"></span><span class="lbl">SAFETY LAYER</span><span class="val" data-ref="safety">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">SAFETY ACTION</span><span class="val" data-ref="safetymod">--</span></div>
@@ -1820,18 +2320,48 @@ class ReservoirTwinRenderer {
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">MB RESERVOIRS</span><span class="val" data-ref="mbres4">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">RESERVOIRS</span><span class="val" data-ref="rescount">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">MPC ACTION</span><span class="val" data-ref="actdim">--</span></div>
-      <div class="hp-row"><span class="dot cy"></span><span class="lbl">LSTM V3</span><span class="val">LIVE</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">LSTM V3</span><span class="val">FORECAST ONLY</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN ADVISORY</span><span class="val" data-ref="gnnstat">--</span></div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN GRAPH</span><span class="val" data-ref="gnngraph">--</span></div>
+      <div class="presentation-note" data-ref="gnn-boundary">GNN advisory: UNKNOWN · affects control: UNKNOWN</div>
       <div class="hp-row"><span class="dot cy"></span><span class="lbl">GNN EMB. SIM</span><span class="val" data-ref="gnnrel">--</span></div>
-      <div class="hp-row"><span class="dot cy"></span><span class="lbl">RISK ENGINE</span><span class="val">ACTIVE</span></div>
+      <div class="hp-row"><span class="dot cy"></span><span class="lbl">RISK SOURCE</span><span class="val">BACKEND</span></div>
       <div class="hp-row"><span class="dot warn"></span><span class="lbl">HARDWARE I/F</span><span class="val" style="color:var(--warn)">NOT CONNECTED</span></div>`);
+
+    /* ── STAGE 18 — AUTO CONTROL status + activity feed ────────────────────────
+     * Every value rendered here is read VERBATIM from the backend's
+     * `auto_control` block and `event_log` array. Nothing is computed, inferred
+     * or invented in JavaScript: a row whose field the backend did not supply is
+     * HIDDEN (display:none) rather than defaulted to a hopeful value, and the
+     * feed only ever lists entries the backend actually logged. */
+    panel(right, 'hud-auto', '', `
+      <p class="presentation-note">Conditions apply on STEP / PLAY. Replay uses historical forecasts.</p><div class="hp-title">CONTROL STATUS <span class="hp-title-em" data-ref="auto-state">--</span></div>
+      <div class="presentation-note" data-ref="auto-reason-summary">Waiting for backend control state.</div>
+      <div class="hp-row" data-ref="row-auto-enabled"><span class="lbl">ENABLED</span><span class="val" data-ref="auto-enabled">--</span></div>
+      <div class="hp-row" data-ref="row-auto-mode"><span class="lbl">CONTROL MODE</span><span class="val" data-ref="auto-mode">--</span></div>
+      <div class="hp-row" data-ref="row-auto-decision"><span class="lbl">DECISION</span><span class="val" data-ref="auto-decision">--</span></div>
+      <div class="hp-row" data-ref="row-auto-safety"><span class="lbl">SAFETY</span><span class="val" data-ref="auto-safety">--</span></div>
+      <div class="hp-row" data-ref="row-auto-downstream"><span class="lbl">DOWNSTREAM</span><span class="val" data-ref="auto-downstream">--</span></div>
+      <div class="hp-row" data-ref="row-auto-forecast"><span class="lbl">FORECAST SRC</span><span class="val" data-ref="auto-forecast">--</span></div>
+      <div class="hp-row"><span class="lbl">ELIGIBILITY</span><span class="val" data-ref="auto-eligible">--</span></div>
+      <div class="hp-row"><span class="lbl">MASS BALANCE</span><span class="val" data-ref="auto-balance">--</span></div>
+      <div class="hp-row" data-ref="row-auto-action"><span class="lbl">ACTION SRC</span><span class="val" data-ref="auto-action">--</span></div>
+      <div class="hp-row reason" data-ref="row-auto-reason"><span class="lbl">BACKEND REASON</span><span class="val" data-ref="auto-reason">--</span></div>
+      <details class="presentation-detail">
+        <summary>FORECAST → MPC → SAFETY → DOWNSTREAM → FINAL</summary>
+        <div class="presentation-note">MPC: <span data-ref="mpc-status">--</span></div>
+        <div class="decision-chain" data-ref="auto-chain"></div>
+        <div class="presentation-note">CURRENT is the physical gate. FINAL is the backend's last final action; -- means unavailable.</div>
+        <div class="presentation-reason" data-ref="downstream-reason"></div>
+      </details>
+      <div class="hp-sub" style="color:var(--lbl);font-size:8px;letter-spacing:.2em;margin-top:6px">ACTIVITY (BACKEND EVENT LOG)</div>
+      <div class="auto-feed" data-ref="auto-feed"></div>`);
 
     const weatherP = panel(right, 'hud-weather', '', `
       <div class="hp-title">Weather / Storm</div>
-      <div class="hp-row"><span class="lbl">RAINFALL INT</span><span class="val" data-ref="wint">70%</span></div>
+      <div class="hp-row"><span class="lbl">STORM INPUT</span><span class="val" data-ref="wint">--</span></div>
       <div class="bar"><div class="fill" data-ref="wbar"></div></div>
-      <div class="hp-row"><span class="lbl">STORM LEVEL</span><span class="val" style="color:var(--warn)" data-ref="wlevel">HEAVY</span></div>
+      <div class="hp-row"><span class="lbl">STORM LEVEL</span><span class="val" style="color:var(--warn)" data-ref="wlevel">UNKNOWN</span></div>
       <div class="hp-sub" style="color:var(--lbl);font-size:8px;letter-spacing:.2em;margin-top:6px">FORECAST</div>
       <div class="fc" data-ref="fc"></div>
       <div class="fc-lbls"><span>1D</span><span>3D</span><span>7D</span></div>`);
@@ -1886,18 +2416,33 @@ class ReservoirTwinRenderer {
       d.id = 'hud-r' + n;
       d.innerHTML = `
         <div class="rc-head">
-          <span class="rc-id">R${n}</span>
+          <span class="rc-id">${'ABCD'[n - 1]}</span>
           <span class="rc-name">${RES_NAMES[n - 1]}</span>
           <span class="chip normal" data-k="risk">NORMAL</span>
         </div>
         <div class="rc-grid">
-          <div class="rc-kv"><div class="k">Level</div><div class="v" data-k="level">--</div></div>
+          <div class="rc-kv"><div class="k">Storage</div><div class="v" data-k="level">--</div></div>
           <div class="rc-kv"><div class="k">Inflow</div><div class="v" data-k="inflow">--</div></div>
-          <div class="rc-kv"><div class="k">Release</div><div class="v" data-k="release">--</div></div>
-          <div class="rc-kv"><div class="k">Storage</div><div class="v" data-k="storage">--</div></div>
-          <div class="rc-kv"><div class="k">Gate</div><div class="v" data-k="gate">--</div></div>
-          <div class="rc-kv"><div class="k">Trend</div><div class="v" data-k="trend">—</div></div>
+          <div class="rc-kv" hidden><div class="k">Storage</div><div class="v" data-k="storage">--</div></div>
+          <div class="rc-kv"><div class="k" data-k="gate-owner">Physical gate</div><div class="v" data-k="gate">--</div></div>
+          <div class="rc-kv"><div class="k">Total outflow</div><div class="v" data-k="release">--</div></div>
         </div>
+        <div class="card-trend" data-k="trend">UNKNOWN</div>
+        <div class="gate-feedback" data-k="gate-feedback" aria-live="polite"></div>
+        <details class="presentation-detail">
+          <summary>Forecast, gate &amp; flow details</summary>
+          <div class="presentation-note">FORECAST INFLOW · m³/s</div>
+          <div class="forecast-horizons">${['1d','3d','7d'].map(h => `<div><span>${h.toUpperCase()}</span><b data-k="forecast-${h}">N/A</b><i data-k="forecast-bar-${h}"></i></div>`).join('')}</div>
+          <div class="presentation-note" data-k="forecast-source">UNKNOWN</div>
+          <div class="rc-grid">
+            <div class="rc-kv"><div class="k">Operator request</div><div class="v" data-k="requested">--</div></div>
+            <div class="rc-kv"><div class="k">Controlled release</div><div class="v" data-k="controlled">--</div></div>
+            <div class="rc-kv"><div class="k">Spill this step</div><div class="v" data-k="spill">--</div></div>
+          </div>
+          <div class="presentation-note" data-k="decision"></div>
+          <div class="presentation-note">Scene water height is a storage proxy, not metres. Requests apply on a simulation step. Physical gate is backend-confirmed. Routing delays and losses are handled by ReservoirNetwork.</div>
+        <div class="presentation-reason" data-k="reason"></div>
+        </details>
         <div class="rc-foot">
           <div class="bar"><div class="fill" data-k="barL"></div></div>
         </div>`;
@@ -1911,7 +2456,7 @@ class ReservoirTwinRenderer {
     dsCard.innerHTML = `
       <div class="rc-head">
         <span class="rc-id">DS</span>
-        <span class="rc-name">Downstream</span>
+        <span class="rc-name">Idukki → downstream</span>
         <span class="chip normal" data-ref="dsstat2">NORMAL</span>
       </div>
       <div class="rc-grid">
@@ -1920,16 +2465,16 @@ class ReservoirTwinRenderer {
         <div class="rc-kv"><div class="k">Status</div><div class="v" data-ref="dsstat3">NORMAL</div></div>
       </div>
       <div class="rc-foot"><div class="bar"><div class="fill" data-ref="dsbar2"></div></div></div>`;
-    bottom.appendChild(dsCard);
+    right.appendChild(dsCard);
     hud.appendChild(bottom);
 
     /* — floating 3D labels — */
     this.fLabels = [];
     const FL = [
-      { id: 'R1' }, { id: 'R2' }, { id: 'R3' }, { id: 'DS' },
+      { id: 'R1' }, { id: 'R2' }, { id: 'R3' }, { id: 'R4' }, { id: 'DS' },
     ];
     for (const f of FL) {
-      const idx = f.id === 'DS' ? 3 : Number(f.id.slice(1)) - 1;
+      const idx = f.id === 'DS' ? 4 : Number(f.id.slice(1)) - 1;
       /* STAGE 12 — the fallback name comes from the ONE name list
        * (`this.resNames`), never a second, potentially mismatched literal. */
       const fname = f.id === 'DS' ? 'Downstream' : (this.resNames[idx] || f.id);
@@ -1937,7 +2482,7 @@ class ReservoirTwinRenderer {
       d.className = 'flabel';
       const gateHtml = f.id !== 'DS' ? `<span class="fl-gate" data-fl="gate">--%</span>` : '';
       d.innerHTML = `<span class="fl-dot" style="background:var(--accent)"></span>
-        <span class="fl-id">${f.id}</span><span class="fl-name">${fname}</span><span class="fl-lvl" data-fl="lvl">--</span>${gateHtml}<span class="fl-risk" data-fl="risk">NO DATA</span>`;
+        <span class="fl-id">${f.id === 'DS' ? 'DS' : 'ABCD'[idx]}</span><span class="fl-name">${fname}</span><span class="fl-lvl" data-fl="lvl">--</span>${gateHtml}<span class="fl-risk" data-fl="risk">NO DATA</span>`;
       hud.appendChild(d);
       this.fLabels.push(d);
     }
@@ -1946,7 +2491,7 @@ class ReservoirTwinRenderer {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.id = 'hud-connectors';
     this.connLines = []; this.connDots = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < this.R.length; i++) {
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       dot.setAttribute('r', '3');
@@ -1956,17 +2501,19 @@ class ReservoirTwinRenderer {
 
     const hint = document.createElement('div');
     hint.id = 'hud-hint';
-    hint.textContent = 'DRAG ORBIT · WHEEL ZOOM · RIGHT-DRAG PAN';
+    hint.textContent = 'STYLIZED TOPOLOGY · NOT GEOGRAPHIC TERRAIN · ARROWS = CONNECTIONS · BRIGHTNESS = REPORTED FLOW';
 
     const bar = document.createElement('div');
     bar.id = 'hud-controls';
     bar.innerHTML = `
       <div class="ctl-group"><span class="ctl-cap">CAMERA</span>
         <button class="cbtn on" data-cam="overview">OVERVIEW</button>
-        <button class="cbtn" data-cam="reservoir1">R1</button>
-        <button class="cbtn" data-cam="reservoir2">R2</button>
-        <button class="cbtn" data-cam="reservoir3">R3</button>
+        <button class="cbtn" data-cam="reservoir1">A</button>
+        <button class="cbtn" data-cam="reservoir2">B</button>
+        <button class="cbtn" data-cam="reservoir3">C</button>
+        <button class="cbtn" data-cam="reservoir4">IDUKKI</button>
         <button class="cbtn" data-cam="downstream">DOWNSTREAM</button>
+        <button class="cbtn" id="btn-focus" aria-pressed="false">FOCUS SIMULATION</button>
       </div>
       <div class="ctl-group harness"><span class="ctl-cap">SIMULATION CONTROLS</span>
         <button class="cbtn" id="btn-play">PLAY</button>
@@ -1979,7 +2526,24 @@ class ReservoirTwinRenderer {
         <label class="sld"><span>G2</span><input type="range" data-ctl="g2" min="0" max="100" value="35"><b data-v="g2">35</b></label>
         <label class="sld"><span>G3</span><input type="range" data-ctl="g3" min="0" max="100" value="50"><b data-v="g3">50</b></label>
         <label class="sld"><span>G4</span><input type="range" data-ctl="g4" min="0" max="100" value="50"><b data-v="g4">50</b></label>
-        <label class="chk"><input type="checkbox" data-ctl="auto" checked>AUTO</label>
+        <label class="chk" hidden><input type="checkbox" data-ctl="auto" checked>AUTO</label>
+      </div>
+      <div class="ctl-group" id="demo-commands"><span class="ctl-cap">DEMO</span>
+        <button class="cbtn" data-demo="normal">1 · RESET / NORMAL</button>
+        <button class="cbtn" data-demo="rain">2 · RISING INFLOW</button>
+        <button class="cbtn" data-demo="auto">3 · REQUEST AUTO</button>
+        <button class="cbtn" data-demo="return">4 · RETURN</button>
+      </div>
+      <div class="ctl-group mode" id="ctl-mode" data-ref="modegroup">
+        <span class="ctl-cap">CONTROL MODE</span>
+        <button class="cbtn mbtn mmanual" data-mode="MANUAL">MANUAL</button>
+        <button class="cbtn mbtn mauto" data-mode="AUTO">🤖 AUTO</button>
+        <span class="ai-lock" data-ref="gatelock">GATES · OPERATOR</span>
+      </div>
+      <div class="ctl-group" id="ctl-source">
+        <span class="ctl-cap">AI FORECAST SOURCE</span>
+        <button class="cbtn srcbtn" data-mode="MANUAL" data-source="SIMULATION">SIMULATION</button>
+        <button class="cbtn srcbtn" data-mode="AI" data-source="VALIDATED_REPLAY">HISTORICAL REPLAY</button>
       </div>`;
 
     hud.appendChild(svg);
@@ -2029,6 +2593,40 @@ class ReservoirTwinRenderer {
       gnnstat: q(hud, '[data-ref="gnnstat"]'), gnngraph: q(hud, '[data-ref="gnngraph"]'),
       gnnrel: q(hud, '[data-ref="gnnrel"]'),
       demoBadge: q(hud, '#demo-badge'), demoBadgeSub: q(hud, '#demo-badge [data-ref="dbsub"]'),
+      /* STAGE 18 — AUTO CONTROL panel + control-bar mode/source/lock refs.
+       * All are display targets: the values/classes written into them come from
+       * the authoritative payload, never from a local decision. */
+      autoState: q(hud, '[data-ref="auto-state"]'),
+      autoReasonSummary: q(hud, '[data-ref="auto-reason-summary"]'),
+      autoRows: {
+        enabled: q(hud, '[data-ref="row-auto-enabled"]'),
+        mode: q(hud, '[data-ref="row-auto-mode"]'),
+        decision: q(hud, '[data-ref="row-auto-decision"]'),
+        safety: q(hud, '[data-ref="row-auto-safety"]'),
+        downstream: q(hud, '[data-ref="row-auto-downstream"]'),
+        forecast: q(hud, '[data-ref="row-auto-forecast"]'),
+        action: q(hud, '[data-ref="row-auto-action"]'),
+        reason: q(hud, '[data-ref="row-auto-reason"]'),
+      },
+      autoVals: {
+        enabled: q(hud, '[data-ref="auto-enabled"]'),
+        mode: q(hud, '[data-ref="auto-mode"]'),
+        decision: q(hud, '[data-ref="auto-decision"]'),
+        safety: q(hud, '[data-ref="auto-safety"]'),
+        downstream: q(hud, '[data-ref="auto-downstream"]'),
+        forecast: q(hud, '[data-ref="auto-forecast"]'),
+        action: q(hud, '[data-ref="auto-action"]'),
+        reason: q(hud, '[data-ref="auto-reason"]'),
+      },
+      autoFeed: q(hud, '[data-ref="auto-feed"]'),
+      autoChain: q(hud, '[data-ref="auto-chain"]'),
+      autoEligible: q(hud, '[data-ref="auto-eligible"]'),
+      autoBalance: q(hud, '[data-ref="auto-balance"]'),
+      mpcStatus: q(hud, '[data-ref="mpc-status"]'),
+      downstreamReason: q(hud, '[data-ref="downstream-reason"]'),
+      modeBtns: Array.from(document.querySelectorAll('#ctl-mode [data-mode]')),
+      srcBtns: Array.from(document.querySelectorAll('#ctl-source [data-source]')),
+      gatelock: document.querySelector('[data-ref="gatelock"]'),
       res: rCards.map(p => {
         const g = k => q(p, `[data-k="${k}"]`);
         return { panel: p, level: g('level'), storage: g('storage'), inflow: g('inflow'),
@@ -2055,17 +2653,99 @@ class ReservoirTwinRenderer {
       btn.classList.add('on');
       this.setCameraPreset(btn.dataset.cam);
     }));
+    // Reuse live cards in the drawer: no duplicate state, polling or calculations.
+    const drawer = document.createElement('section');
+    drawer.id = 'reservoir-drawer';
+    drawer.hidden = true;
+    drawer.setAttribute('aria-label', 'Reservoir details');
+    drawer.innerHTML = `<div class="drawer-heading"><strong>RESERVOIRS</strong><button class="cbtn" data-close>CLOSE</button></div>
+      <div class="ctl-group">${rCards.map((_, i) => `<button class="cbtn" data-res="${i}">R${i + 1}</button>`).join('')}</div><div data-card></div>`;
+    hud.appendChild(drawer);
+    const restoreCards = () => rCards.forEach(card => bottom.appendChild(card));
+    const closeDrawer = () => {
+      restoreCards();
+      if (!drawer.hidden) rCards.forEach(card => { card.querySelector('details').open = false; });
+      drawer.hidden = true;
+      this.container.classList.remove('reservoir-view');
+      this._onResize?.();
+      this._cachePanelAnchors();
+    };
+    const showReservoir = i => {
+      restoreCards();
+      drawer.querySelector('[data-card]').appendChild(rCards[i]);
+      rCards[i].querySelector('details').open = true;
+      drawer.hidden = false;
+      this.container.classList.add('reservoir-view');
+      this._onResize?.();
+    drawer.querySelectorAll('[data-res]').forEach(b => b.classList.toggle('on', Number(b.dataset.res) === i));
+      this.setCameraPreset('reservoir' + (i + 1));
+      this._cachePanelAnchors();
+    };
+      this.fLabels.slice(0, this.R.length).forEach((label, i) => {
+      label.style.pointerEvents = 'auto'; label.tabIndex = 0; label.setAttribute('role', 'button');
+      label.addEventListener('click', () => showReservoir(i));
+      label.addEventListener('keydown', e => { if (e.key === 'Enter') showReservoir(i); });
+      rCards[i].querySelector('.rc-head').addEventListener('click', () => showReservoir(i));
+    });
+    drawer.querySelectorAll('[data-res]').forEach(b => b.addEventListener('click', () => showReservoir(Number(b.dataset.res))));
+    drawer.querySelector('[data-close]').addEventListener('click', () => {
+      closeDrawer();
+      rCards.forEach(card => { card.querySelector('details').open = false; });
+      this.setCameraPreset('overview');
+      rail.querySelector('[data-nav="reservoirs"]').focus();
+    });
+    const focusButton = bar.querySelector('#btn-focus');
+    const setFocus = active => {
+      closeDrawer();
+      this.container.classList.toggle('scene-focus', active);
+      focusButton.textContent = active ? 'EXIT FOCUS' : 'FOCUS SIMULATION';
+      focusButton.setAttribute('aria-pressed', String(active));
+      this._onResize?.();
+      this._cachePanelAnchors();
+    };
+    focusButton.addEventListener('click', () => setFocus(!this.container.classList.contains('scene-focus')));
+    this.container.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        if (!drawer.hidden) drawer.querySelector('[data-close]').click();
+        if (this.container.classList.contains('scene-focus')) { setFocus(false); focusButton.focus(); }
+      }
+    });
+    const secondary = document.createElement('details');
+    secondary.className = 'secondary-panels';
+    secondary.innerHTML = '<summary>System, weather &amp; hardware details</summary>';
+    Array.from(right.children).filter(p => !['hud-auto', 'hud-ds'].includes(p.id)).forEach(p => secondary.appendChild(p));
+    right.appendChild(secondary);
     /* Nav rail: visual state + camera shortcuts (single-page twin) */
     rail.querySelectorAll('.rail-item').forEach(item => item.addEventListener('click', () => {
       rail.querySelectorAll('.rail-item').forEach(b => b.classList.remove('on'));
       item.classList.add('on');
+      if (item.dataset.nav === 'reservoirs') showReservoir(0);
+      else closeDrawer();
       const cam = { home: 'overview', reservoirs: null, forecasting: null, simulation: 'overview', risk: null, reports: null, settings: null }[item.dataset.nav];
       if (cam) {
         this.el.camBtns.forEach(b => b.classList.toggle('on', b.dataset.cam === cam));
         this.setCameraPreset(cam);
       }
     }));
+    rail.querySelectorAll('.rail-item').forEach(item => {
+      item.tabIndex = 0;
+      item.setAttribute('role', 'button');
+      item.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); item.click(); }
+      });
+    });
     this._cachePanelAnchors();
+    // Track actual dock dimensions instead of overlapping fixed bottom offsets.
+    this._layoutObserver = new ResizeObserver(() => {
+      this.container.style.setProperty('--dock-height', bottom.offsetHeight + 'px');
+      this.container.style.setProperty('--controls-height', bar.offsetHeight + 'px');
+      this._cachePanelAnchors();
+      if (this._onResize) this._onResize();
+    });
+    this._layoutObserver.observe(bottom);
+    this._layoutObserver.observe(bar);
+    bottom.addEventListener('scroll', () => this._cachePanelAnchors(), { passive: true });
+    bottom.addEventListener('toggle', () => this._cachePanelAnchors(), true);
   }
 
   _cachePanelAnchors() {
@@ -2078,40 +2758,47 @@ class ReservoirTwinRenderer {
 
   _updateConnectors() {
     if (!this.connLines || !this.panelAnchors) return;
-    const w = this.container.clientWidth, h = this.container.clientHeight;
+    const w = this.renderer.domElement.clientWidth, h = this.renderer.domElement.clientHeight;
+    const viewport = this.renderer.domElement.getBoundingClientRect();
     /* floating label anchor points: R1/R2/R3 above their basins, DS at the downstream pool */
-    const DS_POS = { x: 40, y: -25, z: 520 };
-    const labelWorld = [
-      ...this.R.map(r => ({ x: valleyCenterX(r.B.cz), y: (r.waterY || r.minY) + 42, z: r.B.cz })),
-      DS_POS,
-    ];
-    for (let i = 0; i < 4; i++) {
+    const labelWorld = this._labelWorld || (this._labelWorld = [
+      ...this.R.map(r => ({ x: valleyCenterX(r.B.cz), y: 0, z: r.B.cz })),
+      { x: 40, y: -25, z: 520 },
+    ]);
+    for (let i = 0; i < this.R.length; i++) labelWorld[i].y = (this.R[i].waterY || this.R[i].minY) + 42;
+    let previousX = -1000, previousY = -1000;
+    for (let i = 0; i < this.fLabels.length; i++) {
       const lw = labelWorld[i];
       this._v3.set(lw.x, lw.y, lw.z).project(this.camera);
       const label = this.fLabels[i];
       const line = this.connLines[i], dot = this.connDots[i];
-      if (this._v3.z > 1 || this._v3.z < -1) {
-        if (label) label.style.opacity = '0';
-        if (line) line.style.display = 'none';
-        if (dot) dot.style.display = 'none';
+      if (this._v3.z > 1 || this._v3.z < -1 || Math.abs(this._v3.x) > 1.15 || Math.abs(this._v3.y) > 1.15) {
+        setStyle(label, 'opacity', '0');
+        setStyle(line, 'display', 'none');
+        setStyle(dot, 'display', 'none');
         continue;
       }
-      const sx = (this._v3.x * 0.5 + 0.5) * w, sy = (-this._v3.y * 0.5 + 0.5) * h;
+      const sx = viewport.left + (this._v3.x * 0.5 + 0.5) * w, sy = viewport.top + (-this._v3.y * 0.5 + 0.5) * h;
       if (label) {
-        label.style.opacity = '1';
-        label.style.left = sx + 'px';
-        label.style.top = sy + 'px';
-        if (this.el && this.el.flLvl[i]) {
-          const d = i < 3 ? this.R[i].data : null;
+        setStyle(label, 'opacity', '1');
+        const lx = Math.max(viewport.left + 76, Math.min(viewport.right - 76, sx));
+        let ly = Math.max(viewport.top + 50, Math.min(viewport.bottom - 6, sy));
+        if (Math.abs(lx - previousX) < 155 && Math.abs(ly - previousY) < 48) ly = previousY + 52;
+        previousX = lx; previousY = ly;
+        setStyle(label, 'left', lx.toFixed(2) + 'px');
+        setStyle(label, 'top', ly.toFixed(2) + 'px');
+        if (this.el && this.el.flLvl[i] && label._stateVersion !== this._labelVersion) {
+          label._stateVersion = this._labelVersion;
+          const d = i < this.R.length ? this.R[i].data : null;
           const dOk = !!(this.data.hasState && d && typeof d.level === 'number');
           this.el.flLvl[i].textContent = dOk ? (d.level * 100).toFixed(0) + '%'
-            : (i === 3 && typeof this.data.downstream === 'number'
+            : (i === this.R.length && typeof this.data.downstream === 'number'
                ? this.data.downstream.toFixed(0) + ' m³/s' : '--');
           if (dOk) {
             /* gate % — reservoirs only */
-            if (this.el.flGate[i]) this.el.flGate[i].textContent = (d.gate * 100).toFixed(0) + '%';
+            if (this.el.flGate[i]) this.el.flGate[i].textContent = (typeof d.gate === 'number' ? (d.gate * 100).toFixed(0) + '%' : '--');
             /* risk chip + label tint — backend string verbatim via RISK_UI */
-            const ru = riskUi(d.risk) || RISK_UI.normal;
+            const ru = riskUi(d.risk) || {cls:'unknown', label:'UNKNOWN'};
             if (this.el.flRisk[i]) {
               this.el.flRisk[i].textContent = ru.label;
               this.el.flRisk[i].className = 'fl-risk chip ' + ru.cls;
@@ -2123,7 +2810,7 @@ class ReservoirTwinRenderer {
             const dst = this.data.hasState ? String(this.data.downstreamStatus || 'UNKNOWN') : 'UNKNOWN';
             const ru = dst === 'WARNING' ? RISK_UI.warning
                      : dst === 'CRITICAL' ? RISK_UI.danger
-                     : dst === 'NORMAL' ? RISK_UI.normal : RISK_UI.normal;
+                     : dst === 'NORMAL' ? RISK_UI.normal : {cls:'unknown', label:'UNKNOWN'};
             if (this.el.flRisk[i]) {
               this.el.flRisk[i].textContent = ru.label;
               this.el.flRisk[i].className = 'fl-risk chip ' + ru.cls;
@@ -2132,33 +2819,35 @@ class ReservoirTwinRenderer {
           }
         }
       }
-      if (i < 3) {
+      if (i < this.R.length) {
         const a = this.panelAnchors[i];
-        line.style.display = '';
-        dot.style.display = '';
-        line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
-        line.setAttribute('x2', sx); line.setAttribute('y2', sy);
-        dot.setAttribute('cx', sx); dot.setAttribute('cy', sy);
+        setStyle(line, 'display', '');
+        setStyle(dot, 'display', '');
+        setAttr(line, 'x1', a.x); setAttr(line, 'y1', a.y);
+        setAttr(line, 'x2', sx.toFixed(2)); setAttr(line, 'y2', sy.toFixed(2));
+        setAttr(dot, 'cx', sx.toFixed(2)); setAttr(dot, 'cy', sy.toFixed(2));
         /* risk-tinted connector line + dot */
         const ru = riskUi(this.R[i].data.risk) || RISK_UI.normal;
         const tint = ru.cls === 'normal' ? 'var(--accent-line)' :
           ru.cls === 'watch' || ru.cls === 'warning' ? 'var(--warn)' :
           ru.cls === 'alert' ? 'var(--alert)' : 'var(--bad)';
-        line.style.stroke = tint;
-        dot.setAttribute('stroke', ru.cls === 'normal' ? 'var(--accent)' : tint);
+        setStyle(line, 'stroke', tint);
+        setAttr(dot, 'stroke', ru.cls === 'normal' ? 'var(--accent)' : tint);
       }
     }
   }
 
   _updateHUD(dt) {
+    if (!this._hudDirty) return;
     this._hudT += dt;
     if (this._hudT < 0.2) return;               /* DOM text at 5 Hz — never per-frame */
     this._hudT = 0;
     const el = this.el;
     if (!el) return;
+    this._hudDirty = false;
 
     const hasState = this.data.hasState === true;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < this.R.length; i++) {
       const d = this.R[i].data, e = el.res[i];
       /* STAGE 12 — `ok` is true only when the BACKEND supplied a level. Nothing
        * is defaulted to a number and nothing is derived from other readouts. */
@@ -2170,7 +2859,7 @@ class ReservoirTwinRenderer {
       e.gate.textContent    = (ok && typeof d.gate === 'number') ? (d.gate * 100).toFixed(0) + '%' : '--';
       e.barL.style.width    = ok ? (clamp01(d.level) * 100) + '%' : '0%';
       /* risk chip — backend string verbatim via RISK_UI (handles 'high risk' etc.) */
-      const ru = riskUi(ok ? d.risk : null) || RISK_UI.normal;
+      const ru = riskUi(ok ? d.risk : null) || {cls:'unknown', label:'UNKNOWN'};
       e.risk.textContent = ok ? ru.label : 'NO DATA';
       e.risk.className = 'chip ' + (ok ? ru.cls : 'normal');
       /* STAGE 12 — the trend is the BACKEND's classification of the net flux.
@@ -2182,8 +2871,8 @@ class ReservoirTwinRenderer {
       e.trend.style.color = tr === 'RISING' ? 'var(--warn)'
                           : tr === 'FALLING' ? 'var(--accent)' : 'var(--ink-faint)';
     }
-    const s = this.storm.cur;
-    el.wint.textContent = hasState ? (s * 100).toFixed(0) + '%' : '--';
+    const s = this.storm.tgt;
+    el.wint.textContent = hasState && this.data.stormIntensity !== null ? (s * 100).toFixed(0) + '%' : '--';
     el.wbar.style.width = hasState ? (s * 100) + '%' : '0%';
     /* STAGE 12 — the storm LEVEL is the backend's classification. */
     const lvl = this.data.stormLevel;
@@ -2236,51 +2925,18 @@ class ReservoirTwinRenderer {
     el.dsstat2.className = 'chip ' + (st === 'NORMAL' ? 'normal' : st === 'WARNING' ? 'warning' : st === 'CRITICAL' ? 'danger' : 'normal');
     el.dsstat3.textContent = st;
     el.dsstat3.style.color = stColor;
-    /* Stage 9 — the FOURTH reservoir card (Reservoir D / Idukki).
-     * Only the three basins above have a 3D mesh, so this card is fed from the
-     * payload's reservoir_4 block rather than from this.R. */
-    if (el.res[3]) {
-      const e4 = el.res[3], d4 = this.data.reservoir4;
-      if (d4) {
-        e4.level.textContent = (d4.level * 100).toFixed(1) + '%';
-        e4.storage.textContent = (d4.storage * 100).toFixed(1) + '%';
-        e4.inflow.textContent = d4.inflow.toFixed(1) + ' m³/s';
-        e4.release.textContent = d4.release.toFixed(1) + ' m³/s';
-        e4.gate.textContent = (d4.gate * 100).toFixed(0) + '%';
-        e4.barL.style.width = (d4.level * 100) + '%';
-        const ru4 = riskUi(d4.risk) || RISK_UI.normal;
-        e4.risk.textContent = ru4.label;
-        e4.risk.className = 'chip ' + ru4.cls;
-        /* STAGE 12 — backend trend verdict (was computed from inflow - release) */
-        const tr4 = String(d4.trend || '');
-        e4.trend.textContent = tr4 === 'RISING' ? '▲ RISING'
-                             : tr4 === 'FALLING' ? '▼ FALLING'
-                             : tr4 === 'STEADY' ? '— STEADY' : '—';
-        e4.trend.style.color = tr4 === 'RISING' ? 'var(--warn)'
-                             : tr4 === 'FALLING' ? 'var(--accent)' : 'var(--ink-faint)';
-      } else {
-        e4.level.textContent = '--'; e4.storage.textContent = '--';
-        e4.inflow.textContent = '--'; e4.release.textContent = '--';
-        e4.gate.textContent = '--'; e4.trend.textContent = '—';
-        e4.risk.textContent = 'NO DATA'; e4.risk.className = 'chip normal';
-        e4.barL.style.width = '0%';
-      }
-    }
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < this.R.length; i++) {
       const rd = this.R[i].data;
       const ru = riskUi(rd && rd.risk ? rd.risk : null) || RISK_UI.normal;
       const known = hasState && rd && typeof rd.level === 'number';
       el.tn[i].className = 'tnode' + (!known ? '' : ru.cls === 'normal' ? '' : ' ' + ru.cls);
     }
-    /* R4 node — risk comes VERBATIM from the payload for Reservoir D. */
-    const ru4 = riskUi((this.data.reservoir4 && this.data.reservoir4.risk) || 'normal') || RISK_UI.normal;
-    el.tn[3].className = 'tnode' + (ru4.cls === 'normal' ? '' : ' ' + ru4.cls);
     el.tn[4].className = 'tnode' + (st === 'NORMAL' ? '' : st === 'WARNING' ? ' warn' : st === 'CRITICAL' ? ' bad' : '');
     /* STAGE 12 — the authoritative state identity, displayed verbatim so the
      * operator can see the twin following the BACKEND's simulation progress. */
     if (el.stateid) el.stateid.textContent = hasState ? (this.data.stateId || '--') : '--';
     const modeTxt = !this.data.hasState ? '--'
-                  : this.data.mode === 'MANUAL' ? 'MANUAL' : 'AI / MPC';
+                  : this.data.mode === 'MANUAL' ? 'MANUAL' : this.data.mode === 'AI' ? 'AUTO REQUESTED' : 'UNKNOWN';
     el.mode.textContent = modeTxt;
     el.mode2.textContent = modeTxt;
 
@@ -2389,6 +3045,9 @@ class ReservoirTwinRenderer {
      * The similarity shown is an EMBEDDING SIMILARITY between learned vectors —
      * never hydraulic, causal or physical connectivity. */
     const ga = this.data.gnnAdvisory || {};
+    setText(this.hudRoot.querySelector('[data-ref="gnn-boundary"]'),
+      'Advisory only: ' + (typeof ga.advisory_only === 'boolean' ? (ga.advisory_only ? 'YES' : 'NO') : 'UNKNOWN')
+      + ' · Affects control: ' + (typeof ga.affects_control === 'boolean' ? (ga.affects_control ? 'YES' : 'NO') : 'UNKNOWN'));
     const gaStatus = String(ga.status || 'UNAVAILABLE');
     if (el.fceng) {
       /* The forecast engine is named by the payload. It was previously a
@@ -2397,7 +3056,9 @@ class ReservoirTwinRenderer {
        * the control forecast and the GNN is advisory only. */
       const fp = this.data.forecastProvenance || {};
       const model = String(fp.model || '');
-      el.fceng.textContent = model.startsWith('LSTM_V3') ? 'LSTM V3' : (model || '--');
+      const selection = this.data.forecastSourceSelection;
+      el.fceng.textContent = selection && selection.selected
+        ? selection.selected.replace(/_/g, ' ') : (model.startsWith('LSTM_V3') ? 'LSTM V3' : (model || '--'));
       el.fceng.style.color = 'var(--ink-faint)';
     }
     if (el.gnnstat) {
@@ -2461,7 +3122,7 @@ class ReservoirTwinRenderer {
     el.liveTime.textContent = isFinite(t.getTime())
       ? t.toLocaleTimeString('en-GB') + ' · ' + t.toLocaleDateString('en-GB')
       : String(this.data.simTime);
-    el.liveWx.textContent = 'RAIN — ' + (lvl || '--') + ' · 24°C';
+    el.liveWx.textContent = lvl || '--';
     const hwKeys = ['esp32', 'water_level_sensor', 'flow_sensor', 'gate_actuator'];
     for (let i = 0; i < 4; i++) {
       el.hw[i].textContent = String(this.data.hardware[hwKeys[i]] || 'NOT_CONNECTED')
@@ -2501,8 +3162,35 @@ if (app) {
   /* Initialize API connection */
   const api = new TwinAPI((state) => {
     app.updateState(state);
+  }, status => {
+    if (app.connectionStatus !== status) app._hudDirty = true;
+    app.connectionStatus = status;
+    const connection = document.querySelector('[data-ref="connection"]');
+    setText(connection, status === 'CONNECTED' ? 'BACKEND VERIFIED' : status === 'STALE DATA' ? status : status === 'CONNECTING' ? 'VERIFYING BACKEND' : 'BACKEND DISCONNECTED');
+    setStatus(connection, status);
+  }, status => {
+    document.querySelector('[data-ref="command-feedback"]').textContent = status;
+  }, health => {
+    const put = (key, value) => { const target = document.querySelector(`[data-ref="${key}"]`); if (target) target.textContent = value; };
+    put('rest-health', health.rest);
+    put('ws-health', health.websocket);
+    put('state-health', health.state);
+    put('state-received', health.receivedAt ? `ID ${health.stateId} at ${new Date(health.receivedAt).toLocaleTimeString()}` : 'NO STATE YET');
   });
   window.__twin_api = api;
+  Object.defineProperty(window, '__twinDiagnostics', {get: () => ({
+    fps: app._fps, frameMs: app._fps ? 1000 / app._fps : null,
+    connection: app.connectionStatus, stateId: app.data.stateId,
+    camera: app.camera.position.toArray(), target: app.controls.target.toArray(),
+    memory: {...app.renderer.info.memory}, drawCalls: app.renderer.info.render.calls,
+    reservoirs: app.R.map(r => ({id:r.B.id, level:r.data.level, gate:r.data.gate,
+      waterY:r.waterMesh.position.y, gateY:r.gateMesh.position.y,
+      gateTargetY:r.gateClosedY + r.gateTgt * r.gateTravel,
+      waterVisible:r.waterMesh.visible, jetVisible:r.jetMesh.visible,
+      spillVisible:r.spillMesh.visible, basin:{...r.B}})),
+    channels: app.flowMeshes.map(f => ({key:f.key, flow:f.mat.uniforms.uFlow.value,visible:f.mesh.visible})),
+    objects: app.scene.children.map(o=>o.name).filter(Boolean)
+  })});
 
   /* Bind Simulation Controls */
   const bindEvent = (selector, eventName, handler) => {
@@ -2522,10 +3210,22 @@ if (app) {
     }
   };
 
+  document.querySelectorAll('[data-demo]').forEach(btn => btn.addEventListener('click', async () => {
+    const step = btn.dataset.demo;
+    if (step === 'normal') {
+      await api.pause(); await api.reset(); await api.setMode('MANUAL'); await api.setStorm(0); await api.step();
+    } else if (step === 'return') {
+      await api.setMode('MANUAL'); await api.setStorm(20);
+    } else if (step === 'rain') await api.setStorm(35);
+    else await api.setMode('AI');
+  }));
   bindClick('#btn-play', () => api.play());
   bindClick('#btn-pause', () => api.pause());
   bindClick('#btn-step', () => api.step());
-  bindClick('#btn-reset', () => api.reset());
+  bindClick('#btn-reset', async () => {
+    await api.pause(); await api.reset();
+    await api.setMode('MANUAL'); await api.setStorm(0);
+  });
   
   bindInput('#ctl-speed', '#v-speed', (e) => api.setSpeed(Number(e.target.value) / 100));
   bindInput('[data-ctl="storm"]', '[data-v="storm"]', (e) => api.setStorm(Number(e.target.value)));
@@ -2535,6 +3235,24 @@ if (app) {
   }
   
   bindChange('[data-ctl="auto"]', (e) => api.setMode(e.target.checked ? 'AI' : 'MANUAL'));
+
+  /* ── STAGE 18 — CONTROL MODE (MANUAL | AUTO) ────────────────────────────────
+   * The switch only ISSUES the command. What the twin displays afterwards comes
+   * from the backend's own `auto_control` block, so the UI can never show AUTO
+   * as active when the backend is not in AI mode. */
+  document.querySelectorAll('#ctl-mode [data-mode]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      api.setMode(btn.dataset.mode === 'AUTO' ? 'AI' : 'MANUAL');
+    });
+  });
+
+  /* ── STAGE 18 — AI FORECAST SOURCE ──────────────────────────────────────────
+   * Selects which REAL forecast source is offered to the controller. This never
+   * relaxes the provenance gate; it is the backend that decides whether the
+   * gate is satisfied. */
+  document.querySelectorAll('#ctl-source [data-source]').forEach(btn => {
+    btn.addEventListener('click', () => api.setMode(btn.dataset.mode, btn.dataset.source));
+  });
 }
 </script>
 </body>

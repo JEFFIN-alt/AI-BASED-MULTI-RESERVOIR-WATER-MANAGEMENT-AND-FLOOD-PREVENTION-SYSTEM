@@ -176,14 +176,24 @@ def test_reset_command_restores_authoritative_initial_conditions():
 
 def test_websocket_publishes_authoritative_state():
     """The WS payload must reflect the authoritative simulation's own state."""
+    client.post("/api/simulation/pause")
     client.post("/api/controller/mode", json={"mode": "MANUAL"})
+    node = state_manager.sim_state.bridge.cascade.network.nodes["Virtual Reservoir A"]
+    physical_gate = node.state.gate_position
     client.post("/api/gate/reservoir_1", json={"value": 37.0})
 
     with client.websocket_connect("/ws/state") as ws:
         data = ws.receive_json()
 
-    assert data["reservoirs"]["reservoir_1"]["gate"] == pytest.approx(0.37, abs=1e-9)
+    assert data["reservoirs"]["reservoir_1"]["requested_gate_pct"] == 37.0
+    assert data["reservoirs"]["reservoir_1"]["gate"] == physical_gate
+    assert node.state.gate_position == physical_gate
     assert data["controller_mode"] == "MANUAL"
+    client.post("/api/simulation/step")
+    with client.websocket_connect("/ws/state") as ws:
+        applied = ws.receive_json()
+    assert applied["reservoirs"]["reservoir_1"]["gate"] == node.state.gate_position
+    assert node.state.gate_position == pytest.approx(0.37, abs=1e-9)
 
 
 def test_websocket_and_rest_state_agree():
@@ -206,18 +216,28 @@ def test_websocket_and_rest_state_agree():
 
 def test_websocket_state_changes_when_authoritative_simulation_changes():
     """A command that moves the simulation must be visible over the WS feed."""
+    client.post("/api/simulation/pause")
     client.post("/api/controller/mode", json={"mode": "MANUAL"})
     client.post("/api/gate/reservoir_3", json={"value": 5.0})
+    client.post("/api/simulation/step")
     with client.websocket_connect("/ws/state") as ws:
         before = ws.receive_json()
 
     client.post("/api/gate/reservoir_3", json={"value": 65.0})
 
     with client.websocket_connect("/ws/state") as ws:
+        pending = ws.receive_json()
+    assert pending["reservoirs"]["reservoir_3"]["requested_gate_pct"] == 65.0
+    assert pending["reservoirs"]["reservoir_3"]["gate"] == before["reservoirs"]["reservoir_3"]["gate"]
+    client.post("/api/simulation/step")
+
+    with client.websocket_connect("/ws/state") as ws:
         after = ws.receive_json()
 
     assert before["reservoirs"]["reservoir_3"]["gate"] == pytest.approx(0.05, abs=1e-9)
     assert after["reservoirs"]["reservoir_3"]["gate"] == pytest.approx(0.65, abs=1e-9)
+    assert after["reservoirs"]["reservoir_3"]["gate"] == state_manager.sim_state.bridge.cascade.network.nodes[
+        "Virtual Reservoir C"].state.gate_position
 
 
 def test_websocket_uses_the_authoritative_singleton_object():

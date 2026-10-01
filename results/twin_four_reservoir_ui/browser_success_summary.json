@@ -1,0 +1,151 @@
+{
+  "result": "PASS",
+  "checks": {
+    "REST four reservoirs": {
+      "pass": true
+    },
+    "WebSocket matches REST": {
+      "pass": true
+    },
+    "four complete scene reservoirs": {
+      "pass": true
+    },
+    "gate request acknowledged but not physical yet": {
+      "pass": true
+    },
+    "gate REST-WebSocket-renderer synchronization": {
+      "pass": true
+    },
+    "storm command": {
+      "pass": true
+    },
+    "inflow increased in authoritative backend": {
+      "pass": true
+    },
+    "four state mappings follow cascade": {
+      "pass": true
+    },
+    "terminal flow belongs to D": {
+      "pass": true
+    },
+    "simulation AUTO honestly blocked": {
+      "pass": true
+    },
+    "historical replay MPC actual status": {
+      "pass": true
+    },
+    "safety status matches backend": {
+      "pass": true
+    },
+    "guard status matches backend": {
+      "pass": true
+    },
+    "mass balance matches backend": {
+      "pass": true
+    },
+    "replay provenance disclosed": {
+      "pass": true
+    },
+    "GNN remains advisory": {
+      "pass": true
+    },
+    "hardware not connected": {
+      "pass": true
+    },
+    "GNN UI flags honest": {
+      "pass": true
+    },
+    "hardware UI honest": {
+      "pass": true
+    },
+    "Idukki camera actually moves": {
+      "pass": true
+    },
+    "Idukki drawer correct": {
+      "pass": true
+    },
+    "Idukki forecast values displayed": {
+      "pass": true
+    },
+    "focus mode": {
+      "pass": true
+    },
+    "1920x1080 scene clear of controls": {
+      "pass": true
+    },
+    "1920x1080 layout bounds": {
+      "pass": true
+    },
+    "1440x900 scene clear of controls": {
+      "pass": true
+    },
+    "1440x900 layout bounds": {
+      "pass": true
+    },
+    "1366x768 scene clear of controls": {
+      "pass": true
+    },
+    "1366x768 layout bounds": {
+      "pass": true
+    },
+    "1280x720 scene clear of controls": {
+      "pass": true
+    },
+    "1280x720 layout bounds": {
+      "pass": true
+    },
+    "live WebSocket progress": {
+      "pass": true
+    },
+    "reset authoritative state": {
+      "pass": true
+    },
+    "normal demo uses backend reset and commands": {
+      "pass": true
+    },
+    "disconnect honestly shown": {
+      "pass": true
+    },
+    "stale data honestly shown": {
+      "pass": true
+    },
+    "no browser errors": {
+      "pass": true
+    }
+  },
+  "check_count": 37,
+  "runtime": "FastAPI at 127.0.0.1:8000; browser runner and backend stopped after validation",
+  "screenshots": [
+    "normal-1920x1080.png",
+    "normal-1440x900.png",
+    "normal-1366x768.png",
+    "normal-1280x720.png",
+    "idukki-normal.png",
+    "focus.png",
+    "disconnected.png"
+  ],
+  "performance_headless_swiftshader": {
+    "fps_median_by_resolution": {
+      "1920x1080": 4.88,
+      "1440x900": 6.13,
+      "1366x768": 5.9,
+      "1280x720": 6.36
+    },
+    "frame_ms_median_by_resolution": {
+      "1920x1080": 205.0,
+      "1440x900": 163.1,
+      "1366x768": 169.4,
+      "1280x720": 157.1
+    },
+    "renderer_memory": {
+      "geometries": 49,
+      "textures": 5,
+      "growth_observed": false
+    },
+    "js_heap_bytes_samples": [
+      11200000,
+      11200000
+    ],
+    "websocket_frames": 21
+  }
+}

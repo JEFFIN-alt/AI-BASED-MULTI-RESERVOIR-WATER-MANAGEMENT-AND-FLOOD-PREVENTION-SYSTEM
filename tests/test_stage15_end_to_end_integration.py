@@ -616,11 +616,19 @@ def test_streamlit_reads_state_and_only_posts_bound_commands():
 
 def test_streamlit_commands_reach_the_authoritative_backend(stepped_sim):
     """The routes the page posts to are real and move the ONE authoritative sim."""
+    node = state_manager.sim_state.bridge.cascade.network.nodes["Virtual Reservoir D"]
+    before = node.state.gate_position
     response = client.post("/api/gate/reservoir_4", json={"value": 20.0})
     assert response.status_code == 200
     assert state_manager.sim_state.manual_gates["Virtual Reservoir D"] == pytest.approx(20.0)
-    assert client.get("/api/state").json()["reservoirs"]["reservoir_4"]["gate"] == \
-        pytest.approx(0.20, abs=1e-9)
+    row = client.get("/api/state").json()["reservoirs"]["reservoir_4"]
+    assert row["requested_gate_pct"] == pytest.approx(20.0)
+    assert row["gate"] == pytest.approx(before, abs=1e-9)
+    assert node.state.gate_position == before
+    assert client.post("/api/simulation/step").status_code == 200
+    row = client.get("/api/state").json()["reservoirs"]["reservoir_4"]
+    assert row["gate"] == pytest.approx(node.state.gate_position, abs=1e-9)
+    assert row["gate"] == pytest.approx(0.20, abs=1e-9)
 
 
 # ===========================================================================
@@ -697,12 +705,16 @@ def test_mass_balance_corruption_in_the_live_path_is_reported_not_repaired(stepp
     network = state_manager.sim_state.bridge.cascade.network
     monitor = state_manager.sim_state.bridge.cascade.mass_balance_monitor
     snapshot = monitor.snapshot(network)
-    network.nodes["Virtual Reservoir D"].state.total_outflow += 5.0
+    original_outflow = network.nodes["Virtual Reservoir D"].state.total_outflow
+    corrupted_outflow = original_outflow + 5.0
+    network.nodes["Virtual Reservoir D"].state.total_outflow = corrupted_outflow
     result = monitor.verify(network, snapshot,
                             applied_inflows=dict(state_manager.sim_state.manual_inflows),
                             applied_gates_fraction={n: 0.3 for n in NODES})
     assert result.status != "PASS"
-    assert network.nodes["Virtual Reservoir D"].state.total_outflow > 5.0  # untouched
+    # A drained terminal reservoir can legitimately start at zero outflow.
+    # Verification must preserve the exact corruption, regardless of prior tests.
+    assert network.nodes["Virtual Reservoir D"].state.total_outflow == corrupted_outflow
 
 
 def test_unavailable_gnn_does_not_block_the_simulation(stepped_sim):

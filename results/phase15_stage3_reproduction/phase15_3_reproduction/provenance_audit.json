@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-17T21:46:26.291399",
+  "timestamp": "2026-10-01T14:04:41.055738",
   "script": "scripts/run_phase15_3_validation.py",
   "network_provenance_summary": {
     "OBSERVED": 4,
@@ -170,7 +170,7 @@
   },
   "v3_adapter_provenance": {
     "model": "LSTM_V3",
-    "artifact": "C:\\Users\\JEFFIN\\Music\\mki\\test-repo1\\results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv",
+    "artifact": "C:\\Users\\theju\\Music\\proj\\AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM\\results\\lstm_pytorch_v3_logtarget\\test_predictions_original_units.csv",
     "artifact_exists": true,
     "total_records": 1100,
     "unique_dates": 74,

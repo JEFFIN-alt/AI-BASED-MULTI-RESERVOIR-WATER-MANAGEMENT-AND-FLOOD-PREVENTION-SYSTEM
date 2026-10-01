@@ -1,0 +1,1265 @@
+{
+  "source": "captured public REST/WebSocket state; no injected frontend state",
+  "stages": [
+    {
+      "stage": "NORMAL",
+      "state_identity": {
+        "sim_step_index": 1,
+        "network_timestep": 1,
+        "state_id": "step1-t1",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      },
+      "storm": {
+        "intensity": 0.0,
+        "level": "LIGHT",
+        "source": "authoritative storm_intensity"
+      },
+      "reservoirs": {
+        "reservoir_1": {
+          "storage": 0.5924214417744916,
+          "inflow": 34.72222222222222,
+          "release": 23.14814814814815,
+          "gate": 0.4,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_2": {
+          "storage": 0.5235183443085607,
+          "inflow": 46.2962962962963,
+          "release": 40.50925925925926,
+          "gate": 0.35,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_3": {
+          "storage": 0.543067558643659,
+          "inflow": 1041.6666666666667,
+          "release": 868.0555555555555,
+          "gate": 0.5,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_4": {
+          "storage": 0.25089056622574296,
+          "inflow": 0.0,
+          "release": 1157.4074074074074,
+          "gate": 0.5,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        }
+      },
+      "forecast_source_selection": {
+        "selected": "SIMULATION",
+        "control_forecast_validated": false,
+        "replay_is_historical_not_live": false,
+        "options": [
+          "SIMULATION",
+          "VALIDATED_REPLAY"
+        ],
+        "note": "SIMULATION: the frozen LSTM V3 model run on this simulation's own state, with explicitly-labelled synthetic placeholders for features the live simulation cannot produce. Reported DEMONSTRATION_ONLY, so the provenance gate blocks the controller and AUTO holds the gates."
+      },
+      "forecast_provenance": {
+        "model": "LSTM_V3_LOGTARGET",
+        "model_status": "FROZEN_UNMODIFIED",
+        "forecast_unit": "MCM/day",
+        "horizons": [
+          "1d",
+          "3d",
+          "7d"
+        ],
+        "validated_evaluation": "historical held-out data -> frozen LSTM V3",
+        "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",
+        "live_forecasts_are_validated": false,
+        "provenance_note": "Live forecasts use simulation-derived inputs and explicitly labelled synthetic placeholders for features the live simulation cannot produce (water_level in metres, rainfall in mm). Validated V3 test metrics do NOT apply to them."
+      },
+      "auto_control": {
+        "state": "AUTO_DISABLED",
+        "reason": "Control mode is MANUAL \u2014 the backend is not deciding gate positions.",
+        "control_mode": "MANUAL",
+        "auto_enabled": false,
+        "loop_running": false,
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_validated": false,
+        "control_applied": false,
+        "safety_layer_status": "UNKNOWN",
+        "safety_modified_by_controller": false,
+        "downstream_status": "UNKNOWN",
+        "downstream_protection_modified": false,
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "forecast_source": "SIMULATION",
+        "mpc_status": "",
+        "gate_transitions": [],
+        "risk_transitions": [],
+        "actions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          }
+        ],
+        "reasons": [],
+        "controller_provenance": {
+          "forecast_date": null,
+          "rule": null,
+          "reason_strings": []
+        }
+      },
+      "downstream": {
+        "flow_m3_s": 1157.4074074074074,
+        "capacity_m3_s": 578.7037037037037,
+        "utilisation": 2.0,
+        "status": "CRITICAL",
+        "unit": "m3/s",
+        "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 2.842170943040401e-14,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-01T08:41:20.997881+00:00",
+        "step_index": null,
+        "timestep": 1,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 5.41 -> 6.41 MCM, in 3.0 (local) + 0.0 (routed) MCM/day, out 2.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 5.41,
+            "storage_after_mcm": 6.41,
+            "storage_change_mcm": 1.0,
+            "inflow_local_mcm_day": 3.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 2.0,
+            "commanded_gate_fraction": 0.4,
+            "applied_gate_position": 0.4,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 10.63 -> 11.13 MCM, in 4.0 (local) + 0.0 (routed) MCM/day, out 3.5 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 10.63,
+            "storage_after_mcm": 11.13,
+            "storage_change_mcm": 0.5,
+            "inflow_local_mcm_day": 4.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 3.5,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 3.5,
+            "commanded_gate_fraction": 0.35,
+            "applied_gate_position": 0.35,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 174.145 -> 189.14499999999998 MCM, in 90.0 (local) + 0.0 (routed) MCM/day, out 75.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 174.145,
+            "storage_after_mcm": 189.14499999999998,
+            "storage_change_mcm": 14.999999999999972,
+            "inflow_local_mcm_day": 90.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 75.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 75.0,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": -2.842170943040401e-14,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 100.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 100.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 100.715,
+            "storage_change_mcm": -100.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 100.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 100.0,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.4,
+          "Virtual Reservoir B": 0.35,
+          "Virtual Reservoir C": 0.5,
+          "Virtual Reservoir D": 0.5
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 40.0,
+          "Virtual Reservoir B": 35.0,
+          "Virtual Reservoir C": 50.0,
+          "Virtual Reservoir D": 50.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.12760000026901253
+      }
+    },
+    {
+      "stage": "RISING INFLOW",
+      "state_identity": {
+        "sim_step_index": 6,
+        "network_timestep": 6,
+        "state_id": "step6-t6",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      },
+      "storm": {
+        "intensity": 0.35,
+        "level": "NORMAL",
+        "source": "authoritative storm_intensity"
+      },
+      "reservoirs": {
+        "reservoir_1": {
+          "storage": 1.0,
+          "inflow": 71.18055555555556,
+          "release": 71.18055555555554,
+          "gate": 0.4,
+          "spill_mcm": 4.149999999999999,
+          "risk": "high risk"
+        },
+        "reservoir_2": {
+          "storage": 1.0,
+          "inflow": 115.74074074074075,
+          "release": 115.74074074074075,
+          "gate": 0.35,
+          "spill_mcm": 6.5,
+          "risk": "high risk"
+        },
+        "reservoir_3": {
+          "storage": 1.0,
+          "inflow": 2169.8495370370365,
+          "release": 2169.8495370370365,
+          "gate": 0.5,
+          "spill_mcm": 112.47499999999997,
+          "risk": "high risk"
+        },
+        "reservoir_4": {
+          "storage": 0.7491094337742571,
+          "inflow": 694.4444444444445,
+          "release": 231.4814814814815,
+          "gate": 0.1,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        }
+      },
+      "forecast_source_selection": {
+        "selected": "SIMULATION",
+        "control_forecast_validated": false,
+        "replay_is_historical_not_live": false,
+        "options": [
+          "SIMULATION",
+          "VALIDATED_REPLAY"
+        ],
+        "note": "SIMULATION: the frozen LSTM V3 model run on this simulation's own state, with explicitly-labelled synthetic placeholders for features the live simulation cannot produce. Reported DEMONSTRATION_ONLY, so the provenance gate blocks the controller and AUTO holds the gates."
+      },
+      "forecast_provenance": {
+        "model": "LSTM_V3_LOGTARGET",
+        "model_status": "FROZEN_UNMODIFIED",
+        "forecast_unit": "MCM/day",
+        "horizons": [
+          "1d",
+          "3d",
+          "7d"
+        ],
+        "validated_evaluation": "historical held-out data -> frozen LSTM V3",
+        "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",
+        "live_forecasts_are_validated": false,
+        "provenance_note": "Live forecasts use simulation-derived inputs and explicitly labelled synthetic placeholders for features the live simulation cannot produce (water_level in metres, rainfall in mm). Validated V3 test metrics do NOT apply to them."
+      },
+      "auto_control": {
+        "state": "AUTO_DISABLED",
+        "reason": "Control mode is MANUAL \u2014 the backend is not deciding gate positions.",
+        "control_mode": "MANUAL",
+        "auto_enabled": false,
+        "loop_running": false,
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_validated": false,
+        "control_applied": false,
+        "safety_layer_status": "UNKNOWN",
+        "safety_modified_by_controller": false,
+        "downstream_status": "UNKNOWN",
+        "downstream_protection_modified": false,
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "forecast_source": "SIMULATION",
+        "mpc_status": "",
+        "gate_transitions": [],
+        "risk_transitions": [],
+        "actions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          }
+        ],
+        "reasons": [],
+        "controller_provenance": {
+          "forecast_date": null,
+          "rule": null,
+          "reason_strings": []
+        }
+      },
+      "downstream": {
+        "flow_m3_s": 231.4814814814815,
+        "capacity_m3_s": 578.7037037037037,
+        "utilisation": 0.4,
+        "status": "NORMAL",
+        "unit": "m3/s",
+        "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 3.552713678800501e-15,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-01T08:41:31.018861+00:00",
+        "step_index": null,
+        "timestep": 6,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 10.82 -> 10.82 MCM, in 6.1499999999999995 (local) + 0.0 (routed) MCM/day, out 2.0 (release) + 4.149999999999999 (spill) MCM/day",
+            "storage_before_mcm": 10.82,
+            "storage_after_mcm": 10.82,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 6.1499999999999995,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.0,
+            "spill_mcm": 4.149999999999999,
+            "total_outflow_mcm_day": 6.149999999999999,
+            "commanded_gate_fraction": 0.4,
+            "applied_gate_position": 0.4,
+            "residual_mcm": -8.881784197001252e-16,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 21.26 -> 21.26 MCM, in 8.2 (local) + 1.8 (routed) MCM/day, out 3.5 (release) + 6.5 (spill) MCM/day",
+            "storage_before_mcm": 21.26,
+            "storage_after_mcm": 21.26,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 8.2,
+            "inflow_routed_mcm_day": 1.8,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 3.5,
+            "spill_mcm": 6.5,
+            "total_outflow_mcm_day": 10.0,
+            "commanded_gate_fraction": 0.35,
+            "applied_gate_position": 0.35,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 348.29 -> 348.29 MCM, in 184.49999999999997 (local) + 2.975 (routed) MCM/day, out 75.0 (release) + 112.47499999999997 (spill) MCM/day",
+            "storage_before_mcm": 348.29,
+            "storage_after_mcm": 348.29,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 184.49999999999997,
+            "inflow_routed_mcm_day": 2.975,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 75.0,
+            "spill_mcm": 112.47499999999997,
+            "total_outflow_mcm_day": 187.47499999999997,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 260.71500000000003 -> 300.71500000000003 MCM, in 0.0 (local) + 60.0 (routed) MCM/day, out 20.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 260.71500000000003,
+            "storage_after_mcm": 300.71500000000003,
+            "storage_change_mcm": 40.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 60.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 20.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 20.0,
+            "commanded_gate_fraction": 0.1,
+            "applied_gate_position": 0.1,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.4,
+          "Virtual Reservoir B": 0.35,
+          "Virtual Reservoir C": 0.5,
+          "Virtual Reservoir D": 0.1
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 40.0,
+          "Virtual Reservoir B": 35.0,
+          "Virtual Reservoir C": 50.0,
+          "Virtual Reservoir D": 10.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.14340000052470714
+      }
+    },
+    {
+      "stage": "SIMULATION FORECAST BLOCKED",
+      "state_identity": {
+        "sim_step_index": 7,
+        "network_timestep": 7,
+        "state_id": "step7-t7",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      },
+      "storm": {
+        "intensity": 0.35,
+        "level": "NORMAL",
+        "source": "authoritative storm_intensity"
+      },
+      "reservoirs": {
+        "reservoir_1": {
+          "storage": 1.0,
+          "inflow": 71.18055555555556,
+          "release": 71.18055555555554,
+          "gate": 0.4,
+          "spill_mcm": 4.149999999999999,
+          "risk": "high risk"
+        },
+        "reservoir_2": {
+          "storage": 1.0,
+          "inflow": 115.74074074074075,
+          "release": 115.74074074074075,
+          "gate": 0.35,
+          "spill_mcm": 6.5,
+          "risk": "high risk"
+        },
+        "reservoir_3": {
+          "storage": 1.0,
+          "inflow": 2169.8495370370365,
+          "release": 2169.8495370370365,
+          "gate": 0.5,
+          "spill_mcm": 112.47499999999997,
+          "risk": "high risk"
+        },
+        "reservoir_4": {
+          "storage": 0.8487532072839599,
+          "inflow": 694.4444444444445,
+          "release": 231.4814814814815,
+          "gate": 0.1,
+          "spill_mcm": 0.0,
+          "risk": "watch"
+        }
+      },
+      "forecast_source_selection": {
+        "selected": "SIMULATION",
+        "control_forecast_validated": false,
+        "replay_is_historical_not_live": false,
+        "options": [
+          "SIMULATION",
+          "VALIDATED_REPLAY"
+        ],
+        "note": "SIMULATION: the frozen LSTM V3 model run on this simulation's own state, with explicitly-labelled synthetic placeholders for features the live simulation cannot produce. Reported DEMONSTRATION_ONLY, so the provenance gate blocks the controller and AUTO holds the gates."
+      },
+      "forecast_provenance": {
+        "model": "LSTM_V3_LOGTARGET",
+        "model_status": "FROZEN_UNMODIFIED",
+        "forecast_unit": "MCM/day",
+        "horizons": [
+          "1d",
+          "3d",
+          "7d"
+        ],
+        "validated_evaluation": "historical held-out data -> frozen LSTM V3",
+        "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",
+        "live_forecasts_are_validated": false,
+        "provenance_note": "Live forecasts use simulation-derived inputs and explicitly labelled synthetic placeholders for features the live simulation cannot produce (water_level in metres, rainfall in mm). Validated V3 test metrics do NOT apply to them."
+      },
+      "auto_control": {
+        "state": "AUTO_BLOCKED",
+        "reason": "FORECAST_NOT_ELIGIBLE_FOR_CONTROL",
+        "control_mode": "AI",
+        "auto_enabled": true,
+        "loop_running": false,
+        "controller_type": "MPC",
+        "controller_status": "BLOCKED",
+        "forecast_control_eligible": false,
+        "forecast_validated": false,
+        "control_applied": false,
+        "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+        "safety_modified_by_controller": false,
+        "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+        "downstream_protection_modified": false,
+        "final_safe_control_action_source": "HELD_CURRENT_GATES",
+        "forecast_source": "SIMULATION",
+        "mpc_status": "NOT_INVOKED",
+        "gate_transitions": [],
+        "risk_transitions": [
+          {
+            "reservoir": "Idukki",
+            "node_id": "Virtual Reservoir D",
+            "previous_risk": "NORMAL",
+            "risk": "WATCH"
+          }
+        ],
+        "actions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": 40.0,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": 40.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": 35.0,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": 35.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": 50.0,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": 10.0,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": 10.0
+          }
+        ],
+        "reasons": [
+          "Virtual Reservoir A:NOT_VALIDATED_METRICS",
+          "Virtual Reservoir A:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+          "Virtual Reservoir B:NOT_VALIDATED_METRICS",
+          "Virtual Reservoir B:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+          "Virtual Reservoir C:NOT_VALIDATED_METRICS",
+          "Virtual Reservoir C:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+          "Virtual Reservoir D:MISSING_FORECAST",
+          "Virtual Reservoir D:NOT_VALIDATED_METRICS",
+          "Virtual Reservoir D:HORIZON_UNAVAILABLE:1d",
+          "Virtual Reservoir D:HORIZON_UNAVAILABLE:3d",
+          "Virtual Reservoir D:HORIZON_UNAVAILABLE:7d"
+        ],
+        "controller_provenance": {
+          "forecast_date": "2026-10-01",
+          "rule": "validated_metrics_apply == true for EVERY controlled reservoir",
+          "reason_strings": [
+            "Virtual Reservoir A:NOT_VALIDATED_METRICS",
+            "Virtual Reservoir A:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+            "Virtual Reservoir B:NOT_VALIDATED_METRICS",
+            "Virtual Reservoir B:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+            "Virtual Reservoir C:NOT_VALIDATED_METRICS",
+            "Virtual Reservoir C:STATUS_NOT_VALIDATED:DEMONSTRATION_ONLY",
+            "Virtual Reservoir D:MISSING_FORECAST",
+            "Virtual Reservoir D:NOT_VALIDATED_METRICS",
+            "Virtual Reservoir D:HORIZON_UNAVAILABLE:1d",
+            "Virtual Reservoir D:HORIZON_UNAVAILABLE:3d",
+            "Virtual Reservoir D:HORIZON_UNAVAILABLE:7d"
+          ]
+        }
+      },
+      "downstream": {
+        "flow_m3_s": 231.4814814814815,
+        "capacity_m3_s": 578.7037037037037,
+        "utilisation": 0.4,
+        "status": "NORMAL",
+        "unit": "m3/s",
+        "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 3.552713678800501e-15,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-01T08:41:36.634108+00:00",
+        "step_index": null,
+        "timestep": 7,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 10.82 -> 10.82 MCM, in 6.1499999999999995 (local) + 0.0 (routed) MCM/day, out 2.0 (release) + 4.149999999999999 (spill) MCM/day",
+            "storage_before_mcm": 10.82,
+            "storage_after_mcm": 10.82,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 6.1499999999999995,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.0,
+            "spill_mcm": 4.149999999999999,
+            "total_outflow_mcm_day": 6.149999999999999,
+            "commanded_gate_fraction": 0.4,
+            "applied_gate_position": 0.4,
+            "residual_mcm": -8.881784197001252e-16,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 21.26 -> 21.26 MCM, in 8.2 (local) + 1.8 (routed) MCM/day, out 3.5 (release) + 6.5 (spill) MCM/day",
+            "storage_before_mcm": 21.26,
+            "storage_after_mcm": 21.26,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 8.2,
+            "inflow_routed_mcm_day": 1.8,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 3.5,
+            "spill_mcm": 6.5,
+            "total_outflow_mcm_day": 10.0,
+            "commanded_gate_fraction": 0.35,
+            "applied_gate_position": 0.35,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 348.29 -> 348.29 MCM, in 184.49999999999997 (local) + 2.975 (routed) MCM/day, out 75.0 (release) + 112.47499999999997 (spill) MCM/day",
+            "storage_before_mcm": 348.29,
+            "storage_after_mcm": 348.29,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 184.49999999999997,
+            "inflow_routed_mcm_day": 2.975,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 75.0,
+            "spill_mcm": 112.47499999999997,
+            "total_outflow_mcm_day": 187.47499999999997,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 300.71500000000003 -> 340.71500000000003 MCM, in 0.0 (local) + 60.0 (routed) MCM/day, out 20.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 300.71500000000003,
+            "storage_after_mcm": 340.71500000000003,
+            "storage_change_mcm": 40.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 60.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 20.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 20.0,
+            "commanded_gate_fraction": 0.1,
+            "applied_gate_position": 0.1,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "HELD_CURRENT_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.4,
+          "Virtual Reservoir B": 0.35,
+          "Virtual Reservoir C": 0.5,
+          "Virtual Reservoir D": 0.1
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 40.0,
+          "Virtual Reservoir B": 35.0,
+          "Virtual Reservoir C": 50.0,
+          "Virtual Reservoir D": 10.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: manual operator gates were applied",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.20370000038383296
+      }
+    },
+    {
+      "stage": "VALIDATED REPLAY AUTO CONTROL",
+      "state_identity": {
+        "sim_step_index": 8,
+        "network_timestep": 8,
+        "state_id": "step8-t8",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      },
+      "storm": {
+        "intensity": 0.35,
+        "level": "NORMAL",
+        "source": "authoritative storm_intensity"
+      },
+      "reservoirs": {
+        "reservoir_1": {
+          "storage": 1.0,
+          "inflow": 71.18055555555556,
+          "release": 71.18055555555554,
+          "gate": 0.9,
+          "spill_mcm": 1.6499999999999986,
+          "risk": "high risk"
+        },
+        "reservoir_2": {
+          "storage": 1.0,
+          "inflow": 115.74074074074075,
+          "release": 115.74074074074075,
+          "gate": 0.85,
+          "spill_mcm": 1.5,
+          "risk": "high risk"
+        },
+        "reservoir_3": {
+          "storage": 1.0,
+          "inflow": 2169.8495370370365,
+          "release": 2169.8495370370365,
+          "gate": 0.3,
+          "spill_mcm": 142.47499999999997,
+          "risk": "high risk"
+        },
+        "reservoir_4": {
+          "storage": 0.923486037416237,
+          "inflow": 694.4444444444445,
+          "release": 347.22222222222223,
+          "gate": 0.15,
+          "spill_mcm": 0.0,
+          "risk": "alert"
+        }
+      },
+      "forecast_source_selection": {
+        "selected": "VALIDATED_REPLAY",
+        "control_forecast_validated": true,
+        "replay_is_historical_not_live": true,
+        "options": [
+          "SIMULATION",
+          "VALIDATED_REPLAY"
+        ],
+        "note": "VALIDATED_REPLAY: the frozen LSTM V3 model's predictions on its held-out REAL historical test split, read read-only. They satisfy the provenance gate; they are a HISTORICAL REPLAY, not a forecast of current live conditions."
+      },
+      "forecast_provenance": {
+        "model": "LSTM_V3_LOGTARGET",
+        "model_status": "FROZEN_UNMODIFIED",
+        "forecast_unit": "MCM/day",
+        "horizons": [
+          "1d",
+          "3d",
+          "7d"
+        ],
+        "validated_evaluation": "historical held-out data -> frozen LSTM V3",
+        "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",
+        "live_forecasts_are_validated": false,
+        "provenance_note": "Live forecasts use simulation-derived inputs and explicitly labelled synthetic placeholders for features the live simulation cannot produce (water_level in metres, rainfall in mm). Validated V3 test metrics do NOT apply to them."
+      },
+      "auto_control": {
+        "state": "AUTO_CONTROL_APPLIED",
+        "reason": "Control action applied to the authoritative reservoir network.",
+        "control_mode": "AI",
+        "auto_enabled": true,
+        "loop_running": false,
+        "controller_type": "MPC",
+        "controller_status": "ACTIVE",
+        "forecast_control_eligible": true,
+        "forecast_validated": true,
+        "control_applied": true,
+        "safety_layer_status": "SAFE",
+        "safety_modified_by_controller": false,
+        "downstream_status": "PROTECTED",
+        "downstream_protection_modified": false,
+        "final_safe_control_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "forecast_source": "VALIDATED_REPLAY",
+        "mpc_status": "CORRECTED",
+        "gate_transitions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": 40.0,
+            "new_pct": 90.0,
+            "delta_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": 35.0,
+            "new_pct": 85.0,
+            "delta_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": 50.0,
+            "new_pct": 30.0,
+            "delta_pct": -20.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": 10.0,
+            "new_pct": 15.0,
+            "delta_pct": 5.0
+          }
+        ],
+        "risk_transitions": [
+          {
+            "reservoir": "Idukki",
+            "node_id": "Virtual Reservoir D",
+            "previous_risk": "WATCH",
+            "risk": "ALERT"
+          }
+        ],
+        "actions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": 40.0,
+            "mpc_proposal_pct": 90.0,
+            "safety_pct": 90.0,
+            "final_pct": 90.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": 35.0,
+            "mpc_proposal_pct": 85.0,
+            "safety_pct": 85.0,
+            "final_pct": 85.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": 50.0,
+            "mpc_proposal_pct": 30.0,
+            "safety_pct": 30.0,
+            "final_pct": 30.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": 10.0,
+            "mpc_proposal_pct": 15.0,
+            "safety_pct": 15.0,
+            "final_pct": 15.0
+          }
+        ],
+        "reasons": [
+          "t=1: Virtual Reservoir A spill=1.15 MCM",
+          "t=1: Virtual Reservoir C spill=142.47 MCM",
+          "Virtual Reservoir A: gate movement 0.6000 exceeds limit 0.5000 \u2014 rate-limited to 0.9000",
+          "Virtual Reservoir B: gate movement 0.6500 exceeds limit 0.5000 \u2014 rate-limited to 0.8500"
+        ],
+        "controller_provenance": {
+          "forecast_date": "2026-10-01",
+          "rule": "validated_metrics_apply == true for EVERY controlled reservoir",
+          "reason_strings": []
+        }
+      },
+      "downstream": {
+        "flow_m3_s": 347.22222222222223,
+        "capacity_m3_s": 578.7037037037037,
+        "utilisation": 0.6,
+        "status": "NORMAL",
+        "unit": "m3/s",
+        "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 3.552713678800501e-15,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-01T08:41:38.823001+00:00",
+        "step_index": null,
+        "timestep": 8,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 10.82 -> 10.82 MCM, in 6.1499999999999995 (local) + 0.0 (routed) MCM/day, out 4.5 (release) + 1.6499999999999986 (spill) MCM/day",
+            "storage_before_mcm": 10.82,
+            "storage_after_mcm": 10.82,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 6.1499999999999995,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 4.5,
+            "spill_mcm": 1.6499999999999986,
+            "total_outflow_mcm_day": 6.149999999999999,
+            "commanded_gate_fraction": 0.9,
+            "applied_gate_position": 0.9,
+            "residual_mcm": -8.881784197001252e-16,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 21.26 -> 21.26 MCM, in 8.2 (local) + 1.8 (routed) MCM/day, out 8.5 (release) + 1.5 (spill) MCM/day",
+            "storage_before_mcm": 21.26,
+            "storage_after_mcm": 21.26,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 8.2,
+            "inflow_routed_mcm_day": 1.8,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 8.5,
+            "spill_mcm": 1.5,
+            "total_outflow_mcm_day": 10.0,
+            "commanded_gate_fraction": 0.85,
+            "applied_gate_position": 0.85,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 348.29 -> 348.29 MCM, in 184.49999999999997 (local) + 2.975 (routed) MCM/day, out 45.0 (release) + 142.47499999999997 (spill) MCM/day",
+            "storage_before_mcm": 348.29,
+            "storage_after_mcm": 348.29,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 184.49999999999997,
+            "inflow_routed_mcm_day": 2.975,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 45.0,
+            "spill_mcm": 142.47499999999997,
+            "total_outflow_mcm_day": 187.47499999999997,
+            "commanded_gate_fraction": 0.3,
+            "applied_gate_position": 0.3,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 340.71500000000003 -> 370.71500000000003 MCM, in 0.0 (local) + 60.0 (routed) MCM/day, out 30.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 340.71500000000003,
+            "storage_after_mcm": 370.71500000000003,
+            "storage_change_mcm": 30.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 60.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 30.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 30.0,
+            "commanded_gate_fraction": 0.15,
+            "applied_gate_position": 0.15,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.9,
+          "Virtual Reservoir B": 0.85,
+          "Virtual Reservoir C": 0.3,
+          "Virtual Reservoir D": 0.15
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 90.0,
+          "Virtual Reservoir B": 85.0,
+          "Virtual Reservoir C": 30.0,
+          "Virtual Reservoir D": 15.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": true,
+        "matches_final_safe_control_action": true,
+        "checked_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "action_check_note": "the gates applied to ReservoirNetwork are the controller's FINAL_SAFE_CONTROL_ACTION",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.26510000043344917
+      }
+    },
+    {
+      "stage": "RECOVERY RESET",
+      "state_identity": {
+        "sim_step_index": 16,
+        "network_timestep": 0,
+        "state_id": "step16-t0",
+        "source": "GlobalSimulationState.sim_step_index + ReservoirNetwork.timestep (authoritative; no browser clock)"
+      },
+      "storm": {
+        "intensity": 0.0,
+        "level": "LIGHT",
+        "source": "authoritative storm_intensity"
+      },
+      "reservoirs": {
+        "reservoir_1": {
+          "storage": 0.5,
+          "inflow": 0.0,
+          "release": 0.0,
+          "gate": 0.0,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_2": {
+          "storage": 0.5,
+          "inflow": 0.0,
+          "release": 0.0,
+          "gate": 0.0,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_3": {
+          "storage": 0.5,
+          "inflow": 0.0,
+          "release": 0.0,
+          "gate": 0.0,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        },
+        "reservoir_4": {
+          "storage": 0.5,
+          "inflow": 0.0,
+          "release": 0.0,
+          "gate": 0.0,
+          "spill_mcm": 0.0,
+          "risk": "normal"
+        }
+      },
+      "forecast_source_selection": {
+        "selected": "VALIDATED_REPLAY",
+        "control_forecast_validated": true,
+        "replay_is_historical_not_live": true,
+        "options": [
+          "SIMULATION",
+          "VALIDATED_REPLAY"
+        ],
+        "note": "VALIDATED_REPLAY: the frozen LSTM V3 model's predictions on its held-out REAL historical test split, read read-only. They satisfy the provenance gate; they are a HISTORICAL REPLAY, not a forecast of current live conditions."
+      },
+      "forecast_provenance": {
+        "model": "LSTM_V3_LOGTARGET",
+        "model_status": "FROZEN_UNMODIFIED",
+        "forecast_unit": "MCM/day",
+        "horizons": [
+          "1d",
+          "3d",
+          "7d"
+        ],
+        "validated_evaluation": "historical held-out data -> frozen LSTM V3",
+        "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",
+        "live_forecasts_are_validated": false,
+        "provenance_note": "Live forecasts use simulation-derived inputs and explicitly labelled synthetic placeholders for features the live simulation cannot produce (water_level in metres, rainfall in mm). Validated V3 test metrics do NOT apply to them."
+      },
+      "auto_control": {
+        "state": "AUTO_DISABLED",
+        "reason": "Control mode is MANUAL \u2014 the backend is not deciding gate positions.",
+        "control_mode": "MANUAL",
+        "auto_enabled": false,
+        "loop_running": false,
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_validated": false,
+        "control_applied": false,
+        "safety_layer_status": "UNKNOWN",
+        "safety_modified_by_controller": false,
+        "downstream_status": "UNKNOWN",
+        "downstream_protection_modified": false,
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "forecast_source": "VALIDATED_REPLAY",
+        "mpc_status": "",
+        "gate_transitions": [],
+        "risk_transitions": [],
+        "actions": [
+          {
+            "node": "Virtual Reservoir A",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "previous_pct": null,
+            "mpc_proposal_pct": null,
+            "safety_pct": null,
+            "final_pct": null
+          }
+        ],
+        "reasons": [],
+        "controller_provenance": {
+          "forecast_date": null,
+          "rule": null,
+          "reason_strings": []
+        }
+      },
+      "downstream": {
+        "flow_m3_s": 0.0,
+        "capacity_m3_s": 578.7037037037037,
+        "utilisation": 0.0,
+        "status": "NORMAL",
+        "unit": "m3/s",
+        "source": "ReservoirNetwork.terminal_outflow vs network.downstream_capacity"
+      },
+      "mass_balance": {
+        "status": "NOT_CHECKED",
+        "checked": false,
+        "residual": null,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": null,
+        "step_index": null,
+        "timestep": null,
+        "reason": "NO_AUTHORITATIVE_STEP_AUDITED",
+        "reservoirs_checked": 0,
+        "reservoirs_expected": 0,
+        "per_reservoir": [],
+        "applied_action_source": "UNKNOWN",
+        "applied_action_fraction": {},
+        "applied_action_percent": {},
+        "state_valid": false,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": false,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_AUDITED_STEP_YET",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.0
+      }
+    }
+  ]
+}

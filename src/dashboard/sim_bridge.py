@@ -172,6 +172,8 @@ class SimBridge:
                 "inflow": res_obj.state.inflow_mcm_day,
                 "routed_inflow": res_obj.state.upstream_routed_inflow,
                 "outflow": res_obj.state.release_mcm_day,
+                "controlled_release": res_obj.state.controlled_release_mcm_day,
+                "spill_mcm": res_obj.state.spill_mcm,
                 "gate_position_pct": res_obj.state.gate_position_pct,
                 "risk_status": risk["overall_status"],
                 "risk_reason": risk["reason"],

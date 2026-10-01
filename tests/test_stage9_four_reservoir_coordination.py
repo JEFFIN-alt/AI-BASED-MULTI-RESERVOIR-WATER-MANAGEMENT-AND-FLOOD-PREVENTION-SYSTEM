@@ -316,12 +316,21 @@ def test_reservoir_d_is_commandable_through_the_api(live_sim):
     assert set(RESERVOIR_ID_TO_NODE) == {"reservoir_1", "reservoir_2",
                                         "reservoir_3", "reservoir_4"}
 
+    client.post("/api/simulation/pause")
     client.post("/api/controller/mode", json={"mode": "MANUAL"})
+    node = LIVE_SIM.bridge.cascade.network.nodes["Virtual Reservoir D"]
+    before = node.state.gate_position
     response = client.post("/api/gate/reservoir_4", json={"value": 12.5})
     assert response.status_code == 200
     assert LIVE_SIM.manual_gates["Virtual Reservoir D"] == pytest.approx(12.5)
 
     twin = client.get("/api/state").json()
+    assert twin["reservoirs"]["reservoir_4"]["requested_gate_pct"] == 12.5
+    assert twin["reservoirs"]["reservoir_4"]["gate"] == before
+    assert node.state.gate_position == before
+    client.post("/api/simulation/step")
+    twin = client.get("/api/state").json()
+    assert twin["reservoirs"]["reservoir_4"]["gate"] == node.state.gate_position
     assert twin["reservoirs"]["reservoir_4"]["gate"] == pytest.approx(0.125, abs=1e-9)
 
 

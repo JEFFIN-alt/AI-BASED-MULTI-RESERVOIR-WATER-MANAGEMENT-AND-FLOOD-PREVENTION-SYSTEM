@@ -1,11 +1,16 @@
 import asyncio
 import json
+import logging
 import os
+import time
+from collections import deque
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from pathlib import Path
 from typing import Optional
 from src.dashboard.sim_bridge import SimBridge
+from src.common import units
 from src.dashboard.twin_component.state_adapter import adapt_state_for_twin
 from src.modeling.inference import LiveForecaster, ForecastUnavailableError
 from src.modeling.gnn_inference import LiveGNNForecaster
@@ -23,6 +28,7 @@ from src.modeling.v3_feature_contract import (
 )
 from src.network_env.gnn_forecast_adapter import GNNForecastAdapter
 from src.network_env.live_forecast_adapter import LiveForecastAdapter
+from src.network_env.v3_forecast_adapter import V3ForecastAdapter
 from src.controller.live_mpc_orchestrator import (
     SAFETY_STATUS_NOT_APPLIED_ADAPTER_ERROR,
     ControllerStatus,
@@ -35,6 +41,10 @@ from src.controller.downstream_capacity_guard import (
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROJECT_ROOT = _THIS_DIR.parent.parent.parent
+
+#: STAGE 19 (P4) — module logger. Only used for the deadline-loop overrun
+#: DEBUG line; no existing logging behaviour is changed anywhere by Stage 19.
+logger = logging.getLogger(__name__)
 
 CONFIG_PATH = _PROJECT_ROOT / "configs" / "simulation" / "four_reservoir_demo.json"
 THRESH_PATH = _PROJECT_ROOT / "data" / "processed" / "historical_inflow_thresholds.json"
@@ -49,6 +59,67 @@ THRESH_PATH = _PROJECT_ROOT / "data" / "processed" / "historical_inflow_threshol
 #: absence of a D forecast is auditable rather than looking like legacy
 #: "don't touch D" behaviour.
 LIVE_FORECAST_EXCLUDED = ("Virtual Reservoir D",)
+
+#: ── STAGE 18 — FORECAST SOURCE SELECTION (opt-in; default is unchanged) ──────
+#: Which forecast source is allowed to feed the controller.
+#:
+#: ``SIMULATION`` (DEFAULT — the behaviour every existing test pins)
+#:     The frozen LSTM V3 model run on the LIVE simulation's own state, using
+#:     explicitly-labelled synthetic placeholders for the two features the live
+#:     simulation cannot legitimately produce (``water_level`` in metres,
+#:     ``rainfall`` in mm). Because those inputs are NOT real measurements,
+#:     ``LiveForecaster._resolve_input_provenance`` correctly reports
+#:     ``DEMONSTRATION_ONLY`` / ``validated_metrics_apply = False``, and Reservoir
+#:     D has no live forecast at all (``LIVE_FORECAST_EXCLUDED``). The Stage 7
+#:     provenance gate therefore BLOCKS the MPC, AUTO reports ``AUTO_BLOCKED``
+#:     and the CURRENT gates are held. That is the honest live behaviour and it
+#:     is deliberately NOT changed by this stage.
+#:
+#: ``VALIDATED_REPLAY`` (explicit operator selection)
+#:     The frozen V3 model's own predictions on its held-out REAL historical test
+#:     split, read READ-ONLY through ``V3ForecastAdapter`` from the SAME artifact
+#:     ``scripts/run_phase15_3_validation.py`` consumed. The inputs to those
+#:     predictions are real measurements, so the V3 evaluation metrics genuinely
+#:     DO apply to them and the Stage 5 contract legitimately reports
+#:     ``VALIDATED`` / ``validated_metrics_apply = True`` for all four reservoirs.
+#:
+#:     The provenance gate is NOT bypassed, relaxed or special-cased: it is
+#:     genuinely satisfied, and the real MPCController -> SafetyLayer ->
+#:     DownstreamCapacityGuard chain then produces the FINAL_SAFE_CONTROL_ACTION
+#:     that moves the gates.
+#:
+#:     These are HISTORICAL replay forecasts, NOT forecasts of current live
+#:     conditions. The payload states that explicitly
+#:     (``replay_is_historical_not_live = True``) and the twin displays it.
+FORECAST_SOURCE_SIMULATION = "SIMULATION"
+FORECAST_SOURCE_VALIDATED_REPLAY = "VALIDATED_REPLAY"
+FORECAST_SOURCES = (FORECAST_SOURCE_SIMULATION, FORECAST_SOURCE_VALIDATED_REPLAY)
+
+#: ── STAGE 18 — AUTO CONTROL STATES ───────────────────────────────────────────
+#: The state of backend AUTOMATIC control, derived ONLY from authoritative state.
+#: The most specific applicable state wins:
+#:
+#:   AUTO_DISABLED         control mode is MANUAL — the backend is not deciding.
+#:   AUTO_READY            AUTO armed, but no control decision has been made yet.
+#:   AUTO_BLOCKED          the provenance gate refused the forecast; gates HELD.
+#:   AUTO_ERROR            the controller could not run (UNAVAILABLE).
+#:   AUTO_CONTROL_APPLIED  the controller ran and its safe action moved >=1 gate.
+#:   AUTO_RUNNING          the controller ran, required no gate change, loop advancing.
+#:   AUTO_HOLD             the controller ran, required no gate change, loop idle.
+AUTO_DISABLED = "AUTO_DISABLED"
+AUTO_READY = "AUTO_READY"
+AUTO_RUNNING = "AUTO_RUNNING"
+AUTO_CONTROL_APPLIED = "AUTO_CONTROL_APPLIED"
+AUTO_HOLD = "AUTO_HOLD"
+AUTO_BLOCKED = "AUTO_BLOCKED"
+AUTO_ERROR = "AUTO_ERROR"
+
+#: A gate move smaller than this (gate PERCENT) is not a control action worth
+#: reporting; it is the backend's own deadband, not a UI rounding choice.
+GATE_CHANGE_EPSILON_PCT = 1e-6
+
+#: Bounded live event log length (real backend events only).
+EVENT_LOG_MAXLEN = 250
 
 # ── STAGE 4 — single authoritative simulation ────────────────────────────────
 #: Every GlobalSimulationState constructed in THIS process registers itself here.
@@ -83,6 +154,29 @@ class GlobalSimulationState:
         self.mode = "MANUAL"
         self.running = False
         self.sim_speed = 1.0
+        # ── STAGE 18 — which forecast source feeds the controller. DEFAULT is
+        # the unchanged live-simulation source, so every existing provenance
+        # guarantee (and the Stage 16 hard gate) still holds.
+        self.forecast_source = FORECAST_SOURCE_SIMULATION
+        #: The last REAL gate movement the controller caused, per reservoir:
+        #: [{"node": ..., "previous_pct": ..., "new_pct": ..., "label": ...}].
+        #: Written only from the authoritative decision, never from the UI.
+        self.last_gate_transitions: list = []
+        #: The REAL gates immediately before the last AUTO step (per node id).
+        self.last_previous_gate_pct: dict = {}
+        #: Risk transitions the backend itself detected on the most recent
+        #: evaluated step. Used to explain WHY the controller acted, and never to
+        #: invent a reason that did not occur.
+        self.last_risk_transitions: list = []
+        #: The backend's own event log (real events, real timestamps).
+        self.event_log = deque(maxlen=EVENT_LOG_MAXLEN)
+        #: Risk status per twin reservoir key, from the PREVIOUS authoritative
+        #: step, so a NORMAL -> HIGH transition can be reported truthfully.
+        self._last_risk = {}
+        self._last_downstream_status = None
+        #: Lazily constructed READ-ONLY reader of the frozen V3 held-out
+        #: prediction artifact (VALIDATED_REPLAY source only).
+        self._v3_replay_adapter = None
         # Baseline inflows (MCM/day). MUST stay below each reservoir's
         # max_release_capacity_mcm_day (A:5, B:10, C:150, D:200) so that a
         # fully-open gate can actually drain the reservoir — including routed
@@ -165,6 +259,26 @@ class GlobalSimulationState:
         #: STAGE 14 — the structured ADVISORY result. Displayed by the frontends,
         #: never consumed by the controller (which does not read this attribute).
         self.gnn_advisory = empty_gnn_advisory("NO_INFERENCE_YET")
+        # ── STAGE 19 (P3) — per-authoritative-step memoisation of the DISPLAY
+        # forecast/advisory work.
+        #
+        # `_run_ml_pipeline()` used to be recomputed on EVERY state read: once
+        # inside `step()`'s own `get_adapted_state()`, once more in
+        # `broadcast_state()`'s `get_adapted_state()`, and once per REST
+        # `/api/state` read — even though the authoritative inputs had not
+        # changed. The DISPLAY path is now memoised; see
+        # `_display_pipeline_cache_key()` / `_display_forecasts()`.
+        #
+        # The CONTROL path is deliberately untouched: `step()` keeps calling
+        # `_run_ml_pipeline()` directly so it can never consume stale display
+        # data, and the Stage 7 provenance gate is enforced exactly as before.
+        self._pipeline_cache_key = None
+        self._pipeline_cache = None
+        # ── STAGE 19 (P4) — deadline-loop overrun accounting (diagnostic only;
+        # no physics, no controller timing semantics are read from these).
+        self.loop_overrun_count: int = 0
+        self.last_loop_overrun_s: float = 0.0
+        self.max_loop_overrun_s: float = 0.0
         try:
             self.gnn_forecaster = LiveGNNForecaster(str(_PROJECT_ROOT))
             self.gnn_ready = True
@@ -191,6 +305,209 @@ class GlobalSimulationState:
         # NOT pre-seeded: a 7-day window is only "available" once 7 genuinely
         # distinct simulation steps have actually been recorded.
         self.history_buffers = {v: [] for k, v in self.res_mapping.items()}
+
+    # ------------------------------------------------------------------
+    # STAGE 18 — CONTROL MODE, FORECAST SOURCE AND THE LIVE EVENT LOG
+    # ------------------------------------------------------------------
+
+    def log_event(self, kind: str, text: str, **extra) -> dict:
+        """
+        Append ONE real backend event, timestamped by the backend.
+
+        Callers must pass something the backend actually observed (a mode change
+        it performed, a transition it measured). Nothing here is invented, and no
+        controller action is ever logged that did not happen.
+        """
+        event = {
+            "seq": (self.event_log[-1]["seq"] + 1) if self.event_log else 1,
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+            "kind": str(kind),
+            "text": str(text),
+        }
+        for key, value in extra.items():
+            if value is not None:
+                event[key] = value
+        self.event_log.append(event)
+        return event
+
+    def event_log_payload(self) -> list:
+        """The bounded window of real events, oldest first."""
+        return [dict(e) for e in self.event_log]
+
+    def set_mode(self, mode: str) -> None:
+        """
+        Set MANUAL/AI and record the change as a real event.
+
+        AUTO -> MANUAL handover: the operator baseline is set to the gates the
+        controller is CURRENTLY holding, so control is handed over continuously
+        instead of the gates snapping back to whatever baseline was stored
+        before AUTO took over. The authoritative state itself (storages, flows,
+        routing) is never touched, so nothing else about MANUAL mode changes.
+        """
+        mode = str(mode).upper()
+        if mode == self.mode:
+            return
+        previous = self.mode
+        self.mode = mode
+        # STAGE 19 (P3) — a mode change re-arms the display pipeline. The
+        # authoritative inputs are still fingerprinted, but the invalidation is
+        # explicit so a stale advisory can never be shown after a handover.
+        self._invalidate_pipeline_cache()
+        if mode == "MANUAL" and previous == "AI":
+            try:
+                self.manual_gates.update(self._current_gate_pct())
+            except Exception:  # pragma: no cover - network not ready
+                pass
+        if mode == "AI":
+            self.log_event("auto_enabled",
+                           f"AUTO control ENABLED (was {previous})",
+                           previous_mode=previous, mode=mode)
+        else:
+            self.log_event("auto_disabled",
+                           f"AUTO control DISABLED — MANUAL (was {previous})",
+                           previous_mode=previous, mode=mode)
+
+    def set_forecast_source(self, source: str) -> None:
+        """Select the forecast source and record it as a real event."""
+        source = str(source).upper()
+        if source not in FORECAST_SOURCES:
+            raise ValueError(f"unknown forecast source: {source!r}")
+        previous = self.forecast_source
+        self.forecast_source = source
+        # STAGE 19 (P3) — a source change is a different pipeline entirely
+        # (replay CSV vs live LSTM + GNN); never serve the old one.
+        self._invalidate_pipeline_cache()
+        if source != previous:
+            self.log_event("forecast_source",
+                           f"Forecast source: {previous} -> {source}",
+                           previous_source=previous, forecast_source=source)
+
+    #: The frozen V3 artifact holding the model's HELD-OUT test predictions.
+    V3_PREDICTIONS_ARTIFACT = (
+        "results/lstm_pytorch_v3_logtarget/test_predictions_original_units.csv"
+    )
+
+    def _replay_adapter(self) -> V3ForecastAdapter:
+        """The shared, READ-ONLY V3 artifact reader (constructed once)."""
+        if self._v3_replay_adapter is None:
+            self._v3_replay_adapter = V3ForecastAdapter(
+                str(_PROJECT_ROOT), artifact_path=self.V3_PREDICTIONS_ARTIFACT
+            )
+        return self._v3_replay_adapter
+
+    def _replay_date(self, adapter: V3ForecastAdapter) -> Optional[str]:
+        """
+        Latest date on which ALL mapped reservoirs have all three horizons.
+
+        Chosen by asking the adapter itself, so no date is assumed and no value is
+        interpolated. Returns ``None`` when no such date exists.
+        """
+        df = pd.read_csv(adapter.artifact_path)
+        node_ids = list(adapter.reservoir_mapping.keys())
+        for date in sorted({str(d) for d in df["date"].unique()}, reverse=True):
+            snapshot = adapter.get_network_snapshot(date, node_ids=node_ids)
+            if all(
+                all(snapshot.forecasts[nid].is_available(h) for h in ("1d", "3d", "7d"))
+                for nid in node_ids
+            ):
+                return date
+        return None
+
+    @staticmethod
+    def _replay_unavailable(reason: str, note: str, live_names) -> dict:
+        """Explicit UNAVAILABLE payload for every reservoir — never a substitute."""
+        return {
+            live: {
+                "forecast_1d": None, "forecast_3d": None, "forecast_7d": None,
+                "forecast_source": "FROZEN_LSTM_V3",
+                "forecast_status": ForecastStatus.UNAVAILABLE.value,
+                "forecast_provenance": reason,
+                "is_simulated": False,
+                "validated_metrics_apply": False,
+                "unavailable_features": ["validated_replay_artifact"],
+                "note": note,
+            }
+            for live in live_names
+        }
+
+    def _validated_replay_forecasts(self) -> dict:
+        """
+        STAGE 18 — controller forecasts from the frozen V3 model's predictions on
+        its HELD-OUT REAL historical test split.
+
+        Read READ-ONLY through the SAME ``V3ForecastAdapter`` the Phase 15.3
+        validation script uses; neither the adapter nor the artifact is modified.
+
+        The declared provenance is the honest one for this source: the INPUTS to
+        those predictions are real measurements, so the V3 evaluation metrics DO
+        apply (``validated_metrics_apply = True``) and the declared status is
+        ``VALIDATED``. That is what makes the Stage 7 provenance gate genuinely
+        SATISFIABLE for this source, rather than bypassed.
+
+        Reservoir D is included like every other reservoir. Anything unavailable
+        is reported UNAVAILABLE — never zero-filled, averaged or carried forward.
+        """
+        live_names = list(self.res_mapping)
+        try:
+            adapter = self._replay_adapter()
+            date = self._replay_date(adapter)
+        except Exception as exc:  # artifact missing / unreadable
+            return self._replay_unavailable(
+                f"REPLAY_SOURCE_ERROR:{type(exc).__name__}",
+                "The frozen V3 held-out prediction artifact could not be read. "
+                "Nothing was substituted.",
+                live_names,
+            )
+
+        if date is None:
+            return self._replay_unavailable(
+                "REPLAY_ARTIFACT_INCOMPLETE",
+                "No date in the frozen V3 artifact carries all three horizons for "
+                "all four reservoirs. Nothing was substituted.",
+                live_names,
+            )
+
+        node_by_repo = {v: k for k, v in adapter.reservoir_mapping.items()}
+        out: dict = {}
+        for live_name, repo_name in self.res_mapping.items():
+            node_id = node_by_repo.get(repo_name)
+            record = adapter.get_forecast(node_id, date) if node_id else None
+            if record is None or not all(
+                record.is_available(h) for h in ("1d", "3d", "7d")
+            ):
+                out[live_name] = {
+                    "forecast_1d": None, "forecast_3d": None, "forecast_7d": None,
+                    "forecast_source": "FROZEN_LSTM_V3",
+                    "forecast_status": ForecastStatus.UNAVAILABLE.value,
+                    "forecast_provenance": "REPLAY_HORIZON_UNAVAILABLE",
+                    "is_simulated": False,
+                    "validated_metrics_apply": False,
+                    "unavailable_features": ["validated_replay_horizons"],
+                }
+                continue
+            out[live_name] = {
+                "forecast_1d": record.target_1d,
+                "forecast_3d": record.target_3d,
+                "forecast_7d": record.target_7d,
+                "forecast_source": "FROZEN_LSTM_V3",
+                "forecast_status": ForecastStatus.VALIDATED.value,
+                "forecast_provenance": "MODEL_PREDICTION_ON_HELD_OUT_HISTORICAL_DATA",
+                "is_simulated": False,
+                "validated_metrics_apply": True,
+                "forecast_unit": "MCM/day",
+                "horizons": ["forecast_1d", "forecast_3d", "forecast_7d"],
+                "forecast_date": date,
+                "replay_is_historical_not_live": True,
+                "replay_artifact": self.V3_PREDICTIONS_ARTIFACT,
+                "v3_reservoir_name": record.v3_reservoir_name,
+                "note": (
+                    "Frozen LSTM V3 prediction on HELD-OUT REAL historical data. "
+                    "The inputs are real measurements, so the reported V3 "
+                    "evaluation metrics apply. This is a HISTORICAL REPLAY, not a "
+                    "forecast of current live conditions."
+                ),
+            }
+        return out
 
     def _record_history(self):
         """
@@ -398,6 +715,73 @@ class GlobalSimulationState:
                 continue
         return history
 
+    def _display_pipeline_cache_key(self) -> tuple:
+        """
+        STAGE 19 (P3) — fingerprint of every authoritative input the DISPLAY
+        forecast path depends on.
+
+        The key deliberately includes MORE than the suggested triple
+        (``sim_step_index``, ``forecast_source``, ``storm_intensity``):
+
+        * the `ReservoirNetwork` OBJECT (identity comparison, `is`) — `reset()`
+          rebuilds the cascade while `sim_step_index` keeps counting, and
+          storing the object here keeps a strong reference so a freed object's
+          address can never be recycled into a false hit;
+        * `network.timestep` — the physics advanced;
+        * the gate vector and the storage vector — four floats each; including
+          them makes the fingerprint robust against any gate-only or
+          storage-only change between reads (belt and braces: including them
+          can only cause an extra recomputation, never a stale read).
+
+        `_run_ml_pipeline()` reads no other authoritative mutable state
+        (history buffers advance only via `step()`, which advances
+        `sim_step_index` first).
+
+        STAGE 19 (P3 fix) — the MODEL-AVAILABILITY inputs are part of the key
+        too. `_run_ml_pipeline()` branches on `gnn_ready` / `lstm_ready` and
+        calls the loaded forecaster objects, so toggling a model (as the GNN
+        A/B inertness tests do) is an input change: without these the memo
+        would serve the previous advisory (`AVAILABLE` where the pipeline
+        currently produces `UNAVAILABLE`). Objects are compared by identity.
+        """
+        network = self.bridge.cascade.network
+        return (
+            network,
+            int(self.sim_step_index),
+            str(self.forecast_source),
+            round(float(self.storm_intensity), 6),
+            int(network.timestep),
+            tuple(round(float(network.nodes[nid].state.gate_position), 6)
+                  for nid in network.processing_order),
+            tuple(round(float(network.nodes[nid].state.storage), 9)
+                  for nid in network.processing_order),
+            bool(self.gnn_ready),
+            self.gnn_forecaster,
+            bool(self.lstm_ready),
+            self.lstm_forecaster,
+        )
+
+    def _display_forecasts(self) -> dict:
+        """
+        STAGE 19 (P3) — control forecasts for DISPLAY/state adaptation only.
+
+        Memoised per `_display_pipeline_cache_key()`; recomputed whenever ANY
+        authoritative input changed. The CONTROL path in `step()` calls
+        `_run_ml_pipeline()` directly and never reads this cache.
+        """
+        key = self._display_pipeline_cache_key()
+        if self._pipeline_cache_key == key and self._pipeline_cache is not None:
+            return self._pipeline_cache
+        computed = self._run_ml_pipeline()
+        self._pipeline_cache_key = key
+        self._pipeline_cache = computed
+        return computed
+
+    def _invalidate_pipeline_cache(self) -> None:
+        """Drop the display-pipeline memoisation (reset / mode / source)."""
+        self._pipeline_cache_key = None
+        self._pipeline_cache = None
+
     def _run_ml_pipeline(self) -> dict:
         """
         Produce control forecasts.
@@ -416,11 +800,23 @@ class GlobalSimulationState:
         forward or otherwise fabricated, and the Stage 7 provenance gate blocks
         the coordinated MPC because of it. See ``LIVE_FORECAST_EXCLUDED``.
         """
-        lstm_forecasts = {}
-        for v_name, p_name in self.res_mapping.items():
-            if v_name in LIVE_FORECAST_EXCLUDED:
-                continue
-            lstm_forecasts[v_name] = self._forecast_one_reservoir(v_name, p_name)
+        if self.forecast_source == FORECAST_SOURCE_VALIDATED_REPLAY:
+            # ── STAGE 18 — explicitly-selected VALIDATED source ──────────────
+            # The frozen V3 model's predictions on its held-out REAL historical
+            # test split, read-only, for ALL FOUR reservoirs (D included). This
+            # source genuinely satisfies the Stage 7 provenance gate — the gate
+            # is not bypassed, relaxed or special-cased.
+            lstm_forecasts = self._validated_replay_forecasts()
+        else:
+            # ── DEFAULT — unchanged live behaviour ───────────────────────────
+            # The frozen LSTM V3 model run on THIS simulation's own state, with
+            # Reservoir D deliberately absent (explicit FORECAST_UNAVAILABLE,
+            # never fabricated).
+            lstm_forecasts = {}
+            for v_name, p_name in self.res_mapping.items():
+                if v_name in LIVE_FORECAST_EXCLUDED:
+                    continue
+                lstm_forecasts[v_name] = self._forecast_one_reservoir(v_name, p_name)
 
         # Advisory/experimental GNN — never feeds the control path.
         # STAGE 14 — the inference result is now ADDRESSED as a structured
@@ -471,7 +867,10 @@ class GlobalSimulationState:
                             "steps_collected", "note", "input_provenance",
                             "forecast_unit", "horizons", "target_columns",
                             "model_version", "feature_order", "feature_units",
-                            "history_days", "forecast_date"):
+                            "history_days", "forecast_date",
+                            # STAGE 18 — honest labelling of the replay source
+                            "replay_is_historical_not_live", "replay_artifact",
+                            "v3_reservoir_name"):
                     if key in fc:
                         ctrl_forecasts[name][key] = fc[key]
         return ctrl_forecasts
@@ -597,6 +996,332 @@ class GlobalSimulationState:
                 gate_commands[name] = pct
         return gate_commands
 
+    # ------------------------------------------------------------------
+    # STAGE 18 — AUTO CONTROL: real gates, real transitions, real states
+    # ------------------------------------------------------------------
+
+    def _current_gate_pct(self) -> dict:
+        """
+        The REAL gate positions of the authoritative network, in EXTERNAL
+        percent.
+
+        ``ReservoirState.gate_position`` is the canonical FRACTION in [0, 1];
+        the percent conversion goes through the single unit boundary
+        (``src/common/units``) rather than an inline ``* 100``.
+        """
+        network = self.bridge.cascade.network
+        return {
+            str(nid): float(units.gate_fraction_to_percent(
+                network.nodes[nid].state.gate_position
+            ))
+            for nid in network.processing_order
+        }
+
+    @staticmethod
+    def _gate_transitions(before_pct: dict, after_pct: dict) -> list:
+        """
+        The gates the controller ACTUALLY moved, measured before/after.
+
+        A move below ``GATE_CHANGE_EPSILON_PCT`` is not a control action. Sorted
+        into network order so the payload is deterministic.
+        """
+        out = []
+        for nid in after_pct:
+            if nid not in before_pct:
+                continue
+            previous = float(before_pct[nid])
+            new = float(after_pct[nid])
+            if abs(new - previous) > GATE_CHANGE_EPSILON_PCT:
+                out.append({
+                    "node": str(nid),
+                    "previous_pct": previous,
+                    "new_pct": new,
+                    "delta_pct": new - previous,
+                })
+        return out
+
+    #: Risk severity order used ONLY to read the direction of a transition the
+    #: backend already classified. The twin never re-classifies risk itself.
+    _RISK_ORDER = {"NORMAL": 0, "WARNING": 1, "CRITICAL": 2}
+
+    #: MPC proposal / safety output / final action, as percent, None-safe.
+    @staticmethod
+    def _pct_or_none(values, node_ids) -> dict:
+        out = {}
+        for nid in node_ids:
+            if nid not in values:
+                continue
+            raw = values[nid]
+            try:
+                number = float(raw)
+            except (TypeError, ValueError):
+                continue
+            out[str(nid)] = number
+        return out
+
+    def _auto_control_block(self) -> dict:
+        """
+        STAGE 18 — the backend's own answer to "what is AUTO doing right now?".
+
+        Derived ONLY from the authoritative control mode, the last REAL control
+        decision and the REAL gate transitions. No reason is invented and no
+        status is embellished: every string originates in the controller's own
+        provenance (``blocked_reason``, ``reasons``, the layer statuses), and the
+        MPC proposal / SafetyLayer output / FINAL_SAFE_CONTROL_ACTION are the
+        controller's own recorded values.
+        """
+        decision = self.last_control_decision
+        ctl = self.mpc_orchestrator.status_dict()
+        cstatus = str(getattr(decision, "controller_status", "")
+                      or ctl.get("controller_status") or "")
+        transitions = [dict(t) for t in (self.last_gate_transitions or [])]
+        risk_transitions = [dict(r) for r in (self.last_risk_transitions or [])]
+        escalated = [
+            r for r in risk_transitions
+            if self._RISK_ORDER.get(str(r.get("risk")), 0)
+            > self._RISK_ORDER.get(str(r.get("previous_risk")), 0)
+        ]
+
+        if self.mode != "AI":
+            state, reason = AUTO_DISABLED, (
+                "Control mode is MANUAL — the backend is not deciding gate positions."
+            )
+        elif decision is None:
+            state, reason = AUTO_READY, (
+                "AUTO armed. No control decision has been made yet."
+            )
+        elif cstatus == ControllerStatus.BLOCKED.value:
+            state, reason = AUTO_BLOCKED, (
+                str(getattr(decision, "blocked_reason", "")
+                    or "FORECAST_NOT_ELIGIBLE_FOR_CONTROL")
+            )
+        elif cstatus == ControllerStatus.UNAVAILABLE.value:
+            state, reason = AUTO_ERROR, (
+                str(getattr(decision, "blocked_reason", "") or "CONTROLLER_UNAVAILABLE")
+            )
+        elif transitions:
+            state = AUTO_CONTROL_APPLIED
+            # Give the ACTUAL reason the backend has evidence for, rather than a
+            # generic sentence: if the backend detected a risk escalation, say so.
+            if escalated:
+                reason = "Reservoir risk increased: " + ", ".join(
+                    f"{r['reservoir']} {r['previous_risk']} -> {r['risk']}"
+                    for r in escalated
+                )
+            else:
+                reason = "Control action applied to the authoritative reservoir network."
+        elif self.running:
+            state, reason = AUTO_RUNNING, "No control action required this step."
+        else:
+            state, reason = AUTO_HOLD, (
+                "No control action required; the simulation loop is idle."
+            )
+
+        network = self.bridge.cascade.network
+        node_ids = [str(n) for n in network.processing_order]
+        provenance = getattr(decision, "forecast_provenance", {}) or {}
+        nodes = provenance.get("nodes", {}) if isinstance(provenance, dict) else {}
+        forecast_validated = bool(nodes) and all(
+            (n or {}).get("declared_status") == "VALIDATED" for n in nodes.values()
+        )
+
+        proposed = self._pct_or_none(
+            {k: (None if v is None else v * 100.0)
+             for k, v in (getattr(decision, "proposed_gate_positions_fraction", {}) or {}).items()},
+            node_ids,
+        )
+        safety_pct = self._pct_or_none(
+            getattr(decision, "safety_layer_gate_positions_pct", {}) or {}, node_ids
+        )
+        final_pct = self._pct_or_none(
+            getattr(decision, "final_safe_control_action_pct", {}) or {}, node_ids
+        )
+        previous = {str(k): float(v) for k, v in (self.last_previous_gate_pct or {}).items()}
+
+        actions = [
+            {
+                "node": nid,
+                "previous_pct": previous.get(nid),
+                "mpc_proposal_pct": proposed.get(nid),
+                "safety_pct": safety_pct.get(nid),
+                "final_pct": final_pct.get(nid),
+            }
+            for nid in node_ids
+        ]
+
+        return {
+            "state": state,
+            "reason": reason,
+            "control_mode": self.mode,
+            "auto_enabled": self.mode == "AI",
+            "loop_running": bool(self.running),
+            "controller_type": str(getattr(decision, "controller_type", "MPC")),
+            "controller_status": cstatus or "UNKNOWN",
+            "forecast_control_eligible": bool(
+                getattr(decision, "forecast_control_eligible", False)
+            ),
+            "forecast_validated": forecast_validated,
+            "control_applied": bool(getattr(decision, "control_applied", False)),
+            "safety_layer_status": str(
+                getattr(decision, "safety_layer_status", "UNKNOWN")
+            ),
+            "safety_modified_by_controller": bool(getattr(decision, "safety_modified", False)),
+            "downstream_status": str(getattr(decision, "downstream_status", "UNKNOWN")),
+            "downstream_protection_modified": bool(
+                getattr(decision, "downstream_protection_modified", False)
+            ),
+            "final_safe_control_action_source": str(
+                getattr(decision, "final_safe_control_action_source", "NOT_APPLIED")
+            ),
+            "forecast_source": self.forecast_source,
+            "mpc_status": str(getattr(decision, "mpc_status", "")),
+            "gate_transitions": transitions,
+            "risk_transitions": risk_transitions,
+            "actions": actions,
+            "reasons": list(getattr(decision, "reasons", []) or []),
+            "controller_provenance": {
+                "forecast_date": provenance.get("forecast_date"),
+                "rule": provenance.get("rule"),
+                "reason_strings": list(provenance.get("reason_strings", []) or []),
+            },
+        }
+
+    def _record_control_events(self, state: dict) -> None:
+        """
+        STAGE 18 — emit REAL events for one authoritative step.
+
+        Every event is derived from data the backend itself produced: the
+        controller's own decision provenance, the gate transitions measured on
+        the authoritative network, and the risk/flow classifications the backend
+        computed. Nothing is emitted for something that did not happen, so the
+        activity log can never show a controller action that was not applied.
+        """
+        reservoirs = state.get("reservoirs") or {}
+
+        # ── 1. Risk transitions (NORMAL -> HIGH etc.), as classified by the
+        #       backend's own risk engine. Only a real CHANGE is reported.
+        current_risk = {
+            key: str((res or {}).get("risk") or "normal").upper()
+            for key, res in reservoirs.items()
+        }
+        for key, status in current_risk.items():
+            previous = self._last_risk.get(key)
+            if previous is not None and previous != status:
+                res = reservoirs.get(key) or {}
+                label = res.get("repository_name") or res.get("node_id") or key
+                self.log_event(
+                    "risk_change",
+                    f"{label} risk {previous} -> {status}",
+                    reservoir=label, previous_risk=previous, risk=status,
+                    reason=res.get("risk_reason"),
+                )
+        # Persist the transitions so the AUTO block can explain WHY the
+        # controller acted, using only transitions the backend really detected.
+        self.last_risk_transitions = [
+            {
+                "reservoir": (reservoirs.get(key) or {}).get("repository_name") or key,
+                "node_id": (reservoirs.get(key) or {}).get("node_id"),
+                "previous_risk": self._last_risk.get(key),
+                "risk": status,
+            }
+            for key, status in current_risk.items()
+            if self._last_risk.get(key) is not None
+            and self._last_risk.get(key) != status
+        ]
+        self._last_risk = current_risk
+
+        # ── 2. Controller events. Emitted ONLY when the backend produced a
+        #       decision for THIS step, and always from its own fields.
+        if self.mode != "AI":
+            return
+        decision = self.last_control_decision
+        if decision is None:
+            return
+
+        cstatus = str(getattr(decision, "controller_status", ""))
+        if cstatus == ControllerStatus.BLOCKED.value:
+            self.log_event(
+                "control_blocked",
+                "MPC control decision BLOCKED — holding current gates",
+                controller_status=cstatus,
+                reason=str(getattr(decision, "blocked_reason", "")),
+            )
+            return
+        if cstatus == ControllerStatus.UNAVAILABLE.value:
+            self.log_event(
+                "control_error",
+                "Controller UNAVAILABLE — holding current gates",
+                controller_status=cstatus,
+                reason=str(getattr(decision, "blocked_reason", "")),
+            )
+            return
+        if cstatus != ControllerStatus.ACTIVE.value:
+            return
+
+        self.log_event(
+            "mpc_decision",
+            f"{getattr(decision, 'controller_type', 'MPC')} control decision generated",
+            controller_status=cstatus,
+            objective_score=getattr(decision, "mpc_objective_score", None),
+            candidates_evaluated=getattr(decision, "candidates_evaluated", None),
+        )
+        self.log_event(
+            "safety_validation",
+            f"Safety validation: {getattr(decision, 'safety_layer_status', 'UNKNOWN')}",
+            safety_layer_status=str(getattr(decision, "safety_layer_status", "")),
+            safety_modified=bool(getattr(decision, "safety_modified", False)),
+        )
+        self.log_event(
+            "downstream_protection",
+            f"Downstream protection: {getattr(decision, 'downstream_status', 'UNKNOWN')}",
+            downstream_status=str(getattr(decision, "downstream_status", "")),
+            downstream_modified=bool(
+                getattr(decision, "downstream_protection_modified", False)
+            ),
+        )
+
+        # ── 3. The gates that ACTUALLY moved (measured, not claimed).
+        for transition in self.last_gate_transitions or []:
+            self.log_event(
+                "gate_change",
+                f"{transition['node']} gate: "
+                f"{transition['previous_pct']:.0f}% -> {transition['new_pct']:.0f}%",
+                reservoir=transition["node"],
+                previous_pct=transition["previous_pct"],
+                new_pct=transition["new_pct"],
+            )
+        if not self.last_gate_transitions:
+            self.log_event(
+                "control_hold",
+                "Controller evaluated the network; no gate change required",
+                controller_status=cstatus,
+            )
+
+    def reset_auto_control_state(self) -> None:
+        """
+        STAGE 18 — clear the AUTO-mode transient state after a RESET.
+
+        A reset begins a NEW run, so the previous run's controller decision, gate
+        transitions, risk memory and event log would all be stale. Clearing them
+        is what makes ``AUTO`` report honestly (``AUTO_READY``) afterwards instead
+        of showing a decision that belonged to the discarded run.
+
+        No loop is created or stopped here: the ONE authoritative loop lives in
+        ``simulation_loop()`` and simply keeps advancing whatever state exists.
+        There is therefore no second loop to leak, and nothing to double-run.
+        """
+        self.last_control_decision = None
+        self.mpc_orchestrator.last_decision = None
+        self.last_gate_transitions = []
+        self.last_previous_gate_pct = {}
+        self.last_risk_transitions = []
+        self._last_risk = {}
+        self.event_log.clear()
+        # STAGE 19 (P3) — a RESET rebuilds the cascade and starts a new run:
+        # the display pipeline must be recomputed for it, never reused.
+        self._invalidate_pipeline_cache()
+        self.log_event("reset", "Simulation RESET — authoritative state re-initialised")
+
     def step(self):
         self._update_inflows()
         self._record_history()
@@ -605,6 +1330,10 @@ class GlobalSimulationState:
 
         gate_commands = self.manual_gates.copy()
         action_source = "MANUAL_OPERATOR_GATES"
+        # STAGE 18 — the REAL gates before this step's action, read from the
+        # authoritative network. This is what the AI decision panel reports as
+        # "previous gate" and what the 3D twin animates from.
+        previous_gates = self._current_gate_pct()
         if self.mode == "AI":
             gate_commands = self._apply_ai_control(ctrl_forecasts, gate_commands)
             # STAGE 11 — name the provenance of the action that is about to be
@@ -620,7 +1349,16 @@ class GlobalSimulationState:
         # action applied to ReservoirNetwork is the controller's
         # FINAL_SAFE_CONTROL_ACTION. Never repairs and never re-applies.
         self._applied_action_verification = self._verify_applied_action(gate_commands)
-        return self.get_adapted_state()
+
+        # ── STAGE 18 — record what ACTUALLY happened, from backend data only.
+        if self.mode == "AI":
+            self.last_previous_gate_pct = dict(previous_gates)
+            self.last_gate_transitions = self._gate_transitions(
+                previous_gates, gate_commands
+            )
+        state = self.get_adapted_state()
+        self._record_control_events(state)
+        return state
 
     #: Tolerance for the applied-vs-final-action comparison (gate PERCENT).
     ACTION_MATCH_TOLERANCE_PERCENT = 1e-9
@@ -667,13 +1405,25 @@ class GlobalSimulationState:
         return info
 
     def get_adapted_state(self):
-        ctrl_forecasts = self._run_ml_pipeline()
+        # ── STAGE 19 (P3) — DISPLAY forecasts are memoised per authoritative
+        # step. This method is called by `step()`, by `broadcast_state()` and by
+        # REST `/api/state`; each call used to re-run the whole forecast/GNN
+        # advisory pipeline even when nothing had changed. The CONTROL path in
+        # `step()` still calls `_run_ml_pipeline()` directly and is untouched.
+        ctrl_forecasts = self._display_forecasts()
         current_state = self.bridge.get_state(ctrl_forecasts)
         current_state["storm_intensity"] = self.storm_intensity
 
         # STAGE 7 — authoritative controller provenance (MPC / SafetyLayer /
         # downstream boundary) reaches the API/UI.
         current_state["control"] = self.mpc_orchestrator.status_dict()
+
+        # ── STAGE 18 — AUTO CONTROL STATE, FORECAST SOURCE AND LIVE EVENT LOG
+        # All three are produced by the BACKEND. The twin renders them; it never
+        # derives a control state, a reason or an event of its own.
+        current_state["auto_control"] = self._auto_control_block()
+        current_state["forecast_source"] = self.forecast_source
+        current_state["event_log"] = self.event_log_payload()
 
         # ── STAGE 12 — AUTHORITATIVE STATE IDENTITY ────────────────────────
         # What identifies a state update: the simulation progress the backend
@@ -724,13 +1474,30 @@ class GlobalSimulationState:
         # forecast, and nothing downstream of this point feeds a decision.
         current_state["gnn_advisory"] = self.gnn_advisory
 
-        # Inject live manual gate state into current_state for immediate visual feedback
+        # Requests are presentation metadata, never a replacement for physical gates.
         if self.mode == "MANUAL":
             for res, gate_val in self.manual_gates.items():
                 if res in current_state["reservoirs"]:
-                    current_state["reservoirs"][res]["gate_position_pct"] = gate_val
+                    current_state["reservoirs"][res]["requested_gate_pct"] = gate_val
 
         return adapt_state_for_twin(current_state, self.mode, self.storm_intensity)
+
+    def _record_loop_overrun(self, overrun_s: float) -> None:
+        """
+        STAGE 19 (P4) — record that one loop iteration missed its deadline.
+
+        Diagnostic only: it is written so an operator can SEE cadence pressure
+        (a slow controller, a loaded host). Nothing in the physics or control
+        path reads it, and an overrun never causes a catch-up step.
+        """
+        self.loop_overrun_count += 1
+        self.last_loop_overrun_s = float(overrun_s)
+        if overrun_s > self.max_loop_overrun_s:
+            self.max_loop_overrun_s = float(overrun_s)
+        logger.debug(
+            "simulation_loop deadline overrun by %.3fs (count=%d)",
+            overrun_s, self.loop_overrun_count,
+        )
 
     async def broadcast_state(self):
         if not self.clients:
@@ -744,13 +1511,64 @@ class GlobalSimulationState:
                 self.clients.remove(client)
                 
     async def simulation_loop(self):
+        """
+        STAGE 19 (P4) — DEADLINE-BASED scheduling (no cadence drift).
+
+        The old loop was ``step(); broadcast(); sleep(1/sim_speed)``, so the
+        real period was ``1/sim_speed + computation_time`` — at speed 1.0 the
+        twin updated every ~1.28 s instead of every 1.0 s, and the gap grew
+        with controller cost. This version advances a deadline by one period
+        per authoritative step and sleeps only for the REMAINING time:
+
+            next_deadline += 1.0 / sim_speed
+            sleep(max(0, next_deadline - now))
+
+        * When the system keeps up, the cadence is ``1/sim_speed`` — at
+          speed 1.0 that is approximately one authoritative step per second.
+        * If a step overruns its deadline, the loop does NOT run catch-up
+          steps, does NOT duplicate or skip authoritative steps, and does NOT
+          burst: the missed slot is dropped, the overrun is recorded, and the
+          schedule resumes from the next period. The authoritative state
+          therefore remains exactly one step per iteration.
+        * Physics, controller timing semantics and `sim_speed`'s meaning
+          (steps per second) are unchanged: only WHEN the sleep happens moved.
+        """
+        # Monotonic clock for the deadline arithmetic.
+        clock = time.monotonic
+        next_deadline = clock()
         while True:
-            if self.running:
-                self.step()
-                await self.broadcast_state()
-                await asyncio.sleep(1.0 / self.sim_speed)
-            else:
+            if not self.running:
+                # Idle: drop the schedule so resuming starts fresh (no burst).
+                next_deadline = clock()
                 await asyncio.sleep(0.5)
+                continue
+
+            # ── ONE authoritative step, exactly as before.
+            self.step()
+            # ── Broadcast the resulting authoritative state.
+            await self.broadcast_state()
+
+            # ── Deadline arithmetic: advance one period per step taken.
+            period = 1.0 / self.sim_speed
+            next_deadline += period
+            remaining = next_deadline - clock()
+            if remaining > 0.0:
+                await asyncio.sleep(remaining)
+            else:
+                # OVERRUN: the computation took longer than the period. Record
+                # it (diagnostic only) and DROP the missed slot instead of
+                # running catch-up steps — the next iteration simply starts now
+                # and advances the deadline by one period from there.
+                self._record_loop_overrun(-remaining)
+                next_deadline = clock()
+                # STAGE 19 (P4) — release the event loop WITHOUT delaying.
+                # `broadcast_state()` returns immediately when no client is
+                # connected and `step()` is synchronous, so the overrun branch
+                # would otherwise be a tight, never-yielding loop that starves
+                # every other task (WebSocket, REST, and this loop's own
+                # cancellation). A zero-delay yield adds no step, no delay and
+                # no catch-up; it only guarantees the loop stays cooperative.
+                await asyncio.sleep(0)
 
 # ── STAGE 4 — THE one authoritative live simulation instance ─────────────────
 # Both the REST command routes (src/dashboard/api/routes.py) and the WebSocket

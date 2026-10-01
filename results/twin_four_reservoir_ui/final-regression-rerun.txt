@@ -1,0 +1,120 @@
+........................................................................ [ 19%]
+........................................................................ [ 39%]
+........................................................................ [ 59%]
+.................................................................F...... [ 78%]
+...................F.................................................... [ 98%]
+......                                                                   [100%]
+================================== FAILURES ===================================
+_____ test_scientific_sources_are_unmodified_since_the_validated_baseline _____
+
+    def test_scientific_sources_are_unmodified_since_the_validated_baseline():
+        """
+        Stages 10-15 must not have altered a single line of the scientific
+        computation. Verified against git: the working tree matches HEAD for every
+        Phase 15.3 source, and each was last committed with the Phase 15.3 work.
+        """
+        for rel in SCIENTIFIC_SOURCES:
+>           assert git_clean(rel), f"{rel} has uncommitted modifications"
+E           AssertionError: src/controller/mpc_controller.py has uncommitted modifications
+E           assert False
+E            +  where False = git_clean('src/controller/mpc_controller.py')
+
+tests\test_stage16_regression_hard_gate.py:420: AssertionError
+__________ test_protected_scientific_modules_are_clean_against_head ___________
+
+    def test_protected_scientific_modules_are_clean_against_head():
+        """�16 � Stage 17 must not have modified any validated scientific module."""
+        result = subprocess.run(
+            ["git", "status", "--porcelain", "--"] + PROTECTED_PATHS,
+            cwd=PROJECT_ROOT, capture_output=True, text=True)
+        assert result.returncode == 0
+>       assert result.stdout.strip() == "", (
+            "Stage 17 modified a protected scientific path:\n" + result.stdout)
+E       AssertionError: Stage 17 modified a protected scientific path:
+E          M src/controller/mpc_controller.py
+E          M src/network_env/reservoir_network.py
+E         
+E       assert 'M src/contro...ir_network.py' == ''
+E         
+E         + M src/controller/mpc_controller.py
+E         +  M src/network_env/reservoir_network.py
+
+tests\test_stage17_performance_validation.py:803: AssertionError
+============================== warnings summary ===============================
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch\jit\_script.py:1482
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch\jit\_script.py:1482
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch\jit\_script.py:1482: DeprecationWarning: `torch.jit.script` is not supported in Python 3.14+ and may break. Please switch to `torch.compile` or `torch.export`.
+    warnings.warn(
+
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch_geometric\inspector.py:433: 13 warnings
+tests/test_stage14_gnn_advisory.py: 11 warnings
+tests/test_twin_presentation_truth.py: 11 warnings
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\torch_geometric\inspector.py:433: DeprecationWarning: Failing to pass a value to the 'type_params' parameter of 'typing._eval_type' is deprecated, as it leads to incorrect behaviour when calling typing._eval_type on a stringified annotation that references a PEP 695 type parameter. It will be disallowed in Python 3.15.
+    return typing._eval_type(value, _globals, None)  # type: ignore
+
+src\dashboard\api\app.py:60
+  C:\Users\theju\Music\proj\AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM\src\dashboard\api\app.py:60: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4681
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4681
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\fastapi\applications.py:4681: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+src\dashboard\api\app.py:64
+  C:\Users\theju\Music\proj\AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM\src\dashboard\api\app.py:64: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+tests/test_stage14_gnn_advisory.py::test_gnn_implementation_is_discoverable_and_documented
+tests/test_twin_presentation_truth.py::test_high_storm_r3_reports_real_risk_and_flow_components
+tests/test_twin_presentation_truth.py::test_high_storm_r3_reports_real_risk_and_flow_components
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\sklearn\base.py:442: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.9.0 when using version 1.7.2. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+  https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+    warnings.warn(
+
+tests/test_stage17_performance_validation.py::test_repeated_mpc_decisions_do_not_leak_network_clones
+  C:\Users\theju\Music\proj\AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM\tests\test_stage17_performance_validation.py:782: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead
+    before = sum(1 for o in gc.get_objects() if isinstance(o, ReservoirNetwork))
+
+tests/test_stage17_performance_validation.py::test_repeated_mpc_decisions_do_not_leak_network_clones
+  C:\Users\theju\Music\proj\AI-BASED-MULTI-RESERVOIR-WATER-MANAGEMENT-AND-FLOOD-PREVENTION-SYSTEM\tests\test_stage17_performance_validation.py:787: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead
+    after = sum(1 for o in gc.get_objects() if isinstance(o, ReservoirNetwork))
+
+tests/test_twin_integration.py::test_water_level_rise
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_water_level_rise returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_twin_integration.py::test_gate_change
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_gate_change returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+tests/test_twin_integration.py::test_full_json_contract
+  C:\Users\theju\AppData\Local\Programs\Python\Python314\Lib\site-packages\_pytest\python.py:171: PytestReturnNotNoneWarning: Test functions should return None, but tests/test_twin_integration.py::test_full_json_contract returned <class 'dict'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_stage16_regression_hard_gate.py::test_scientific_sources_are_unmodified_since_the_validated_baseline
+FAILED tests/test_stage17_performance_validation.py::test_protected_scientific_modules_are_clean_against_head
+2 failed, 364 passed, 49 warnings in 68.36s (0:01:08)

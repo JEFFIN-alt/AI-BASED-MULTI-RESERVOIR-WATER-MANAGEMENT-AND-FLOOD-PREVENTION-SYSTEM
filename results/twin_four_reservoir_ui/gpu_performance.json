@@ -1,0 +1,44 @@
+{
+  "gpu_status": "PASS",
+  "renderer": {
+    "vendor": "Google Inc. (Intel)",
+    "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+  },
+  "samples": {
+    "1920x1080": {
+      "fps_median": 72.57182622527087,
+      "samples_fps": [
+        67.63477222995824,
+        72.57182622527087,
+        73.14421271127806
+      ]
+    },
+    "1440x900": {
+      "fps_median": 105.38874527739102,
+      "samples_fps": [
+        91.92448354255224,
+        105.38874527739102,
+        108.3822213383714
+      ]
+    },
+    "1366x768": {
+      "fps_median": 111.98880111988818,
+      "samples_fps": [
+        111.98880111988818,
+        109.74886296223042,
+        131.25186437307363
+      ]
+    },
+    "1280x720": {
+      "fps_median": 147.3223173402346,
+      "samples_fps": [
+        127.12285231899918,
+        147.3223173402346,
+        153.11195068602117
+      ]
+    }
+  },
+  "browser": "Microsoft Edge headless, Direct3D11 GPU acceleration",
+  "method": "Three one-second RAF samples per viewport after stabilization; WebGL unmasked renderer confirms physical adapter.",
+  "limitation": "The renderer test is headless; perform a headed demo-machine review before presentation."
+}

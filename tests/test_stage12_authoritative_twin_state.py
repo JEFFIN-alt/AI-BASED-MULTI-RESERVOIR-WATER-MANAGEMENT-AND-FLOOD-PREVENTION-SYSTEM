@@ -368,10 +368,16 @@ def test_frontend_does_not_calculate_physical_state():
     assert "0.14 * Math.sin" not in code
     # no reservoir equation / routing / spill / mass-balance arithmetic in CODE
     # (the Stage 11/12 comments mentioning these words are stripped first)
-    for forbidden in ("attenuation", "controlled_release", "new_storage",
-                      "inflow_routed", "natural_inflow", "spill_mcm",
+    for forbidden in ("attenuation", "new_storage",
+                      "inflow_routed", "natural_inflow",
                       "storage_before", "storage_change"):
         assert forbidden not in code, f"JavaScript computes physics: {forbidden}"
+    # Presentation now reads the backend's separate release/spill fields.
+    # Reading those names is not physics; deriving jet flow from head/gates is.
+    assert "controlledRelease: value(src.controlled_release)" in code
+    assert "spill: value(src.spill_mcm)" in code
+    assert "head * r.gateCur" not in code
+    assert "r.levelTgt > 0.995" not in code
     # the backend's audit values may only be DISPLAYED, never re-computed
     for forbidden in ("mb.residual +", "mb.residual -", "mb.residual *",
                       "mb.tolerance +", "mb.tolerance *", "Math.abs(mb"):
@@ -389,7 +395,8 @@ def test_frontend_displays_the_backend_verdicts_instead():
                 "state.simulation", "state.mass_balance", "state.control"):
         assert key in code, f"{key} is not consumed by the twin"
     assert "src.trend" in code            # backend trend
-    assert "d4.trend" in code             # backend trend (Reservoir D)
+    assert "for (let i = 0; i < this.R.length; i++)" in code  # same mapping for A?D
+    assert "{ id: 4," in code             # Idukki is a scene reservoir
     assert "downstreamStatus" in code     # backend severity
     assert "downstreamUtil" in code       # backend-computed bar ratio
     assert "downstreamCapacity" in code   # authoritative safe limit

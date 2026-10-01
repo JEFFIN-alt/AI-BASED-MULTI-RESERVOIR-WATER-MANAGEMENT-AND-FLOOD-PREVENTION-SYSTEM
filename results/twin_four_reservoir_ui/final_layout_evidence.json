@@ -1,0 +1,214 @@
+{
+  "gpu": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "vendor": "Google Inc. (Google)",
+    "agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36"
+  },
+  "1920x1080": {
+    "canvasBottom": 784,
+    "controlsTop": 792,
+    "controlsBottom": 897,
+    "dockScrollHeight": 167,
+    "dockHeight": 167,
+    "labels": [
+      {
+        "text": "A\nANAYIRANKAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "B\nPONMUDI\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "C\nIDAMALAYAR\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "D\nIDUKKI / TERMINAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "DS\nDOWNSTREAM\n0 m\u00b3/s",
+        "opacity": "1"
+      }
+    ]
+  },
+  "1440x900": {
+    "canvasBottom": 604,
+    "controlsTop": 612,
+    "controlsBottom": 717,
+    "dockScrollHeight": 167,
+    "dockHeight": 167,
+    "labels": [
+      {
+        "text": "A\nANAYIRANKAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "B\nPONMUDI\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "C\nIDAMALAYAR\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "D\nIDUKKI / TERMINAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "DS\nDOWNSTREAM\n0 m\u00b3/s",
+        "opacity": "1"
+      }
+    ]
+  },
+  "1366x768": {
+    "canvasBottom": 469,
+    "controlsTop": 477,
+    "controlsBottom": 600,
+    "dockScrollHeight": 152,
+    "dockHeight": 152,
+    "labels": [
+      {
+        "text": "A\nANAYIRANKAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "B\nPONMUDI\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "C\nIDAMALAYAR\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "D\nIDUKKI / TERMINAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "DS\nDOWNSTREAM\n0 m\u00b3/s",
+        "opacity": "1"
+      }
+    ]
+  },
+  "1280x720": {
+    "canvasBottom": 403,
+    "controlsTop": 411,
+    "controlsBottom": 552,
+    "dockScrollHeight": 152,
+    "dockHeight": 152,
+    "labels": [
+      {
+        "text": "A\nANAYIRANKAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "B\nPONMUDI\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "C\nIDAMALAYAR\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "D\nIDUKKI / TERMINAL\n50%\n0%",
+        "opacity": "1"
+      },
+      {
+        "text": "DS\nDOWNSTREAM\n0 m\u00b3/s",
+        "opacity": "1"
+      }
+    ]
+  },
+  "drawer": {
+    "canvasBottom": 771,
+    "controlsTop": 783
+  },
+  "focus": {
+    "canvasBottom": 828,
+    "controlsTop": 847
+  },
+  "memorySamples": [
+    {
+      "heap": 11113743,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 5.070993914807315
+    },
+    {
+      "heap": 10609195,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 4.917871545195236
+    },
+    {
+      "heap": 11170447,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 4.838865769863547
+    },
+    {
+      "heap": 10688051,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 5.217391304347826
+    },
+    {
+      "heap": 11259739,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 4.8393341076267875
+    },
+    {
+      "heap": 10012715,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 5.1431510372021165
+    },
+    {
+      "heap": 10574695,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 5.142710208279777
+    },
+    {
+      "heap": 10041094,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 5
+    },
+    {
+      "heap": 10563183,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 4.918355301987023
+    },
+    {
+      "heap": 10021563,
+      "renderer": {
+        "geometries": 36,
+        "textures": 5
+      },
+      "fps": 4.9183553019869874
+    }
+  ],
+  "errors": []
+}

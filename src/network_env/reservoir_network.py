@@ -97,11 +97,16 @@ class ReservoirNode:
     """
 
     def __init__(self, node_id: str, capacity: float, initial_storage: float,
-                 max_release: float, warning_thresholds: Optional[Dict[str, float]] = None):
+                 max_release: float, warning_thresholds: Optional[Dict[str, float]] = None,
+                 emit_warnings: bool = True):
         self.node_id = node_id
         self.capacity = capacity
         self.max_release = max_release
         self.warning_thresholds = warning_thresholds or {}
+        # STAGE 19 (P2) — hypothetical rollout clones suppress log spam.
+        # The counters (`_cumulative_spill`, `_overflow_count`) are ALWAYS
+        # maintained; only the `logger.warning` emission is gated.
+        self.emit_warnings = bool(emit_warnings)
 
         # Validate initial conditions
         if initial_storage < 0:
@@ -168,10 +173,14 @@ class ReservoirNode:
             preliminary = self.capacity
             self._overflow_count += 1
             self._cumulative_spill += spill
-            logger.warning(
-                f"[{self.node_id}] OVERFLOW: {spill:.4f} MCM spilled "
-                f"(storage capped at capacity {self.capacity:.4f} MCM)."
-            )
+            # STAGE 19 (P2) — hypothetical rollout clones suppress log spam.
+            # The overflow counters above are ALWAYS maintained, so physics,
+            # mass balance and the objective see identical values.
+            if self.emit_warnings:
+                logger.warning(
+                    f"[{self.node_id}] OVERFLOW: {spill:.4f} MCM spilled "
+                    f"(storage capped at capacity {self.capacity:.4f} MCM)."
+                )
 
         # 8. Final storage (should never be negative, but guard anyway)
         assert preliminary >= -1e-12, f"Negative storage {preliminary} in {self.node_id}"
@@ -227,10 +236,17 @@ class ReservoirNetwork:
     """
 
     def __init__(self, config_path: Optional[str] = None,
-                 config_dict: Optional[Dict[str, Any]] = None):
+                 config_dict: Optional[Dict[str, Any]] = None,
+                 emit_warnings: bool = True):
         """
         Initialise from a YAML file path or from an in-memory dict.
         Exactly one of config_path / config_dict must be provided.
+
+        STAGE 19 (P2) — `emit_warnings=False` marks a HYPOTHETICAL rollout
+        clone (an MPC candidate world, not the authoritative network).
+        Nodes built from this config then skip the OVERFLOW /
+        DOWNSTREAM-CAPACITY `logger.warning` emission. Physics, counters,
+        spills and trajectories are computed identically either way.
         """
         if config_path and config_dict:
             raise ValueError("Provide config_path OR config_dict, not both.")
@@ -249,6 +265,9 @@ class ReservoirNetwork:
         self._downstream_capacity: float = 0.0
         self._terminal_node_id: str = ""
         self.timestep: int = 0
+        # STAGE 19 (P2) — hypothetical rollout clones suppress log spam.
+        # Physics and counters are computed identically either way.
+        self._emit_warnings = bool(emit_warnings)
 
         # Cumulative mass-balance trackers
         self._total_external_inflow = 0.0
@@ -279,6 +298,7 @@ class ReservoirNetwork:
                 initial_storage=init["value"],
                 max_release=max_rel["value"],
                 warning_thresholds=warnings,
+                emit_warnings=self._emit_warnings,
             )
             self.nodes[nid] = node
 
@@ -464,11 +484,14 @@ class ReservoirNetwork:
             self._total_terminal_outflow += terminal_outflow
 
             if terminal_outflow > self._downstream_capacity:
-                logger.warning(
-                    f"DOWNSTREAM CAPACITY EXCEEDED at t={self.timestep}: "
-                    f"flow={terminal_outflow:.4f} MCM/day, "
-                    f"limit={self._downstream_capacity:.4f} MCM/day"
-                )
+                # STAGE 19 (P2) — hypothetical rollout clones suppress log spam.
+                # Mass-balance totals are updated identically either way.
+                if self._emit_warnings:
+                    logger.warning(
+                        f"DOWNSTREAM CAPACITY EXCEEDED at t={self.timestep}: "
+                        f"flow={terminal_outflow:.4f} MCM/day, "
+                        f"limit={self._downstream_capacity:.4f} MCM/day"
+                    )
 
         # 5. Return snapshot of all node states
         return {nid: copy.copy(self.nodes[nid].state) for nid in self.nodes}

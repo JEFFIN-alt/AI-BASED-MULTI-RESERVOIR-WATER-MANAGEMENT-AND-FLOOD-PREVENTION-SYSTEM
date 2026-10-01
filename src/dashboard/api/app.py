@@ -74,9 +74,16 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.send_text(json.dumps(sim_state.get_adapted_state()))
     try:
         while True:
-            # Keep connection open
-            await websocket.receive_text()
+            # Keep a paused (unchanging) twin distinguishable from a silent
+            # WebSocket. Heartbeats carry no simulation values and are never
+            # broadcast as authoritative state.
+            try:
+                await asyncio.wait_for(websocket.receive_text(), timeout=5.0)
+            except asyncio.TimeoutError:
+                await websocket.send_text(json.dumps({"type": "heartbeat"}))
     except WebSocketDisconnect:
+        pass
+    finally:
         if websocket in sim_state.clients:
             sim_state.clients.remove(websocket)
 

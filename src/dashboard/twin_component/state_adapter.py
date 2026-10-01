@@ -459,6 +459,85 @@ def _cascade_block(sim_state: dict, twin_reservoirs: dict) -> dict:
     }
 
 
+def _auto_control_block(block) -> dict:
+    """
+    STAGE 18 — pass the backend's AUTO control state through VERBATIM.
+
+    This function deliberately computes nothing. The state, the reason, the
+    controller statuses, the MPC proposal, the SafetyLayer output and the final
+    safe action are all produced by ``GlobalSimulationState._auto_control_block``
+    from real controller provenance. The twin just displays them, so the UI can
+    never claim an automatic decision the backend did not make.
+    """
+    if not isinstance(block, dict):
+        return {
+            "state": "AUTO_DISABLED",
+            "reason": "No AUTO control state was supplied by the backend.",
+            "auto_enabled": False,
+            "control_mode": "MANUAL",
+            "gate_transitions": [],
+            "actions": [],
+            "reasons": [],
+        }
+    out = dict(block)
+    out["gate_transitions"] = [dict(t) for t in (block.get("gate_transitions") or [])]
+    out["actions"] = [dict(a) for a in (block.get("actions") or [])]
+    out["reasons"] = list(block.get("reasons") or [])
+    return out
+
+
+def _forecast_source_block(sim_state: dict) -> dict:
+    """
+    STAGE 18 — which forecast source may feed the controller, and what that
+    means for the provenance gate.
+
+    ``control_forecast_validated`` is the backend's own answer to "is the
+    forecast driving the controller validated?". The demonstration badge is
+    keyed off it, so the badge disappears exactly when the backend says the
+    control forecast is no longer simulation-derived.
+    """
+    source = str(sim_state.get("forecast_source") or "SIMULATION")
+    validated = source == "VALIDATED_REPLAY"
+    return {
+        "selected": source,
+        "control_forecast_validated": validated,
+        "replay_is_historical_not_live": validated,
+        "options": ["SIMULATION", "VALIDATED_REPLAY"],
+        "note": (
+            "VALIDATED_REPLAY: the frozen LSTM V3 model's predictions on its "
+            "held-out REAL historical test split, read read-only. They satisfy "
+            "the provenance gate; they are a HISTORICAL REPLAY, not a forecast "
+            "of current live conditions."
+            if validated else
+            "SIMULATION: the frozen LSTM V3 model run on this simulation's own "
+            "state, with explicitly-labelled synthetic placeholders for features "
+            "the live simulation cannot produce. Reported DEMONSTRATION_ONLY, so "
+            "the provenance gate blocks the controller and AUTO holds the gates."
+        ),
+    }
+
+
+def _event_log_block(events) -> list:
+    """STAGE 18 — the backend's real event log, passed through unchanged."""
+    out = []
+    for event in events or []:
+        if not isinstance(event, dict):
+            continue
+        entry = {
+            "seq": event.get("seq"),
+            "timestamp": event.get("timestamp"),
+            "kind": event.get("kind"),
+            "text": event.get("text"),
+        }
+        for key in ("reservoir", "previous_pct", "new_pct", "previous_risk",
+                    "risk", "reason", "controller_status", "safety_layer_status",
+                    "downstream_status", "previous_storm", "storm"):
+            if event.get(key) is not None:
+                entry[key] = event[key]
+        out.append(entry)
+    return out
+
+
 def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
     """
     Converts the output of SimBridge.get_state() into the exact JSON schema
@@ -470,7 +549,7 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
     twin_state = {
         "reservoirs": {},
         "storm_intensity": float(storm_intensity),
-        "downstream_flow": mcm_per_day_to_m3_per_s(sim_state.get("downstream_flow", 0.0)),
+        "downstream_flow": mcm_per_day_to_m3_per_s(sim_state.get("downstream_flow")),
         "controller_mode": current_mode,
         "simulation_time": datetime.datetime.now().isoformat(),
         "hardware_status": {
@@ -491,6 +570,16 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
         # gate positions are the SAFETY-VALIDATED ones (Stage 8), never the raw
         # MPC proposal.
         "control": _control_block(sim_state.get("control")),
+        # ── STAGE 18 — AUTO CONTROL STATE ────────────────────────────────────
+        # The backend's own answer to "what is AUTO doing right now?", plus the
+        # real gate transitions and the real MPC proposal / SafetyLayer output /
+        # FINAL_SAFE_CONTROL_ACTION per reservoir. Passed through verbatim: the
+        # twin never computes a control state, a reason or a decision.
+        "auto_control": _auto_control_block(sim_state.get("auto_control")),
+        # ── STAGE 18 — WHICH FORECAST SOURCE MAY DRIVE THE CONTROLLER ────────
+        "forecast_source_selection": _forecast_source_block(sim_state),
+        # ── STAGE 18 — THE BACKEND'S REAL EVENT LOG ──────────────────────────
+        "event_log": _event_log_block(sim_state.get("event_log")),
         # ── STAGE 11 — LIVE MASS-BALANCE INTEGRITY ──────────────────────
         # The audit of the last authoritative simulation step, straight from the
         # backend physics. An absent audit is NOT_CHECKED / checked=False — the
@@ -540,9 +629,10 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
         # STAGE 12 — the net flux and its trend are computed HERE, not in the
         # browser. The twin renders the backend's verdict.
         inflow_m3_s = mcm_per_day_to_m3_per_s(
-            res_data.get("inflow", 0.0) + res_data.get("routed_inflow", 0.0)
+            (res_data["inflow"] + res_data.get("routed_inflow", 0.0))
+            if res_data.get("inflow") is not None else None
         )
-        release_m3_s = mcm_per_day_to_m3_per_s(res_data.get("outflow", 0.0))
+        release_m3_s = mcm_per_day_to_m3_per_s(res_data.get("outflow"))
         net_flux_m3_s = None
         if inflow_m3_s is not None and release_m3_s is not None:
             net_flux_m3_s = inflow_m3_s - release_m3_s
@@ -550,12 +640,22 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
         twin_state["reservoirs"][twin_key] = {
             # The twin renderer consumes RATIOS in [0, 1], derived from the
             # EXTERNAL percentage representation via the single boundary.
-            "water_level": units.storage_percent_to_fraction(res_data.get("storage_pct", 0.0)),
-            "storage": units.storage_percent_to_fraction(res_data.get("storage_pct", 0.0)),
+            "water_level": (units.storage_percent_to_fraction(res_data["storage_pct"])
+                            if res_data.get("storage_pct") is not None else None),
+            "storage": (units.storage_percent_to_fraction(res_data["storage_pct"])
+                            if res_data.get("storage_pct") is not None else None),
             "inflow": inflow_m3_s,
             "release": release_m3_s,
-            "gate": units.gate_percent_to_fraction(res_data.get("gate_position_pct", 0.0)),
-            "risk": res_data.get("risk_status", "NORMAL").lower(),
+            # Keep legacy total outflow; expose its physical components separately.
+            "controlled_release": mcm_per_day_to_m3_per_s(res_data.get("controlled_release")),
+            "spill_mcm": res_data.get("spill_mcm"),
+            "requested_gate_pct": res_data.get("requested_gate_pct"),
+            "gate": (units.gate_percent_to_fraction(res_data["gate_position_pct"])
+                     if res_data.get("gate_position_pct") is not None else None),
+            "risk": (res_data.get("risk_status") or "UNKNOWN").lower(),
+            # ── STAGE 18 — the backend's own explanation of its risk verdict,
+            # displayed verbatim by the AI decision panel. Never authored here.
+            "risk_reason": res_data.get("risk_reason"),
             # ── STAGE 12 — backend-computed display classifications ──────
             "net_flux_m3_s": net_flux_m3_s,
             "trend": classify_trend(net_flux_m3_s),
@@ -590,12 +690,12 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
         key = f"reservoir_{i}"
         if key not in twin_state["reservoirs"]:
             twin_state["reservoirs"][key] = {
-                "water_level": 0.0,
-                "storage": 0.0,
-                "inflow": 0.0,
-                "release": 0.0,
-                "gate": 0.0,
-                "risk": "normal",
+                "water_level": None,
+                "storage": None,
+                "inflow": None,
+                "release": None,
+                "gate": None,
+                "risk": "unknown",
                 "node_id": None,
                 "repository_name": None,
                 "cascade_position": i - 1,

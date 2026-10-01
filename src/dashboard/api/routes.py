@@ -75,8 +75,16 @@ class StormCommand(BaseModel):
 
 
 class ModeCommand(BaseModel):
-    """Controller mode — only the two implemented modes are accepted."""
+    """Controller mode and the forecast source offered to it.
+
+    The two supported modes remain ``MANUAL`` and ``AI``.  ``source`` is an
+    optional bounded forecast-source selector: ``SIMULATION`` is the unchanged
+    live source, and ``VALIDATED_REPLAY`` is the explicitly selected frozen-V3
+    historical-replay source.  The selector never relaxes the provenance gate.
+    """
+
     mode: Literal["MANUAL", "AI"]
+    source: Literal["SIMULATION", "VALIDATED_REPLAY"] | None = None
 
 
 class SpeedCommand(BaseModel):
@@ -130,6 +138,7 @@ async def set_gate(reservoir_id: str, cmd: GateCommand):
 @router.post("/simulation/play")
 async def play_simulation():
     sim_state.running = True
+    sim_state.log_event("simulation_play", "Simulation PLAY")
     # STAGE 12 — a command must come back to the client as the resulting
     # AUTHORITATIVE state, so the twin never shows a stale run state.
     await sim_state.broadcast_state()
@@ -138,6 +147,7 @@ async def play_simulation():
 @router.post("/simulation/pause")
 async def pause_simulation():
     sim_state.running = False
+    sim_state.log_event("simulation_pause", "Simulation PAUSE")
     # STAGE 12 — PAUSE previously stopped the backend WITHOUT broadcasting, so a
     # connected twin kept displaying "RUNNING" until some other command happened
     # to push a state. The pause now reports the resulting state like every other
@@ -155,6 +165,13 @@ async def step_simulation():
 @router.post("/simulation/reset")
 async def reset_simulation():
     sim_state.bridge.init_cascade(50.0)
+    # STAGE 18 — a reset begins a NEW run, so the previous run's controller
+    # decision, gate transitions, risk memory and event log are cleared. This is
+    # what stops AUTO from replaying a decision that belonged to the discarded
+    # run. No loop is created or stopped here: exactly ONE authoritative loop
+    # exists (GlobalSimulationState.simulation_loop), so there is no second
+    # automatic loop to leak.
+    sim_state.reset_auto_control_state()
     if not sim_state.running:
         await sim_state.broadcast_state()
     return {"status": "success", "reset": True}
@@ -169,14 +186,37 @@ async def set_speed(cmd: SpeedCommand):
 
 @router.post("/storm")
 async def set_storm(cmd: StormCommand):
+    previous = sim_state.storm_intensity
     sim_state.storm_intensity = cmd.value
+    # STAGE 18 — a real storm change is a real event.
+    if cmd.value != previous:
+        sim_state.log_event(
+            "storm_change",
+            f"Storm intensity {previous:.2f} -> {cmd.value:.2f}"
+            + (" (increased)" if cmd.value > previous else " (decreased)"),
+            previous_storm=previous, storm=cmd.value,
+        )
     if not sim_state.running:
         await sim_state.broadcast_state()
     return {"status": "success", "storm": cmd.value}
 
 @router.post("/controller/mode")
 async def set_mode(cmd: ModeCommand):
-    sim_state.mode = cmd.mode
+    # ── STAGE 18 — MANUAL | AUTO ──────────────────────────────────────────────
+    # Switching to MANUAL stops the backend from deciding gates WITHOUT touching
+    # the authoritative reservoir state, so the current gates and storages are
+    # preserved and the operator's manual controls behave exactly as before.
+    # Switching back to AUTO resets nothing: the controller simply re-evaluates
+    # the CURRENT authoritative state and forecast on the next step.
+    #
+    # The mode change itself is recorded as a real backend event.
+    if cmd.source is not None:
+        sim_state.set_forecast_source(cmd.source)
+    sim_state.set_mode(cmd.mode)
     if not sim_state.running:
         await sim_state.broadcast_state()
-    return {"status": "success", "mode": cmd.mode}
+    return {
+        "status": "success",
+        "mode": cmd.mode,
+        "forecast_source": sim_state.forecast_source,
+    }

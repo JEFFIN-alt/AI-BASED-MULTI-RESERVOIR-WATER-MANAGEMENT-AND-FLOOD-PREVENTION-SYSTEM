@@ -57,6 +57,25 @@ from .safety import SafetyLayer, SafetyCheckResult
 logger = logging.getLogger(__name__)
 
 
+def _rollout_clone_supported() -> bool:
+    """
+    STAGE 19 (P1) — whether THIS controller build supports clone reuse.
+
+    True only when `decide()` itself was reached through the CURRENT class
+    attribute `_simulate_trajectory` accepting the `rollout_clone` keyword.
+    Historical proof tests (Stage 9) replace `_simulate_trajectory` with an
+    old-signature spy that knows nothing about the clone; `decide()` checks
+    this predicate so those spies keep receiving exactly the five arguments
+    they declare.
+    """
+    try:
+        import inspect as _inspect
+        return "rollout_clone" in _inspect.signature(
+            MPCController._simulate_trajectory).parameters
+    except (TypeError, ValueError):
+        return False
+
+
 @dataclass
 class ControlDecision:
     """
@@ -181,12 +200,32 @@ class MPCController:
         # For the first step, evaluate all gate combinations
         gate_combos = list(itertools.product(self.config.gate_levels, repeat=len(node_ids)))
 
+        # STAGE 19 (P1) — ONE rollout clone per decision, reused for all
+        # candidates. `ReservoirNetwork` topology/config is invariant during a
+        # decision, so rebuilding it 1,296 times is pure overhead. The clone
+        # is restored to the exact rollout start state before each candidate
+        # (see `_restore_rollout_clone`), which proves bit-identical results
+        # in `tests/test_stage19_performance_optimization.py`.
+        rollout_clone = self._build_rollout_clone(network)
+
         for combo in gate_combos:
             candidate_gates_step0 = {nid: g for nid, g in zip(node_ids, combo)}
 
-            # Simulate trajectory on a CLONE
+            # Simulate trajectory on the reused rollout clone. When THIS
+            # `_simulate_trajectory` accepts `rollout_clone` (the normal
+            # build), it is passed EXPLICITLY as a keyword so the reuse path
+            # is taken. If the method was replaced by old-signature
+            # instrumentation (self, real_network, candidate_gates,
+            # inflow_scenarios, node_ids) that knows nothing about the clone,
+            # the keyword is withheld and that wrapper behaves exactly as
+            # before (a fresh clone per candidate inside ITS call, or a spy
+            # around the original implementation).
+            roll_kwargs = (
+                {"rollout_clone": rollout_clone} if _rollout_clone_supported() else {}
+            )
             trajectory = self._simulate_trajectory(
-                network, candidate_gates_step0, inflow_scenarios, node_ids
+                network, candidate_gates_step0, inflow_scenarios, node_ids,
+                **roll_kwargs,
             )
             candidates_evaluated += 1
 
@@ -302,31 +341,95 @@ class MPCController:
 
         return steps
 
+    def _build_rollout_clone(self, real_network: ReservoirNetwork) -> ReservoirNetwork:
+        """
+        STAGE 19 (P1/P2) — construct ONE rollout clone per MPC decision.
+
+        The clone is built exactly like the previous per-candidate clone (same
+        config), but only once: `decide()` reuses it for all 1,296 candidates,
+        restoring the rollout start state before each one.
+
+        STAGE 19 (P2) — the clone is built with `emit_warnings=False` because a
+        candidate trajectory is a HYPOTHETICAL world, not the authoritative
+        network: its overflow / capacity warnings would otherwise describe
+        worlds that were never applied. Physics, counters, spills and costs
+        are all computed identically to a warning-emitting clone.
+
+        The constructor already deep-copies the supplied config dict, so the
+        authoritative network's config is never shared and the live network is
+        never mutated.
+        """
+        return ReservoirNetwork(config_dict=real_network._raw_config,
+                                emit_warnings=False)
+
+    def _restore_rollout_clone(self, clone: ReservoirNetwork,
+                               real_network: ReservoirNetwork,
+                               node_ids: List[str]) -> None:
+        """
+        STAGE 19 (P1) — restore the rollout clone to the exact rollout start
+        state before evaluating a candidate.
+
+        This reproduces, field by field, what a freshly-constructed clone
+        looked like after the old code copied the live storage and routing
+        queues into it:
+
+        * node storages          <- the authoritative network's storages
+        * node states/counters   <- `ReservoirNode.reset`, i.e. a fresh
+          `ReservoirState` with zeroed `_cumulative_spill`/`_overflow_count`,
+          exactly as the constructor leaves them
+        * connection queues      <- deep copies of the authoritative queues
+          (same contents AND the same `maxlen` the old code carried over)
+        * `timestep` and the four mass-balance totals <- 0.0, as constructed
+        * provenance registry    <- untouched (immutable topology metadata)
+
+        Because the config is invariant during a decision, the restored clone
+        behaves bit-identically to a brand-new clone for the same candidate.
+        """
+        for nid in node_ids:
+            clone.nodes[nid].reset(float(real_network.nodes[nid].state.storage))
+        for index, conn in enumerate(real_network.connections):
+            clone.connections[index].queue = copy.deepcopy(conn.queue)
+        clone.timestep = 0
+        clone._total_external_inflow = 0.0
+        clone._total_routing_loss = 0.0
+        clone._total_terminal_outflow = 0.0
+        clone._total_nonterminal_spill = 0.0
+
     def _simulate_trajectory(
         self,
         real_network: ReservoirNetwork,
         candidate_gates: Dict[str, float],
         inflow_scenarios: List[Dict[str, float]],
         node_ids: List[str],
+        rollout_clone: Optional[ReservoirNetwork] = None,
     ) -> Optional[List[Dict[str, Any]]]:
         """
         Simulate a multi-step trajectory on a CLONE of the network.
 
         The real network is NEVER mutated.
 
+        STAGE 19 (P1): when `rollout_clone` is supplied (the normal path from
+        `decide()`), it is restored to the rollout start state and reused
+        instead of building a fresh `ReservoirNetwork` per candidate. Passing
+        `None` preserves the old behaviour (fresh clone per call).
+
         Returns list of state dicts, one per step.
         """
-        # Deep clone the network config and rebuild
-        clone = ReservoirNetwork(config_dict=copy.deepcopy(real_network._raw_config))
+        if rollout_clone is None:
+            # Deep clone the network config and rebuild
+            clone = ReservoirNetwork(config_dict=copy.deepcopy(real_network._raw_config))
 
-        # Copy current storage state from the real network
-        for nid in node_ids:
-            real_storage = real_network.nodes[nid].state.storage
-            clone.nodes[nid].state.storage = real_storage
+            # Copy current storage state from the real network
+            for nid in node_ids:
+                real_storage = real_network.nodes[nid].state.storage
+                clone.nodes[nid].state.storage = real_storage
 
-        # Copy routing queue state
-        for i, conn in enumerate(real_network.connections):
-            clone.connections[i].queue = copy.deepcopy(conn.queue)
+            # Copy routing queue state
+            for i, conn in enumerate(real_network.connections):
+                clone.connections[i].queue = copy.deepcopy(conn.queue)
+        else:
+            clone = rollout_clone
+            self._restore_rollout_clone(clone, real_network, node_ids)
 
         trajectory = []
 
