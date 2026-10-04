@@ -1,0 +1,48 @@
+{
+  "four_day_mass_balance_and_routing": {
+    "total_external_inflow": 38.0,
+    "storage_change": 32.75,
+    "total_terminal_outflow": 0.0,
+    "total_nonterminal_spill": 0.0,
+    "total_routing_loss": 0.24999999999999994,
+    "water_in_transit": 5.0,
+    "accounted": 38.0,
+    "residual_error": 0.0
+  },
+  "actual_mpc_with_frozen_replay": {
+    "forecast_date": "2025-01-05",
+    "status": "ACTIVE",
+    "proposal": {
+      "Virtual Reservoir A": 0.0,
+      "Virtual Reservoir B": 0.5,
+      "Virtual Reservoir C": 0.0,
+      "Virtual Reservoir D": 0.0
+    },
+    "final": {
+      "Virtual Reservoir A": 0.0,
+      "Virtual Reservoir B": 0.5,
+      "Virtual Reservoir C": 0.0,
+      "Virtual Reservoir D": 0.0
+    }
+  },
+  "fractional_gate_roundtrip": {
+    "passed": true,
+    "checked_action": {
+      "Virtual Reservoir A": 0.0,
+      "Virtual Reservoir B": 0.0,
+      "Virtual Reservoir C": 0.3333333333333333,
+      "Virtual Reservoir D": 0.25
+    },
+    "peak": 50.0
+  },
+  "failure_recovery": {
+    "paused": true,
+    "task_survived": true,
+    "error_visible": true
+  },
+  "gnn_input_training_parity": true,
+  "honest_missing_data_and_replay_status": true,
+  "python_sources_parsed": 164,
+  "html_javascript_syntax": "PASS",
+  "frozen_artifact_hashes": "UNCHANGED"
+}

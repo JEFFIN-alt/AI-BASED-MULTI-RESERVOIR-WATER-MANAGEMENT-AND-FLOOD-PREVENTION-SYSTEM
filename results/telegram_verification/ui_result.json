@@ -1,0 +1,7 @@
+{
+  "playwright": "PASS",
+  "credentials": "Not configured",
+  "real_telegram_e2e": "PENDING \u2014 credentials not configured",
+  "delivery": "NOT_CONFIGURED",
+  "console_errors": []
+}

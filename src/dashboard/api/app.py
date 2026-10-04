@@ -59,12 +59,17 @@ app.include_router(router, prefix="/api")
 
 @app.on_event("startup")
 async def startup_event():
+    sim_state._notification_loop = asyncio.get_running_loop()
+    sim_state.notification_manager.telegram.start()
+    sim_state.notification_manager.discord.start()
     sim_state.loop_task = asyncio.create_task(sim_state.simulation_loop())
 
 @app.on_event("shutdown")
 async def shutdown_event():
     if sim_state.loop_task:
         sim_state.loop_task.cancel()
+    await asyncio.to_thread(sim_state.notification_manager.telegram.stop)
+    await asyncio.to_thread(sim_state.notification_manager.discord.stop)
 
 @app.websocket("/ws/state")
 async def websocket_endpoint(websocket: WebSocket):

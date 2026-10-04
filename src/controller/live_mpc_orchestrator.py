@@ -1,107 +1,20 @@
-"""
-Stage 7 — Live MPC Orchestration Boundary
-=========================================
+"""Live forecast-gated MPC orchestration.
 
-Integrates the **validated Phase 15.3 MPC** into the live authoritative
-simulation path, behind an explicit provenance gate.
+Eligible model forecasts drive a joint nominal-target lattice search with daily reserve and movement limits across all
+four reservoirs. The live configuration uses daily offsets 0..7, interpolating
+between the model's point forecasts at days 1, 3 and 7. Interpolation is a stated
+scenario assumption, not an additional learned prediction. The historical
+research controller's default configuration is preserved for reproduction.
 
-    Frozen LSTM V3
-        ↓
-    V3 Forecast Adapter / LiveForecastAdapter   (Stage 6)
-        ↓
-    NetworkForecastSnapshot
-        ↓
-    PROVENANCE GATE                             <-- THIS MODULE
-        ↓
-    MPCController                               (validated, UNMODIFIED)
-        ↓
-    SafetyLayer                                 (validated, UNMODIFIED)  [STAGE 8]
-        ↓
-    DownstreamCapacityGuard                     (NEW, Stage 10)
-        ↓  FINAL_SAFE_CONTROL_ACTION
-    ReservoirNetwork
-        ↓
-    FastAPI / WebSocket
-        ↓
-    Three.js Digital Twin
+MPC -> gate bounds/movement SafetyLayer -> downstream-capacity finite search ->
+final action and independently recomputed cost. The downstream check uses the
+same daily forecast scenario and real routing queues. Failure to find a safe
+candidate is reported without claiming global infeasibility or flood prevention.
 
-THE CRITICAL RULE
------------------
-A forecast may drive the MPC **only** when its provenance says
-``validated_metrics_apply == True``.
-
-Demonstration forecasts (``DEMONSTRATION_ONLY``, synthetic placeholder inputs,
-warm-up, unavailable, non-finite, wrong units, missing reservoirs) are
-**BLOCKED**. When blocked this module:
-
-  * does NOT call the MPC,
-  * does NOT run the SafetyLayer to "rescue" the situation — the SafetyLayer
-    must never manufacture a control decision,
-  * does NOT fabricate, clamp, carry-forward or substitute a forecast value,
-  * returns an explicit ``controller_status = BLOCKED`` decision with the exact
-    reasons, and
-  * holds the CURRENT gate positions (read from the authoritative network) and
-    marks ``control_applied = False``, so nothing pretends an MPC decision was
-    made.
-
-THE SAFETY BOUNDARY (STAGE 8)
------------------------------
-When the MPC IS eligible, its **raw proposal** is passed through the existing
-validated ``SafetyLayer`` (``src/controller/safety.py``) and the layer's OUTPUT —
-never the raw proposal — is what reaches ``ReservoirNetwork``.
-
-For exactly what that layer does and does not guarantee, see
-``docs``-style notes in ``SAFETY_LAYER_GUARANTEES`` below. In short it
-validates: node presence, finite numeric values, gate bounds [0,1] and
-per-step gate rate limiting. It does NOT implement release bounds, downstream
-capacity limits, storage-headroom constraints or minimum-flow rules — those are
-reported as gaps, not silently added.
-
-THE DOWNSTREAM CAPACITY BOUNDARY (STAGE 10)
--------------------------------------------
-The validated SafetyLayer does **not** enforce downstream capacity (Stage 8
-established this by reading its source), and the validated MPC prices a
-downstream excursion only as a soft penalty in its objective. Neither may be
-modified. So the action that survived the SafetyLayer is passed through
-``DownstreamCapacityGuard`` (``src/controller/downstream_capacity_guard.py``),
-which predicts the flow below the terminal reservoir on a clone of the
-authoritative ``ReservoirNetwork`` and either
-
-  * applies the action unchanged (``PROTECTED``),
-  * replaces it with the nearest SafetyLayer-feasible action whose predicted flow
-    stays within capacity (``CORRECTED``), or
-  * fails closed with the conservative minimum-release action and REPORTS that the
-    capacity could not be achieved (``FAILED_CLOSED``).
-
-The three statuses are exposed SEPARATELY (``controller_status``,
-``safety_layer_status``, ``downstream_status``) so the live system can never
-claim "SafetyLayer ACTIVE = downstream capacity protected".
-
-WHAT THIS MODULE DOES NOT DO
-----------------------------
-* It does NOT rewrite, tune or re-implement the MPC — it calls
-  ``MPCController.decide()`` exactly as Phase 15.3 does.
-* It does NOT re-implement the SafetyLayer — it calls
-  ``SafetyLayer.validate()`` exactly as Phase 15.3 does.
-* It does NOT let the GNN, the browser, or a rule-based controller make
-  authoritative gate decisions.
-
-SAFETY_LAYER_GUARANTEES — what the validated layer ACTUALLY checks
-------------------------------------------------------------------
-Verified by reading ``src/controller/safety.py`` (not assumed):
-
-  1. ALL REQUIRED NODES PRESENT — a node missing from the proposal is replaced
-     with its CURRENT gate (``current_gates.get(nid, 0.1)``).
-  2. FINITE NUMERIC VALUES — a non-numeric / NaN / Inf gate is replaced by 0.1.
-  3. GATE BOUNDS — finite gates are clamped into [0.0, 1.0].
-  4. RATE LIMIT — a change larger than ``max_gate_change_per_step`` is
-     truncated to the limit, then re-clamped into [0.0, 1.0].
-
-NOT IMPLEMENTED in the validated layer (reported as gaps, deliberately NOT
-added here): release bounds, downstream capacity constraints, storage-headroom
-or reservoir safety constraints, minimum environmental flow, prior-state
-validation, and detection of an impossible state. The module docstring's claim
-of a "downstream capacity" check is not backed by code.
+Ineligible/unavailable forecasts hold current gates as a PROPOSAL and do not
+manufacture an MPC decision. GlobalSimulationState's final action boundary checks
+EVERY proposal, including manual/fallback holds, immediately before physics.
+GNN remains advisory. The browser cannot decide or inject physical state.
 """
 
 from __future__ import annotations
@@ -125,8 +38,9 @@ from ..network_env.v3_forecast_adapter import (
     ForecastStatus,
     NetworkForecastSnapshot,
 )
-from .mpc_controller import MPCController
+from .mpc_controller import MPCController, MPCConfig
 from .safety import SafetyLayer
+from .storage_reserve import reserve_bounds, verify_reserve_action
 from .downstream_capacity_guard import (
     DOWNSTREAM_STATUS_FAILED_CLOSED,
     DOWNSTREAM_STATUS_NOT_APPLIED_ADAPTER_ERROR,
@@ -249,11 +163,14 @@ class LiveControlDecision:
     # MPC internals (for auditability — never used to bypass the gate)
     mpc_status: str = ""
     mpc_objective_score: Optional[float] = None
+    final_action_objective_score: Optional[float] = None
+    prediction_timeline: str = "legacy research horizon"
     mpc_forecast_used: bool = False
     mpc_forecast_status: str = ""
     mpc_safety_status: str = ""
     candidates_evaluated: int = 0
     per_node: Dict[str, dict] = field(default_factory=dict)
+    storage_reserve: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialisable control provenance for the API / WebSocket / UI."""
@@ -285,6 +202,8 @@ class LiveControlDecision:
             },
             "mpc_status": self.mpc_status,
             "mpc_objective_score": self.mpc_objective_score,
+            "final_action_objective_score": self.final_action_objective_score,
+            "prediction_timeline": self.prediction_timeline,
             "mpc_forecast_used": self.mpc_forecast_used,
             "mpc_forecast_status": self.mpc_forecast_status,
             "mpc_safety_status": self.mpc_safety_status,
@@ -320,6 +239,7 @@ class LiveControlDecision:
             },
             "final_safe_control_action_source": self.final_safe_control_action_source,
             "per_node": {k: dict(v) for k, v in self.per_node.items()},
+            "storage_reserve": dict(self.storage_reserve),
             "gate_unit": "percent [0, 100] (external); fraction [0.0, 1.0] (internal)",
         }
 
@@ -337,7 +257,8 @@ class LiveMPCOrchestrator:
 
     def __init__(self, mpc: Optional[MPCController] = None,
                  safety: Optional[SafetyLayer] = None):
-        self.mpc = mpc if mpc is not None else MPCController()
+        self.mpc = mpc if mpc is not None else MPCController(MPCConfig(
+            lookahead_steps=8, daily_forecast_horizon=True, minimum_storage_fraction=0.3))
         # STAGE 8 — the validated SafetyLayer (src/controller/safety.py) as an
         # explicit boundary on the live path. It is the SAME class with the
         # SAME configuration the MPC uses internally, instantiated separately
@@ -384,8 +305,9 @@ class LiveMPCOrchestrator:
             "gate_levels": levels,
             "candidate_vectors": len(levels) ** dimension if levels else 0,
             "coordinated": dimension > 1,
-            "goal": "jointly optimise ONE gate position per reservoir",
-            "source": "MPCController.config.gate_levels (validated Phase 15.3)",
+            "goal": "jointly optimise nominal gate targets; daily movement and reserve limits clip live actions",
+            "minimum_storage_fraction": self.mpc.config.minimum_storage_fraction,
+            "source": "MPCController.config.gate_levels; prototype AUTO reserve policy",
         }
 
     # ------------------------------------------------------------------
@@ -615,13 +537,30 @@ class LiveMPCOrchestrator:
         # missing/invalid forecast: this code only runs when the MPC produced an
         # action (the provenance gate above already decided that).
         t1 = time.perf_counter()
+        prediction_inflows = current_inflows
+        reserve = reserve_bounds(network, current_inflows or {
+            n: network.nodes[n].state.inflow_local for n in node_ids},
+            self.mpc.config.minimum_storage_fraction)
+        if reserve:
+            # Defensive for injected/custom MPC proposals: reserve corrections
+            # precede the downstream search, which must retain their ceilings.
+            safety_action_fraction = {n: min(g, reserve['gate_upper_bounds'][n])
+                                      for n, g in safety_action_fraction.items()}
+            if not self.downstream_guard.safety_layer_feasible(safety_action_fraction,
+                    node_ids, current_fraction, self.mpc.config.max_gate_change):
+                raise RuntimeError('AUTO reserve conflicts with gate movement; action refused')
+            safety_action_pct = {n: units.gate_fraction_to_percent(g) for n, g in safety_action_fraction.items()}
+        if self.mpc.config.daily_forecast_horizon:
+            prediction_inflows = self.mpc._build_inflow_scenarios(
+                node_ids, current_inflows or {}, snapshot)
         downstream = self.downstream_guard.evaluate(
             network,
             action_fraction=safety_action_fraction,
             current_fraction=current_fraction,
             node_ids=node_ids,
             max_gate_change=self.mpc.config.max_gate_change,
-            inflows=current_inflows,
+            inflows=prediction_inflows,
+            **({'gate_upper_bounds': reserve['gate_upper_bounds']} if reserve else {}),
         )
         self.last_downstream_latency_ms = (time.perf_counter() - t1) * 1000.0
 
@@ -666,6 +605,7 @@ class LiveMPCOrchestrator:
             )
 
         applied_pct = {nid: units.gate_fraction_to_percent(g) for nid, g in applied_fraction.items()}
+        verify_reserve_action(applied_fraction, reserve)
 
         downstream_dict = downstream.to_dict()
 
@@ -739,7 +679,26 @@ class LiveMPCOrchestrator:
             mpc_safety_status=str(mpc_decision.safety_status),
             candidates_evaluated=int(mpc_decision.candidates_evaluated),
             per_node={k: dict(v) for k, v in (mpc_decision.per_node or {}).items()},
+            storage_reserve=reserve or {},
         )
+        if self.mpc.config.daily_forecast_horizon:
+            scenarios = self.mpc._build_inflow_scenarios(node_ids, current_inflows or {}, snapshot)
+            trajectory = self.mpc._simulate_trajectory(network, applied_fraction, scenarios, node_ids)
+            if trajectory is not None:
+                decision.final_action_objective_score = self.mpc.objective.evaluate_trajectory(
+                    trajectory, {n: network.nodes[n].capacity for n in node_ids},
+                    network.downstream_capacity, network._terminal_node_id,
+                    previous_gates=dict(current_fraction))["total_cost"]
+            else:
+                decision.reasons.append("FINAL_ACTION_FUTURE_RESCORE_INFEASIBLE; next-step reserve remains verified")
+            decision.prediction_timeline = "daily offsets 0..7; model anchors 1,3,7; interpolated scenarios; daily movement/reserve clipping of nominal targets"
+            for nid in node_ids:
+                explanation = decision.per_node.setdefault(nid, {})
+                explanation["proposal_gate_position"] = explanation.get("gate_position")
+                explanation["gate_position"] = applied_fraction[nid]
+                explanation["estimated_release"] = (trajectory[0][nid].controlled_release
+                    if trajectory else None)
+                explanation["final_action_note"] = downstream.reason
         self.last_decision = decision
         return decision
 

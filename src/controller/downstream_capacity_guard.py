@@ -1,120 +1,13 @@
-"""
-Stage 10 — Downstream Capacity Safety Boundary
-==============================================
+"""Finite-search downstream-capacity guard using the authoritative daily physics.
 
-The **final software safety boundary** on the live control path:
-
-    MPCController.decide()
-        ↓  raw proposal
-    SafetyLayer.validate()            (validated Phase 15.3 — UNMODIFIED)
-        ↓  gate bounds + per-step rate limit
-    DownstreamCapacityGuard.evaluate()      ← THIS MODULE (Stage 10)
-        ↓  FINAL_SAFE_CONTROL_ACTION
-    ReservoirNetwork.step()
-
-WHY THIS MODULE EXISTS
-----------------------
-Stage 8 established, by reading ``src/controller/safety.py``, that the validated
-SafetyLayer does **NOT** check downstream capacity — its class docstring claims a
-"downstream capacity (estimated from proposed releases)" check that has no
-backing code. The validated MPC does not enforce it either: in
-``src/controller/objective.py`` a downstream excursion is a **soft penalty**
-(``ObjectiveWeights.downstream_violation = 200.0`` per MCM/day above the limit),
-so a proposal that would flood the river below the terminal reservoir can still be
-the lowest-cost candidate and can still be returned by ``MPCController.decide()``.
-
-Neither of those components may be modified (both are frozen Phase 15.3
-artifacts). The boundary is therefore added **downstream of them, inside the one
-authoritative live controller path** (``LiveMPCOrchestrator``), which is the only
-place that holds (a) the live network state, (b) the proposed action and (c) the
-authority to change what is applied.
-
-WHAT "DOWNSTREAM FLOW" MEANS HERE — the authoritative definition
-----------------------------------------------------------------
-``ReservoirNetwork`` computes the flow below the cascade as the **terminal
-reservoir's total outflow** (controlled release + spill) and warns when it exceeds
-``network.downstream_capacity``. ``ObjectiveFunction.evaluate_trajectory`` scores
-violations against exactly the same quantity. This module uses that same
-definition, so the boundary, the physics and the controller's own cost function
-all agree on what "downstream flow" is. Water spilled from non-terminal
-reservoirs leaves the network and is *not* part of the downstream flow (verified
-in Stage 9).
-
-THE PREDICTION USES THE AUTHORITATIVE PHYSICS
----------------------------------------------
-No routing equation is duplicated here. The prediction clones the live
-``ReservoirNetwork`` — the validated delays, attenuation factors, spill rules and
-mass balance — copies the REAL storage and the REAL routing queues, and steps it.
-Water already in transit is therefore part of the prediction, and the cascade
-coupling of the candidate action over the horizon is produced by the validated
-model itself.
-
-THE HORIZON
------------
-``horizon = 1 + sum(routing delays)`` steps — one step for the action being
-applied plus one step per unit of cumulative routing delay (2 + 1 + 1 = 4 in the
-validated topology → 5 steps). That covers the full propagation of the applied
-action from Reservoir A to the river below Reservoir D. It is derived from the
-topology, never hardcoded.
-
-Gate positions and exogenous inflows are held constant across the horizon — the
-*same* convention the validated MPC uses for its own lookahead
-(``MPCController._simulate_trajectory``: "hold gates constant across lookahead"),
-and conservative for a safety boundary because it assumes the action persists.
-Only the first step is ever applied, and this guard re-runs on every decision.
-
-INFLOWS
--------
-Exogenous inflows are held at the values the caller supplies — the live controller
-passes the inflows that will actually be applied in the step — and default, when
-absent, to the network's currently observed local inflows. Inflows are
-deliberately NOT taken from the forecast: a safety boundary must not depend on the
-quality of a forecast whose validity the Stage 7 provenance gate exists to police.
-Water already committed to the routing queues is real state and IS included, so
-arriving flood waves are seen.
-
-UNITS
------
-Gate positions are canonical FRACTIONS in [0, 1]. Downstream capacity and
-predicted flows are MCM/day — the authoritative network's own unit. Nothing is
-converted here and no implicit conversion is introduced.
-
-ACTION POLICY (deterministic, documented)
------------------------------------------
-1. **Safe proposal** → applied UNCHANGED (``PROTECTED``, ``modified = False``).
-2. **Unsafe proposal, safe alternative exists** → the admissible action *closest*
-   to the proposal is applied (``CORRECTED``). Candidates are the validated MPC's
-   own gate lattice, augmented per reservoir with values that let the guard
-   *keep* what it was given (the proposal and the current gate), the project's
-   conservative value, and the analytically-derived gate at which a reservoir's
-   release equals the capacity. Candidates are tried in order of increasing L1
-   distance from the proposal, ties broken by enumeration order, so the
-   intervention is minimal and the result deterministic.
-3. **No admissible action can satisfy the capacity** → ``FAILED_CLOSED``. The
-   minimum admissible action is applied and the shortfall is REPORTED, never
-   hidden.
-
-WHY THE MINIMUM ACTION IS A PROOF, NOT A GUESS
-----------------------------------------------
-Per reservoir, the terminal reservoir's ``total_outflow`` is
-``max(release, available - capacity)``. That quantity is **non-decreasing** in the
-terminal gate (a larger gate means a larger release) and non-decreasing in every
-upstream gate (a larger upstream release means more water arriving at the terminal
-reservoir, hence a larger ``available``). Downstream flow is therefore monotone
-non-decreasing in all four gates, so the flow-minimising action over the
-admissible box ``[current - max_gate_change, current + max_gate_change] ∩ [0, 1]``
-is the all-minimum corner. If that action already predicts a flow above the
-capacity, **no admissible action can avoid it** and the excess is forced
-(unavoidable spill at the terminal reservoir). The guard therefore evaluates the
-minimum action *before* searching, which both bounds the search (a safe action is
-then guaranteed to exist) and makes the ``FAILED_CLOSED`` verdict provable.
-
-Note on the minimum environmental flow: the demo config carries
-``minimum_environmental_flow_percent = 0.05`` as a SIMULATION ASSUMPTION that is
-**not enforced anywhere** in the validated code. The fail-closed action may close
-the gates more than that; flood safety is this boundary's objective and the state
-is reported loudly (``FAILED_CLOSED``, ``capacity_achieved = False``) rather than
-traded away silently.
+The terminal flow includes controlled release and terminal spill. Upstream spill
+is an explicitly separate outlet in this model. Routing queues are copied.
+Candidates obey gate bounds and per-day movement limits. Lower gates are NOT a
+proof of lower future peaks: early releases can create headroom before arrivals.
+A failed finite search is NOT proof of global infeasibility. FAILED_CLOSED is a
+legacy status name: it means capacity protection was not established, not that
+flooding has been prevented. The least-peak tested admissible action is returned.
+Predictions assume held local inflows and held gates; they are not flood guarantees.
 """
 
 from __future__ import annotations
@@ -137,9 +30,7 @@ from ..network_env.reservoir_network import ReservoirNetwork
 DOWNSTREAM_STATUS_PROTECTED = "PROTECTED"
 #: The check ran, the proposal was unsafe, and a safe alternative was applied.
 DOWNSTREAM_STATUS_CORRECTED = "CORRECTED"
-#: The check ran and PROVED that no admissible action satisfies the capacity; the
-#: minimum admissible (flow-minimising) action was applied and the shortfall is
-#: reported.
+#: No safe candidate was found, or prediction failed. No global impossibility proof.
 DOWNSTREAM_STATUS_FAILED_CLOSED = "FAILED_CLOSED"
 #: No check was needed/possible because the MPC did not produce an action.
 DOWNSTREAM_STATUS_NOT_APPLIED_MPC_BLOCKED = "NOT_APPLIED_MPC_BLOCKED"
@@ -185,8 +76,7 @@ class DownstreamCapacityResult:
     #: Full predicted traces (MCM/day), one value per horizon step.
     proposed_trajectory_mcm_day: List[float] = field(default_factory=list)
     trajectory_mcm_day: List[float] = field(default_factory=list)
-    #: The lowest flow any admissible action could reach, and the action that
-    #: reaches it (computed whenever the proposal is unsafe).
+    #: Legacy field names: best peak TESTED, never a continuous-domain lower bound.
     min_achievable_flow_mcm_day: Optional[float] = None
     min_achievable_action_fraction: Dict[str, float] = field(default_factory=dict)
 
@@ -215,6 +105,7 @@ class DownstreamCapacityResult:
             "proposed_predicted_flow_mcm_day": self.proposed_predicted_flow_mcm_day,
             "predicted_flow_mcm_day": self.predicted_flow_mcm_day,
             "min_achievable_flow_mcm_day": self.min_achievable_flow_mcm_day,
+            "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
             "capacity_achieved": self.capacity_achieved,
             "modified": self.modified,
             "candidates_evaluated": self.candidates_evaluated,
@@ -291,7 +182,7 @@ class DownstreamCapacityGuard:
         routing delays, attenuation factors, spill rules and mass balance are the
         ones that will actually be applied. The live network is never mutated.
         """
-        clone = ReservoirNetwork(config_dict=copy.deepcopy(network._raw_config))
+        clone = ReservoirNetwork(config_dict=network._raw_config, emit_warnings=False)
         for nid in node_ids:
             clone.nodes[nid].state.storage = float(network.nodes[nid].state.storage)
         # REAL water already in transit — this is what makes the check respect
@@ -301,11 +192,11 @@ class DownstreamCapacityGuard:
 
         terminal_id = clone._terminal_node_id
         gates = {nid: float(action[nid]) for nid in node_ids}
-        constant_inflows = {nid: float(inflows.get(nid, 0.0)) for nid in node_ids}
-
+        scenarios = inflows if isinstance(inflows, list) else [inflows]
         flows: List[float] = []
-        for _ in range(max(1, horizon)):
-            states = clone.step(dict(constant_inflows), dict(gates))
+        for day in range(max(1, horizon)):
+            local = scenarios[min(day, len(scenarios) - 1)]
+            states = clone.step({nid: float(local.get(nid, 0.0)) for nid in node_ids}, dict(gates))
             flows.append(float(states[terminal_id].total_outflow))
         return flows
 
@@ -393,6 +284,7 @@ class DownstreamCapacityGuard:
         node_ids: Sequence[str],
         max_gate_change: float,
         inflows: Optional[Dict[str, float]] = None,
+        gate_upper_bounds: Optional[Dict[str, float]] = None,
     ) -> DownstreamCapacityResult:
         """
         Run the boundary.
@@ -404,12 +296,22 @@ class DownstreamCapacityGuard:
         started = time.perf_counter()
         node_ids = list(node_ids)
         capacity = float(network.downstream_capacity)
-        horizon = self.horizon_for(network)
+        horizon = max(self.horizon_for(network), len(inflows) if isinstance(inflows, list) else 0)
 
         if inflows is None:
             inflows = {nid: float(network.nodes[nid].state.inflow_local) for nid in node_ids}
 
         proposal = {nid: float(action_fraction[nid]) for nid in node_ids}
+        # AUTO reserve ceilings must survive every downstream replacement.
+        if gate_upper_bounds is not None:
+            for nid in node_ids:
+                limit = gate_upper_bounds[nid]
+                if not math.isfinite(limit) or not 0 <= limit <= 1:
+                    raise ValueError('Invalid reserve gate ceiling')
+                if proposal[nid] > limit + 1e-11:
+                    raise RuntimeError('Downstream proposal exceeds AUTO reserve ceiling')
+                if max(0., current_fraction[nid] - max_gate_change) > limit + 1e-11:
+                    raise RuntimeError('AUTO reserve conflicts with gate movement limit')
 
         result = DownstreamCapacityResult(
             capacity_mcm_day=capacity,
@@ -446,6 +348,8 @@ class DownstreamCapacityGuard:
             self.last_latency_ms = (time.perf_counter() - started) * 1000.0
             return result
 
+        if not proposed_trace or not all(math.isfinite(v) and v >= 0 for v in proposed_trace):
+            raise ValueError("Invalid downstream prediction; simulation action must not advance")
         result.proposed_trajectory_mcm_day = list(proposed_trace)
         result.proposed_predicted_flow_mcm_day = max(proposed_trace)
         result.trajectory_mcm_day = list(proposed_trace)
@@ -465,7 +369,7 @@ class DownstreamCapacityGuard:
             self.last_latency_ms = (time.perf_counter() - started) * 1000.0
             return result
 
-        # ---- 3. flow-minimising action: is the capacity achievable AT ALL? ----
+        # ---- 3. Evaluate the lowest-gate corner as one candidate, not a proof. ----
         minimum_action = self.minimum_admissible_action(
             node_ids, current_fraction, max_gate_change
         )
@@ -481,37 +385,27 @@ class DownstreamCapacityGuard:
             result.min_achievable_flow_mcm_day = max(min_trace)
             result.min_achievable_action_fraction = dict(minimum_action)
 
-        if min_trace is not None and result.min_achievable_flow_mcm_day > capacity + self.tolerance:
-            # PROVEN: downstream flow is monotone non-decreasing in every gate, so
-            # no admissible action can do better than the flow-minimising corner.
-            result.status = DOWNSTREAM_STATUS_FAILED_CLOSED
-            result.action_fraction = dict(minimum_action)
-            result.trajectory_mcm_day = list(min_trace)
-            result.predicted_flow_mcm_day = result.min_achievable_flow_mcm_day
-            result.capacity_achieved = False
-            result.is_protected = False
-            result.modified = True
-            result.reason = (
-                f"NO ADMISSIBLE ACTION CAN LIMIT THE DOWNSTREAM FLOW: the "
-                f"flow-minimising admissible action (every gate at its lowest "
-                f"reachable value) still predicts "
-                f"{result.min_achievable_flow_mcm_day:.6f} {FLOW_UNIT} > capacity "
-                f"{capacity:.6f} {FLOW_UNIT}. Downstream flow is non-decreasing in "
-                f"every gate, so this is the minimum achievable; the excess is forced "
-                f"spill at the terminal reservoir. That action was applied and no "
-                f"capacity guarantee is claimed."
-            )
-            self.last_latency_ms = (time.perf_counter() - started) * 1000.0
-            return result
-
-        # ---- 4. a safe action is now KNOWN to exist: find the nearest one ----
+        # Storage headroom makes multi-day peaks non-monotonic. Search even
+        # when the all-minimum corner spills above capacity.
         safe = self._nearest_safe_action(
             network, proposal, current_fraction, node_ids, max_gate_change,
             inflows, horizon, capacity,
+            gate_upper_bounds,
         )
         if safe is not None:
             action, trace, evaluated = safe
+            result.candidates_evaluated = evaluated
+            if max(trace) > capacity + self.tolerance:
+                minimum_action, min_trace = action, trace
+                result.min_achievable_flow_mcm_day = max(trace)
+                result.min_achievable_action_fraction = dict(action)
+                safe = None
+        if safe is not None:
+            action, trace, evaluated = safe
             result.status = DOWNSTREAM_STATUS_CORRECTED
+            if result.min_achievable_flow_mcm_day is None or max(trace) < result.min_achievable_flow_mcm_day:
+                result.min_achievable_flow_mcm_day = max(trace)
+                result.min_achievable_action_fraction = dict(action)
             result.action_fraction = action
             result.trajectory_mcm_day = list(trace)
             result.predicted_flow_mcm_day = max(trace)
@@ -529,8 +423,7 @@ class DownstreamCapacityGuard:
             self.last_latency_ms = (time.perf_counter() - started) * 1000.0
             return result
 
-        # Unreachable in practice (step 3 guarantees a safe action exists when the
-        # minimum action is safe). Kept so the boundary can never fail OPEN.
+        # No safe finite-grid candidate was found. Report the shortfall honestly.
         result.status = DOWNSTREAM_STATUS_FAILED_CLOSED
         result.action_fraction = dict(minimum_action)
         result.trajectory_mcm_day = list(min_trace) if min_trace is not None else []
@@ -542,7 +435,8 @@ class DownstreamCapacityGuard:
         result.is_protected = False
         result.reason = (
             "the downstream-safe action search did not find an admissible action; "
-            "the minimum admissible action was applied and no capacity guarantee "
+            "the least-peak tested admissible action was applied; this finite search "
+            "does not prove global infeasibility and no capacity guarantee "
             "is claimed"
         )
         self.last_latency_ms = (time.perf_counter() - started) * 1000.0
@@ -562,6 +456,7 @@ class DownstreamCapacityGuard:
         inflows: Dict[str, float],
         horizon: int,
         capacity: float,
+        gate_upper_bounds: Optional[Dict[str, float]] = None,
     ) -> Optional[Tuple[Dict[str, float], List[float], int]]:
         """
         Deterministically find the admissible action closest to the proposal.
@@ -573,9 +468,15 @@ class DownstreamCapacityGuard:
         """
         order = list(node_ids)
         per_node_levels = [
-            self.candidate_levels_for(network, nid, proposal[nid], current[nid])
+            sorted(set(self.candidate_levels_for(network, nid, proposal[nid], current[nid]))
+                   | {max(0.0, current[nid] - max_gate_change),
+                      min(1.0, current[nid] + max_gate_change)})
             for nid in order
         ]
+        if gate_upper_bounds is not None:
+            per_node_levels = [sorted(g for g in set(levels) | {gate_upper_bounds[nid]}
+                                      if g <= gate_upper_bounds[nid] + 1e-11)
+                               for nid, levels in zip(order, per_node_levels)]
         candidates = [
             combo for combo in itertools.product(*per_node_levels)
             if self.safety_layer_feasible(dict(zip(order, combo)), order,
@@ -591,6 +492,7 @@ class DownstreamCapacityGuard:
         )
 
         evaluated = 0
+        best = None
         for index in scored:
             action = {nid: float(candidates[index][j]) for j, nid in enumerate(order)}
             evaluated += 1
@@ -598,9 +500,11 @@ class DownstreamCapacityGuard:
                 trace = self.predict_flows(network, action, inflows, order, horizon)
             except Exception:  # pragma: no cover - defensive
                 continue
+            if best is None or max(trace) < max(best[1]):
+                best = (action, trace)
             if max(trace) <= capacity + self.tolerance:
                 return action, trace, evaluated
-        return None
+        return (*best, evaluated) if best is not None else None
 
     @staticmethod
     def minimum_admissible_action(
@@ -608,15 +512,7 @@ class DownstreamCapacityGuard:
         current: Dict[str, float],
         max_gate_change: float,
     ) -> Dict[str, float]:
-        """
-        The flow-minimising admissible action: every gate at its lowest reachable
-        value, ``clip(current - max_gate_change, 0, 1)``.
-
-        Because downstream flow is non-decreasing in every gate, this action
-        minimises the predicted downstream flow over the whole admissible box —
-        so its predicted flow is a *lower bound* on what any admissible action can
-        achieve. That is what makes the ``FAILED_CLOSED`` verdict provable.
-        """
+        """Lowest reachable gates; NOT a bound on future downstream peaks."""
         return {
             nid: max(0.0, min(1.0, float(current.get(nid, 0.0)) - max_gate_change))
             for nid in node_ids

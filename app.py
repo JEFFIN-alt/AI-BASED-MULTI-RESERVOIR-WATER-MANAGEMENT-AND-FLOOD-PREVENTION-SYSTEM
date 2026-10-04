@@ -44,6 +44,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 REQUIRED_PACKAGES = [
     ("fastapi", "fastapi"),
     ("uvicorn", "uvicorn"),
+    ("websockets", "websockets"),
+    ("httpx", "httpx"),
+    ("matplotlib", "matplotlib"),
     ("numpy", "numpy"),
     ("pandas", "pandas"),
     ("sklearn", "scikit-learn"),

@@ -23,6 +23,7 @@ Design Notes vs. src/simulator/environment.py (Phase 14.4):
 """
 
 import logging
+import math
 import copy
 from collections import deque
 from dataclasses import dataclass, field
@@ -148,6 +149,11 @@ class ReservoirNode:
         (controlled_release, spill) : Tuple[float, float]
             The volumes of water leaving the reservoir.
         """
+        for label, value in (("local inflow", local_inflow), ("routed inflow", routed_inflow)):
+            if not math.isfinite(value) or value < 0:
+                raise ValueError(f"{label} must be finite and nonnegative")
+        if not math.isfinite(gate_position):
+            raise ValueError("gate position must be finite")
         # 1. Clamp gate position
         gate_clamped = max(0.0, min(1.0, gate_position))
 
@@ -427,6 +433,14 @@ class ReservoirNetwork:
         -------
         dict of node_id → ReservoirState (after this step).
         """
+        # Validate the complete command BEFORE consuming queues or changing time.
+        for nid, node in self.nodes.items():
+            inflow = external_inflows.get(nid, 0.0)
+            gate = gate_positions.get(nid, 0.0)
+            if not math.isfinite(inflow) or inflow < 0 or not math.isfinite(gate):
+                raise ValueError(f"Invalid inflow or gate for {nid}")
+            if not math.isfinite(node.state.storage) or not 0 <= node.state.storage <= node.capacity:
+                raise ValueError(f"Invalid reservoir storage for {nid}")
         self.timestep += 1
 
         # 1. Determine routed inflows arriving at each node this step

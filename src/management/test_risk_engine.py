@@ -64,24 +64,27 @@ class TestRiskEngine(unittest.TestCase):
     def test_missing_wl_threshold(self):
         meta = {'historical_95th_inflow': 500.0} # no blue/orange/red
         res = assess_risk({'waterLevel': 750.0}, meta, 10.0, 10.0, 10.0)
-        self.assertEqual(res['water_level_status'], 'NORMAL')
+        self.assertEqual(res['water_level_status'], 'UNKNOWN')
+        self.assertEqual(res['overall_status'], 'UNKNOWN')
 
     # 10. Missing inflow history / Insufficient data (11)
     def test_missing_inflow_threshold(self):
         meta = {'redLevel': 723.7} # no historical_95th_inflow
         res = assess_risk({'waterLevel': 700.0}, meta, 600.0, 600.0, 600.0)
         self.assertEqual(res['inflow_forecast_status'], 'INSUFFICIENT_DATA')
-        self.assertEqual(res['overall_status'], 'NORMAL')
+        self.assertEqual(res['overall_status'], 'UNKNOWN')
 
     # 12. NaN/invalid forecast
     def test_nan_forecast(self):
         res = assess_risk({'waterLevel': 700.0}, self.metadata, None, 10.0, 10.0)
-        self.assertEqual(res['inflow_forecast_status'], 'NORMAL')
+        self.assertEqual(res['inflow_forecast_status'], 'INSUFFICIENT_DATA')
+        self.assertEqual(res['overall_status'], 'UNKNOWN')
 
     # 13. Negative forecast
     def test_negative_forecast(self):
         res = assess_risk({'waterLevel': 700.0}, self.metadata, -10.0, 10.0, 10.0)
-        self.assertIn('Negative forecast detected', res['reason'])
+        self.assertIn('negative forecast horizons', res['reason'])
+        self.assertEqual(res['overall_status'], 'UNKNOWN')
 
     # 14. Missing reservoir (missing telemetry entirely)
     def test_missing_telemetry(self):

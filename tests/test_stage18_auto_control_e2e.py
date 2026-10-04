@@ -551,7 +551,8 @@ def test_manual_mode_keeps_operator_authority_and_handover_moves_no_physics(
     _step()
     after = _gate_pct()
     assert after["Virtual Reservoir A"] == pytest.approx(42.0, abs=GATE_TOL)
-    assert after["Virtual Reservoir B"] == pytest.approx(77.0, abs=GATE_TOL)
+    assert after["Virtual Reservoir B"] == pytest.approx(50.0, abs=GATE_TOL)
+    assert _state()["final_safety"]["checked"]  # 77% requested; 50-point/day limit
 
     state = _state()
     kinds = _kinds(state["event_log"])
@@ -594,7 +595,8 @@ def test_manual_mode_keeps_operator_authority_and_handover_moves_no_physics(
     # ── Operator authority is back: a manual gate command reaches the physics.
     assert client.post("/api/gate/reservoir_3", json={"value": 90.0}).status_code == 200
     _step()
-    assert _gate_pct()["Virtual Reservoir C"] == pytest.approx(90.0, abs=GATE_TOL)
+    expected = min(90.0, before_handover["Virtual Reservoir C"] + 50.0)
+    assert _gate_pct()["Virtual Reservoir C"] == pytest.approx(expected, abs=GATE_TOL)
     state = _state()
     assert state["auto_control"]["state"] == "AUTO_DISABLED"
     assert _count(state["event_log"], "mpc_decision") == decisions

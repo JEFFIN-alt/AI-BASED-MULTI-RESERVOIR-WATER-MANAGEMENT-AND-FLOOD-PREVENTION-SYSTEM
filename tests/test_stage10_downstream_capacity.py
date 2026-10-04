@@ -484,7 +484,7 @@ def test_all_four_reservoirs_participate_in_the_safety_check(orchestrator, monke
     assert set(decision.gate_positions_fraction) == set(NODES)
     assert set(decision.safety_layer_gate_positions_fraction) == set(NODES)
     assert set(decision.final_safe_control_action_fraction) == set(NODES)
-    assert block["horizon_steps"] == 5
+    assert block["horizon_steps"] == 8
     assert block["physics"].startswith("ReservoirNetwork")
 
 
@@ -706,14 +706,15 @@ def test_fail_closed_is_reported_when_the_capacity_is_unachievable():
     assert result.capacity_achieved is False
     assert result.is_protected is False
     assert result.modified is True
-    assert "NO ADMISSIBLE ACTION" in result.reason
+    assert "does not prove global infeasibility" in result.reason
     # The minimum achievable flow is the unavoidable spill and is reported.
     assert result.min_achievable_flow_mcm_day is not None
     assert result.min_achievable_flow_mcm_day > CAPACITY
-    # The applied action is the flow-minimising one (all gates at their lowest
-    # reachable value).
-    for nid in NODES:
-        assert result.action_fraction[nid] == pytest.approx(0.0)
+    # Finite search returns the least-peak tested admissible vector, not a
+    # purported monotone all-minimum proof. Ties need not close every gate.
+    assert guard.safety_layer_feasible(result.action_fraction, NODES,
+                                       {n: 0.0 for n in NODES}, .5)
+    assert max(result.trajectory_mcm_day) == pytest.approx(result.min_achievable_flow_mcm_day)
 
 
 def test_failed_closed_action_is_the_flow_minimiser():

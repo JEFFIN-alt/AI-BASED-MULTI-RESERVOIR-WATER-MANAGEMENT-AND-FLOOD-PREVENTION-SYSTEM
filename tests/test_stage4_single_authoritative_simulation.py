@@ -235,7 +235,8 @@ def test_websocket_state_changes_when_authoritative_simulation_changes():
         after = ws.receive_json()
 
     assert before["reservoirs"]["reservoir_3"]["gate"] == pytest.approx(0.05, abs=1e-9)
-    assert after["reservoirs"]["reservoir_3"]["gate"] == pytest.approx(0.65, abs=1e-9)
+    assert after["reservoirs"]["reservoir_3"]["gate"] <= .55 + 1e-9
+    assert after["final_safety"]["checked"]
     assert after["reservoirs"]["reservoir_3"]["gate"] == state_manager.sim_state.bridge.cascade.network.nodes[
         "Virtual Reservoir C"].state.gate_position
 

@@ -1,0 +1,29 @@
+{
+  "notification_e2e": "PASS",
+  "providers": "MOCKED",
+  "browser": "Chromium",
+  "discord_deliveries": 3,
+  "gmail_deliveries": 1,
+  "page_errors": [],
+  "checks": [
+    "side-by-side cards",
+    "masked webhook",
+    "test delivery",
+    "toggle",
+    "dashboard acknowledgement",
+    "recovery attachment",
+    "physics unchanged"
+  ],
+  "verified_at_utc": "2026-10-03T14:14:26.827001+00:00",
+  "notification_tests": {
+    "passed": 98,
+    "failures": 0,
+    "skipped": 0
+  },
+  "simulation_communication_regressions": {
+    "passed": 210,
+    "failures": 0,
+    "skipped": 0
+  },
+  "real_discord_delivery": "NOT RUN (provider mocked as requested)"
+}

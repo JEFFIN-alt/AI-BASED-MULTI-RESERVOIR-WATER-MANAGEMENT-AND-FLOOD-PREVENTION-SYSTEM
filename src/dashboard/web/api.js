@@ -10,18 +10,21 @@ export class TwinAPI {
     this.lastStateAt = 0;
     this.lastStateId = null;
     this.lastHeartbeatAt = 0;
+    this.lastRestStateAt = 0;
+    this.transport = null;
     this.restStatus = 'CHECKING';
     this.websocketStatus = 'CONNECTING';
     this.stateStatus = 'WAITING';
     this.connect();
     this.checkFreshness();
-    this.healthTimer = setInterval(() => this.checkFreshness(), 5000);
+    this.healthTimer = setInterval(() => this.checkFreshness(), 1500);
     this.healthTimer.unref?.();
   }
 
   publishHealth() {
     const wsOpen = this.ws?.readyState === WebSocket.OPEN;
-    const connected = this.restStatus === 'LIVE' && this.websocketStatus === 'LIVE';
+    const restLive = this.restStatus === 'LIVE' && this.lastRestStateAt > 0 && Date.now() - this.lastRestStateAt < 8000;
+    const connected = this.websocketStatus === 'LIVE' || restLive;
     const waiting = this.restStatus === 'CHECKING' || this.websocketStatus === 'CONNECTING'
       || this.websocketStatus === 'OPEN · AWAITING STATE';
     const status = connected ? (this.stateStatus === 'STALE' ? 'STALE DATA' : 'CONNECTED')
@@ -29,7 +32,7 @@ export class TwinAPI {
       : (this.restStatus === 'LIVE' || this.websocketStatus === 'LIVE') ? 'STALE DATA' : 'DISCONNECTED';
     this.onHealth({rest: this.restStatus, websocket: this.websocketStatus,
       state: this.stateStatus, stateId: this.lastStateId,
-      receivedAt: this.lastStateAt || null, status});
+      receivedAt: this.lastStateAt || null, transport: this.transport, status});
     this.onConnection(status);
   }
 
@@ -39,6 +42,7 @@ export class TwinAPI {
     this.websocketStatus = 'CONNECTING';
     this.publishHealth();
     this.ws.onopen = () => {
+      this.lastStateStep = null;
       this.websocketStatus = 'OPEN · AWAITING STATE';
       this.publishHealth();
       this.checkFreshness();
@@ -56,22 +60,31 @@ export class TwinAPI {
           this.publishHealth();
           return;
         }
-        if (!state || !state.state_identity) throw Error('State identity missing');
-        this.lastStateAt = Date.now();
-        this.lastHeartbeatAt = this.lastStateAt;
-        this.lastStateId = state.state_identity.state_id;
+        if (!this.acceptState(state, 'WEBSOCKET')) return;
+        this.lastHeartbeatAt = Date.now();
         this.websocketStatus = 'LIVE';
-        this.stateStatus = 'LIVE';
-        if (this.onStateUpdate) this.onStateUpdate(state);
         this.publishHealth();
       } catch (err) { console.error('Invalid authoritative WebSocket state', err); }
     };
     this.ws.onclose = () => {
       this.websocketStatus = 'DISCONNECTED';
-      this.stateStatus = 'STALE';
+      if (!(this.restStatus === 'LIVE' && this.lastRestStateAt > 0 && Date.now() - this.lastRestStateAt < 8000)) this.stateStatus = 'STALE';
       this.publishHealth();
       setTimeout(() => this.connect(), 2000);
     };
+  }
+
+  acceptState(state, transport) {
+    if (!state?.state_identity?.state_id) throw Error('State identity missing');
+    const step = state.state_identity.sim_step_index;
+    if (Number.isFinite(step) && Number.isFinite(this.lastStateStep) && step < this.lastStateStep) return false;
+    this.lastStateStep = step;
+    this.lastStateAt = Date.now();
+    this.lastStateId = state.state_identity.state_id;
+    this.transport = transport;
+    this.stateStatus = 'LIVE';
+    this.onStateUpdate?.(state);
+    return true;
   }
 
   async checkFreshness() {
@@ -83,7 +96,9 @@ export class TwinAPI {
       const response = await fetch(`${this.baseUrl}/state`, {signal: abort.signal, cache: 'no-store'});
       if (!response.ok) throw Error('state unavailable');
       const state = await response.json();
+      if (!state?.state_identity?.state_id) throw Error('State identity missing');
       this.restStatus = 'LIVE';
+      this.lastRestStateAt = Date.now();
       const restId = state.state_identity?.state_id;
       const sameIdentity = restId != null && this.lastStateId != null && String(restId) === String(this.lastStateId);
       const grace = Math.max(10000, 2000 / (state.simulation?.speed || 1) + 5000);
@@ -91,13 +106,18 @@ export class TwinAPI {
           && Date.now() - this.lastHeartbeatAt > 12000) {
         this.websocketStatus = 'STALE';
       }
-      const identityBehind = restId != null && this.lastStateId != null && !sameIdentity;
+      const restStep = state.state_identity?.sim_step_index;
+      const wsStep = this.lastStateStep;
+      const identityBehind = Number.isFinite(restStep) && Number.isFinite(wsStep) && restStep > wsStep;
+      // Both transports read the same backend-owned state. REST keeps controls
+      // usable if WebSocket support is missing, interrupted or behind.
+      if (this.websocketStatus !== 'LIVE' || identityBehind) this.acceptState(state, 'REST');
       const oldFrame = this.lastStateAt > 0 && Date.now() - this.lastStateAt > grace;
-      this.stateStatus = (this.websocketStatus === 'STALE' || identityBehind || (state.simulation?.running === true && oldFrame))
-        ? 'STALE' : sameIdentity ? 'LIVE' : oldFrame ? 'STALE' : 'WAITING';
+      this.stateStatus = (this.transport !== 'REST' && (this.websocketStatus === 'STALE' || identityBehind || (state.simulation?.running === true && oldFrame)))
+        ? 'STALE' : (sameIdentity || this.websocketStatus === 'LIVE') ? 'LIVE' : oldFrame ? 'STALE' : 'WAITING';
     } catch (_) {
       this.restStatus = 'UNAVAILABLE';
-      this.stateStatus = 'STALE';
+      if (this.websocketStatus !== 'LIVE') this.stateStatus = 'STALE';
     } finally {
       clearTimeout(timeout);
       this.healthPending = false;
@@ -116,6 +136,7 @@ export class TwinAPI {
       const result = await response.json();
       if (!response.ok) { report(`COMMAND REJECTED (${response.status})`); return result; }
       report('ACCEPTED · application shown by backend state');
+      await this.checkFreshness();
       return result;
     } catch (err) {
       report('COMMAND FAILED · check connection');
@@ -123,7 +144,13 @@ export class TwinAPI {
     }
   }
 
-  async setGate(reservoirId, value) { return this.post(`/gate/${reservoirId}`, {value}); }
+  async setGate(reservoirId, value) {
+    // Preserve command order when a slider emits several inputs before HTTP completes.
+    this.gateCommands = (this.gateCommands || Promise.resolve()).then(
+      () => this.post(`/gate/${reservoirId}`, { value: value }));
+    return this.gateCommands;
+  }
+  async classroomDemo() { return this.post('/simulation/classroom-demo', {}); }
   async play() { return this.post('/simulation/play', {}); }
   async pause() { return this.post('/simulation/pause', {}); }
   async step() { return this.post('/simulation/step', {}); }

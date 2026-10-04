@@ -368,10 +368,12 @@ def test_frontend_does_not_calculate_physical_state():
     assert "0.14 * Math.sin" not in code
     # no reservoir equation / routing / spill / mass-balance arithmetic in CODE
     # (the Stage 11/12 comments mentioning these words are stripped first)
-    for forbidden in ("attenuation", "new_storage",
+    for forbidden in ("new_storage",
                       "inflow_routed", "natural_inflow",
                       "storage_before", "storage_change"):
         assert forbidden not in code, f"JavaScript computes physics: {forbidden}"
+    assert "${esc(r.attenuation)}" in code  # display backend routing metadata only
+    assert "r.attenuation *" not in code and "* r.attenuation" not in code
     # Presentation now reads the backend's separate release/spill fields.
     # Reading those names is not physics; deriving jet flow from head/gates is.
     assert "controlledRelease: value(src.controlled_release)" in code

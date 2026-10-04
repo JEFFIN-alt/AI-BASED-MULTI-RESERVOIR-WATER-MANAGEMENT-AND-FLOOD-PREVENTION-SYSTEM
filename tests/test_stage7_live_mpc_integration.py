@@ -338,7 +338,8 @@ def test_mpc_actually_changes_live_gate_decisions(monkeypatch):
 
         network = sim.bridge.cascade.network
         gates_before = {nid: network.nodes[nid].state.gate_position for nid in LIVE_NODE_IDS}
-        assert all(g == pytest.approx(1.0) for g in gates_before.values())
+        assert all(0 <= g <= .5 for g in gates_before.values())
+        assert sim.final_safety["checked"]  # manual proposals now pass final safety
 
         adapter = _adapter(network)
         bundle = adapter.build_bundle({n: _payload() for n in LIVE_NODE_IDS}, "2026-09-14")

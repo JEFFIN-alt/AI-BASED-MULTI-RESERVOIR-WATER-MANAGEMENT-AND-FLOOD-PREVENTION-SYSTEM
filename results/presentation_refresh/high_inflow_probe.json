@@ -1,0 +1,897 @@
+{
+  "scope": "Core check of existing standard inflow and storm controls; historical replay forecasts are unchanged",
+  "maximum_storm_local_inflows_mcm_day": {
+    "Virtual Reservoir A": 12,
+    "Virtual Reservoir B": 16,
+    "Virtual Reservoir C": 360,
+    "Virtual Reservoir D": 0.0
+  },
+  "cases": [
+    {
+      "policy": "Standard inflows, 6 days",
+      "fixed_request_pct": null,
+      "reserve_fraction": 0.3,
+      "metrics": {
+        "spill_total_mcm": 24.20794999999995,
+        "empty_reservoir_days": 0,
+        "above_90pct_reservoir_days": 6,
+        "downstream_over_capacity_days": 0,
+        "peak_downstream_mcm_day": 50.0,
+        "minimum_storage_pct": {
+          "Virtual Reservoir A": 70.79482439926063,
+          "Virtual Reservoir B": 29.99999999999999,
+          "Virtual Reservoir C": 69.38040138964655,
+          "Virtual Reservoir D": 39.5374037814812
+        },
+        "final_storage_pct": {
+          "Virtual Reservoir A": 100.0,
+          "Virtual Reservoir B": 29.99999999999999,
+          "Virtual Reservoir C": 100.0,
+          "Virtual Reservoir D": 48.50534339735446
+        }
+      },
+      "daily_results": [
+        {
+          "day": 1,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 7.66,
+            "Virtual Reservoir B": 9.63,
+            "Virtual Reservoir C": 241.64499999999998,
+            "Virtual Reservoir D": 170.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 70.79482439926063,
+            "Virtual Reservoir B": 45.29633113828787,
+            "Virtual Reservoir C": 69.38040138964655,
+            "Virtual Reservoir D": 42.526716986772286
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 15.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 15.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 5.684341886080802e-14
+        },
+        {
+          "day": 2,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 9.16,
+            "Virtual Reservoir B": 6.378,
+            "Virtual Reservoir C": 290.895,
+            "Virtual Reservoir D": 158.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 84.65804066543438,
+            "Virtual Reservoir B": 29.999999999999996,
+            "Virtual Reservoir C": 83.52091647764793,
+            "Virtual Reservoir D": 39.5374037814812
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 30.0,
+            "Virtual Reservoir B": 72.52000000000001,
+            "Virtual Reservoir C": 30.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 5.684341886080802e-14
+        },
+        {
+          "day": 3,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 8.66,
+            "Virtual Reservoir B": 6.378,
+            "Virtual Reservoir C": 312.0592,
+            "Virtual Reservoir D": 164.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 80.0369685767098,
+            "Virtual Reservoir B": 29.999999999999996,
+            "Virtual Reservoir C": 89.59751930862211,
+            "Virtual Reservoir D": 41.032060384126744
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 70.0,
+            "Virtual Reservoir B": 46.75000000000001,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 5.684341886080802e-14
+        },
+        {
+          "day": 4,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.66,
+            "Virtual Reservoir B": 6.378,
+            "Virtual Reservoir C": 331.03294999999997,
+            "Virtual Reservoir D": 174.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 98.52125693160814,
+            "Virtual Reservoir B": 29.999999999999996,
+            "Virtual Reservoir C": 95.04520658072295,
+            "Virtual Reservoir D": 43.52315472186932
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 19.999999999999996,
+            "Virtual Reservoir B": 53.49999999999999,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 1.1368683772161603e-13
+        },
+        {
+          "day": 5,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 6.378,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 184.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 29.999999999999996,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 46.014249059611885
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 50.0,
+            "Virtual Reservoir B": 71.50000000000001,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 2.630449999999964,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.33999999999999986,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 2.2904499999999643,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 1.1368683772161603e-13
+        },
+        {
+          "day": 6,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 6.377999999999998,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 194.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 29.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 48.50534339735446
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 50.0,
+            "Virtual Reservoir B": 49.00000000000001,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 21.577499999999986,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.5,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 21.077499999999986,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 1.1368683772161603e-13
+        }
+      ]
+    },
+    {
+      "policy": "Maximum storm, 1 day then 5 standard days",
+      "fixed_request_pct": null,
+      "reserve_fraction": 0.3,
+      "metrics": {
+        "spill_total_mcm": 229.96499999999995,
+        "empty_reservoir_days": 0,
+        "above_90pct_reservoir_days": 13,
+        "downstream_over_capacity_days": 0,
+        "peak_downstream_mcm_day": 50.0,
+        "minimum_storage_pct": {
+          "Virtual Reservoir A": 97.6894639556377,
+          "Virtual Reservoir B": 29.999999999999996,
+          "Virtual Reservoir C": 96.91349163053776,
+          "Virtual Reservoir D": 37.544528311287145
+        },
+        "final_storage_pct": {
+          "Virtual Reservoir A": 97.6894639556377,
+          "Virtual Reservoir B": 29.999999999999996,
+          "Virtual Reservoir C": 100.0,
+          "Virtual Reservoir D": 60.96081508606732
+        }
+      },
+      "daily_results": [
+        {
+          "day": 1,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 150.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 37.544528311287145
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 15.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 117.06499999999997,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 5.84,
+            "Virtual Reservoir B": 0.370000000000001,
+            "Virtual Reservoir C": 110.85499999999996,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 2,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.57,
+            "Virtual Reservoir B": 15.260000000000002,
+            "Virtual Reservoir C": 337.54,
+            "Virtual Reservoir D": 160.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 97.6894639556377,
+            "Virtual Reservoir B": 71.7779868297272,
+            "Virtual Reservoir C": 96.91349163053776,
+            "Virtual Reservoir D": 40.03562264902972
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 65.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 70.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 3,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 9.935000000000002,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 194.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 46.73095014111007,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 48.50534339735446
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 50.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 13.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.25,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 12.75,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 4,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 9.860000000000003,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 204.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 46.37817497648167,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 50.996437735097025
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 15.0,
+            "Virtual Reservoir B": 70.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 25.75,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 2.25,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 23.5,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 5,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 9.110000000000003,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 214.71500000000003
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 42.850423330197565,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 53.487532072839606
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 15.0,
+            "Virtual Reservoir B": 70.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 23.19999999999999,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 2.25,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 20.94999999999999,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 6,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3,
+            "Virtual Reservoir B": 4,
+            "Virtual Reservoir C": 90,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.57,
+            "Virtual Reservoir B": 6.378,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 244.71500000000003
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 97.6894639556377,
+            "Virtual Reservoir B": 29.999999999999996,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 60.96081508606732
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 65.0,
+            "Virtual Reservoir B": 74.07000000000004,
+            "Virtual Reservoir C": 30.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 50.94999999999999,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 50.94999999999999,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": -1.1368683772161603e-13
+        }
+      ]
+    },
+    {
+      "policy": "Maximum storm, sustained 6 days",
+      "fixed_request_pct": null,
+      "reserve_fraction": 0.3,
+      "metrics": {
+        "spill_total_mcm": 1696.2399999999998,
+        "empty_reservoir_days": 0,
+        "above_90pct_reservoir_days": 18,
+        "downstream_over_capacity_days": 0,
+        "peak_downstream_mcm_day": 50.0,
+        "minimum_storage_pct": {
+          "Virtual Reservoir A": 100.0,
+          "Virtual Reservoir B": 99.99999999999999,
+          "Virtual Reservoir C": 100.0,
+          "Virtual Reservoir D": 37.544528311287145
+        },
+        "final_storage_pct": {
+          "Virtual Reservoir A": 100.0,
+          "Virtual Reservoir B": 99.99999999999999,
+          "Virtual Reservoir C": 100.0,
+          "Virtual Reservoir D": 59.96437735097029
+        }
+      },
+      "daily_results": [
+        {
+          "day": 1,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 150.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 37.544528311287145
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 15.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 117.06499999999997,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 5.84,
+            "Virtual Reservoir B": 0.370000000000001,
+            "Virtual Reservoir C": 110.85499999999996,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 2,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 160.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 40.03562264902972
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 50.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 70.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 274.74999999999994,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 9.5,
+            "Virtual Reservoir B": 6.0000000000000036,
+            "Virtual Reservoir C": 259.24999999999994,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 3,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 194.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 48.50534339735446
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 30.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 310.67499999999995,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 10.5,
+            "Virtual Reservoir B": 6.675000000000001,
+            "Virtual Reservoir C": 293.49999999999994,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        },
+        {
+          "day": 4,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 204.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 50.996437735097025
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 70.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 50.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 310.24999999999994,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 8.5,
+            "Virtual Reservoir B": 8.250000000000004,
+            "Virtual Reservoir C": 293.49999999999994,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 2.2737367544323206e-13
+        },
+        {
+          "day": 5,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 234.71500000000003
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 58.46972074832475
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 50.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 30.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 340.34999999999997,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 9.5,
+            "Virtual Reservoir B": 7.349999999999998,
+            "Virtual Reservoir C": 323.49999999999994,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 4.547473508864641e-13
+        },
+        {
+          "day": 6,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 12,
+            "Virtual Reservoir B": 16,
+            "Virtual Reservoir C": 360,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 21.26,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 240.71500000000003
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 99.99999999999999,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 59.96437735097029
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 30.0,
+            "Virtual Reservoir B": 100.0,
+            "Virtual Reservoir C": 30.0,
+            "Virtual Reservoir D": 15.0
+          },
+          "spill_mcm": 343.1499999999999,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 10.5,
+            "Virtual Reservoir B": 9.149999999999995,
+            "Virtual Reservoir C": 323.49999999999994,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 30.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 4.547473508864641e-13
+        }
+      ]
+    },
+    {
+      "policy": "Fixed manual standard inflows, 3 days",
+      "fixed_request_pct": [
+        0.0,
+        50.0,
+        0.0,
+        25.0
+      ],
+      "reserve_fraction": null,
+      "metrics": {
+        "spill_total_mcm": 107.94499999999996,
+        "empty_reservoir_days": 0,
+        "above_90pct_reservoir_days": 4,
+        "downstream_over_capacity_days": 0,
+        "peak_downstream_mcm_day": 50.0,
+        "minimum_storage_pct": {
+          "Virtual Reservoir A": 77.7264325323475,
+          "Virtual Reservoir B": 35.8889934148636,
+          "Virtual Reservoir C": 75.84053518619541,
+          "Virtual Reservoir D": 12.633584933861446
+        },
+        "final_storage_pct": {
+          "Virtual Reservoir A": 100.0,
+          "Virtual Reservoir B": 35.8889934148636,
+          "Virtual Reservoir C": 100.0,
+          "Virtual Reservoir D": 12.633584933861446
+        }
+      },
+      "daily_results": [
+        {
+          "day": 1,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3.0,
+            "Virtual Reservoir B": 4.0,
+            "Virtual Reservoir C": 90.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 8.41,
+            "Virtual Reservoir B": 9.63,
+            "Virtual Reservoir C": 264.145,
+            "Virtual Reservoir D": 150.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 77.7264325323475,
+            "Virtual Reservoir B": 45.29633113828787,
+            "Virtual Reservoir C": 75.84053518619541,
+            "Virtual Reservoir D": 37.544528311287145
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 0.0,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 5.684341886080802e-14
+        },
+        {
+          "day": 2,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3.0,
+            "Virtual Reservoir B": 4.0,
+            "Virtual Reservoir C": 90.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 8.63,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 100.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 40.59266227657573,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 25.089056622574297
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 10.694999999999961,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 0.5899999999999999,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 10.104999999999961,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 2.842170943040401e-14
+        },
+        {
+          "day": 3,
+          "local_inflows_mcm_day": {
+            "Virtual Reservoir A": 3.0,
+            "Virtual Reservoir B": 4.0,
+            "Virtual Reservoir C": 90.0,
+            "Virtual Reservoir D": 0.0
+          },
+          "storage_mcm": {
+            "Virtual Reservoir A": 10.82,
+            "Virtual Reservoir B": 7.630000000000001,
+            "Virtual Reservoir C": 348.29,
+            "Virtual Reservoir D": 50.715
+          },
+          "storage_pct": {
+            "Virtual Reservoir A": 100.0,
+            "Virtual Reservoir B": 35.8889934148636,
+            "Virtual Reservoir C": 100.0,
+            "Virtual Reservoir D": 12.633584933861446
+          },
+          "applied_pct": {
+            "Virtual Reservoir A": 0.0,
+            "Virtual Reservoir B": 50.0,
+            "Virtual Reservoir C": 0.0,
+            "Virtual Reservoir D": 25.0
+          },
+          "spill_mcm": 97.25,
+          "spill_by_node_mcm": {
+            "Virtual Reservoir A": 3.0,
+            "Virtual Reservoir B": 0.0,
+            "Virtual Reservoir C": 94.25,
+            "Virtual Reservoir D": 0.0
+          },
+          "downstream_mcm_day": 50.0,
+          "predicted_protected": true,
+          "mass_balance_residual": 0.0
+        }
+      ]
+    }
+  ]
+}

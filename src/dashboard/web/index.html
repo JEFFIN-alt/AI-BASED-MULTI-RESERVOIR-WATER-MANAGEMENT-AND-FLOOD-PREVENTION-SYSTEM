@@ -79,6 +79,9 @@
     z-index:99;text-align:center;padding:0 20px;font-weight:600}
   #boot .boot-mark{font-family:var(--serif);font-size:30px;letter-spacing:.06em;font-weight:400;color:var(--ink)}
   #boot .boot-sub{color:var(--ink-faint);font-size:10px;letter-spacing:.22em}
+  #boot .boot-help{max-width:560px;font-size:16px;line-height:1.6;letter-spacing:0;color:var(--ink);font-weight:400}
+  #boot .boot-help code{display:block;margin:16px 0;padding:12px;border:1px solid var(--hairline);border-radius:8px;user-select:text;font-family:var(--mono)}
+  #boot .boot-help a{color:var(--accent);text-decoration:underline}
 
   /* ================= layout shell ================= */
   #hud{position:absolute;inset:0;pointer-events:none;z-index:10}
@@ -99,6 +102,7 @@
   .rail-item span{font-size:8px;letter-spacing:.08em;font-weight:600;text-transform:uppercase}
   .rail-item:hover{color:var(--ink);background:var(--btn-hover);transform:translateY(-1px)}
   .rail-item:active{transform:scale(.97)}
+  .rail-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   .rail-item.on{color:var(--accent);background:var(--accent-soft);border-color:var(--accent-line)}
   #rail .rail-spacer{flex:1}
 
@@ -250,6 +254,96 @@
   #demo-badge.on{display:flex}
   #demo-badge .db-dot{width:6px;height:6px;border-radius:50%;background:#ffb020}
   #demo-badge .db-sub{color:#e8c48a;font-weight:600;letter-spacing:.08em;text-transform:none;opacity:.9}
+
+  #operator-alert{position:absolute;top:104px;left:50%;transform:translateX(-50%);z-index:29;
+    min-width:290px;max-width:min(560px,calc(100% - 32px));padding:9px 14px;
+    background:var(--panel);border:1px solid var(--hairline);border-left:3px solid var(--warn);
+    border-radius:7px;box-shadow:var(--shadow);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    color:var(--ink);font-size:10px;line-height:1.45;letter-spacing:.04em;pointer-events:auto}
+  #operator-alert[data-severity="critical"]{border-left-color:var(--bad)}
+  #operator-alert .oa-title{font-weight:800;letter-spacing:.12em}
+  #operator-alert .oa-detail{color:var(--ink-soft);margin-left:8px}
+  .scene-focus #operator-alert{top:104px}
+
+  .settings-view{position:absolute;inset:52px 0 0 64px;z-index:32;display:grid;grid-template-columns:208px minmax(0,1fr);
+    background:var(--bg);border-top:1px solid var(--hairline);overflow:hidden;pointer-events:auto}
+  .settings-view[hidden]{display:none}
+  .settings-nav{padding:24px 16px;border-right:1px solid var(--hairline);background:var(--panel-solid)}
+  .settings-nav h2{margin:0 8px 18px;color:var(--ink-faint);font-size:9px;letter-spacing:.18em}
+  .settings-nav button{display:block;width:100%;text-align:left;border:0;border-radius:7px;background:transparent;color:var(--ink-soft);padding:9px 10px;margin:3px 0;font:inherit;font-size:11px;cursor:pointer}
+  .settings-nav button:hover,.settings-nav button.on{background:var(--accent-soft);color:var(--accent)}
+  .settings-main{padding:24px clamp(20px,4vw,56px);overflow:auto;max-width:980px;width:100%;margin:0 auto}
+  .settings-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .settings-top h1{font-size:18px;letter-spacing:.12em;margin:0;color:var(--ink)}
+  .settings-crumb{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px}
+  .settings-card{background:var(--panel);border:1px solid var(--hairline);border-radius:10px;padding:16px;margin:12px 0;box-shadow:var(--shadow)}
+  .settings-card h3{font-size:12px;letter-spacing:.08em;margin:0 0 12px;color:var(--ink)}
+  .settings-channel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+  .settings-channel-grid .settings-card{margin:0;min-width:0}
+  [data-discord-webhook]{overflow-wrap:anywhere;max-width:65%}
+  [data-active-incidents] .settings-row{flex-wrap:wrap}
+  [data-active-incidents] .settings-label{min-width:180px}
+  @media(max-width:900px){.settings-channel-grid{grid-template-columns:1fr}}
+  .settings-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--hairline-soft);font-size:11px}
+  .settings-row:first-of-type{border-top:0}.settings-row .settings-label{flex:1;color:var(--lbl)}
+  .settings-input{width:min(100%,390px);padding:9px 10px;border:1px solid var(--hairline);border-radius:6px;background:var(--btn-bg);color:var(--ink);font:inherit;font-size:11px}
+  .settings-button{border:1px solid var(--accent-line);border-radius:7px;background:var(--accent-soft);color:var(--accent);padding:9px 13px;font:inherit;font-size:10px;font-weight:700;letter-spacing:.08em;cursor:pointer}
+  .settings-button.primary{background:var(--accent);color:var(--panel-solid);border-color:var(--accent)}
+  .settings-button:disabled{opacity:.5;cursor:not-allowed}
+  .settings-hint{font-size:10px;line-height:1.6;color:var(--ink-soft);max-width:640px}
+  .settings-error{font-size:10px;line-height:1.5;color:var(--bad);margin-top:10px}
+  .settings-status{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:.1em}
+  .settings-toggle{accent-color:var(--accent);width:15px;height:15px}
+  .workspace-view{position:absolute;inset:52px 0 0 64px;z-index:31;background:var(--bg);overflow:auto;pointer-events:auto;padding:28px clamp(20px,4vw,56px) 36px}
+  .workspace-inner{max-width:1240px;margin:0 auto}
+  .page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:0 0 22px;padding-bottom:16px;border-bottom:1px solid var(--hairline)}
+  .page-eyebrow{font-size:9px;letter-spacing:.16em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:7px}
+  .page-heading h1{font-size:21px;letter-spacing:.06em;font-weight:650;color:var(--ink)}
+  .page-heading p{font-size:11px;color:var(--ink-soft);margin-top:7px;line-height:1.5}
+  .page-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+  .page-card{grid-column:span 6;min-width:0;padding:16px;background:var(--panel-solid);border:1px solid var(--hairline);border-radius:8px}
+  .page-card.wide{grid-column:1/-1}.page-card.third{grid-column:span 4}
+  .page-card h2{font-size:10px;letter-spacing:.13em;color:var(--ink-faint);text-transform:uppercase;margin-bottom:13px}
+  .page-card p,.page-note{font-size:11px;line-height:1.55;color:var(--ink-soft)}
+  .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  .metric{padding:11px;border:1px solid var(--hairline-soft);border-radius:6px;background:var(--btn-bg);min-width:0}
+  .metric .k{font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7px}
+  .metric .v{font:600 13px var(--mono);line-height:1.3;color:var(--val);overflow-wrap:break-word;word-break:normal}
+  .metric .u{font:500 9px var(--sans);color:var(--ink-soft)}
+  .data-table{width:100%;border-collapse:collapse;font-size:10px}
+  .data-table th{text-align:left;padding:9px 8px;color:var(--ink-faint);font-size:8px;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--hairline)}
+  .data-table td{padding:10px 8px;border-bottom:1px solid var(--hairline-soft);color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .data-table tbody tr{cursor:pointer}.data-table tbody tr:hover{background:var(--accent-soft)}
+  .asset-link,.page-action{border:0;background:none;color:var(--accent);font:600 11px var(--sans);cursor:pointer}
+  .page-action{border:1px solid var(--accent-line);border-radius:6px;padding:8px 11px;background:var(--accent-soft)}
+  .page-action:hover{background:var(--btn-hover)}
+  .page-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--hairline);border-radius:999px;padding:4px 8px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .page-pill.ok{color:var(--ok);border-color:var(--chip-ok-bd);background:var(--chip-ok-bg)}.page-pill.warn{color:var(--warn);border-color:var(--chip-warn-bd);background:var(--chip-warn-bg)}.page-pill.bad{color:var(--bad);border-color:var(--chip-bad-bd);background:var(--chip-bad-bg)}
+  .page-list{display:grid;gap:0}.page-list-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(160px,2fr) auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--hairline-soft);font-size:10px}
+  .page-list-row:last-child{border-bottom:0}.page-list-row .meta{color:var(--ink-faint);font:9px var(--mono)}
+  .page-event-group{padding:0;overflow:hidden}.page-event-group>summary{list-style:none;padding:13px 16px;cursor:pointer;font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--ink-faint);text-transform:uppercase}
+  .page-event-group>summary::-webkit-details-marker{display:none}.page-event-group>summary::after{content:'+';float:right;color:var(--accent);font-size:14px;line-height:10px}.page-event-group[open]>summary::after{content:'−'}
+  .page-event-group .page-list{max-height:320px;overflow:auto;padding:0 16px 12px}
+  .simulation-strip{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.simulation-strip .metric{flex:1;min-width:130px}
+  .simulation-view{background:transparent;overflow:visible;pointer-events:none;padding:12px 16px}
+  .simulation-view .workspace-inner{max-width:none;pointer-events:none}
+  .simulation-view .page-heading{display:block;width:max-content;max-width:min(540px,calc(100vw - 100px));padding:7px 12px;margin:0;background:var(--panel);border:1px solid var(--hairline);border-radius:8px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+  .simulation-view .page-heading>div{display:grid;grid-template-columns:max-content max-content;align-items:baseline;column-gap:12px}.simulation-view .page-eyebrow{grid-column:1/-1}.simulation-view .page-heading h1{font-size:16px}.simulation-view .page-heading p{margin:0;font-size:9px}.simulation-view .simulation-strip{max-width:980px;margin-top:7px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+  .simulation-view .simulation-strip .metric{background:var(--panel);box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+  .simulation-view .simulation-strip .metric{min-width:0;padding:10px}.simulation-view .simulation-strip .metric .v{font-size:10px;overflow-wrap:normal;word-break:normal}
+  .sim-camera-controls{max-width:980px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 10px;border:1px solid var(--hairline);border-radius:7px;background:var(--panel);box-shadow:var(--shadow);backdrop-filter:blur(10px);pointer-events:auto}
+  .sim-camera-controls .k{font-size:8px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-faint);margin-right:4px}
+  .sim-camera-controls [data-camera]{pointer-events:auto}
+  .simulation-view [data-camera]{pointer-events:auto}
+  .classroom-panel{pointer-events:auto;background:var(--panel-solid);border:1px solid var(--hairline);border-radius:8px;padding:10px;margin-top:8px;max-width:690px;max-height:290px;overflow:auto;font-size:11px}
+  .classroom-panel table{width:100%;font-size:10px;text-align:right}.classroom-panel td,.classroom-panel th{padding:4px}.classroom-panel td:first-child{text-align:left}
+  .classroom-panel p{margin:8px 0;line-height:1.5}
+  #twin-root.workspace-open #hud-right,#twin-root.workspace-open #hud-bottom,#twin-root.workspace-open #hud-hint,#twin-root.workspace-open #operator-alert,#twin-root.workspace-open #demo-badge{display:none!important}
+  #twin-root.workspace-open:not(.workspace-simulation) #hud-controls{display:none!important}
+  #twin-root.workspace-simulation #hud-controls{z-index:34}
+  .settings-row{min-height:40px}.settings-view .settings-card{max-width:860px}
+  @media(max-width:800px){.settings-view,.workspace-view{inset:52px 0 0 56px}.settings-view{grid-template-columns:142px minmax(0,1fr)}.settings-nav{padding:18px 9px}.settings-main{padding:18px 14px}.workspace-view{padding:20px 14px}.page-card.third{grid-column:span 6}.simulation-view .simulation-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){#rail{width:52px}.rail-item{width:40px}.rail-item span{font-size:7px}.settings-view{grid-template-columns:112px minmax(0,1fr)}.settings-nav button{padding:8px 6px;font-size:10px}.settings-main{padding:14px 10px}.settings-row{flex-wrap:wrap;align-items:flex-start}.settings-row .settings-label{min-width:100%}.settings-input{width:100%}.page-heading{align-items:flex-start;flex-direction:column}.page-heading h1{font-size:18px}.page-grid{gap:9px}.page-card,.page-card.third{grid-column:1/-1;padding:12px}.data-table{min-width:680px}.page-card:has(.data-table){overflow:auto}}
 
   /* — controls (camera + simulation) — */
   #hud-controls{position:absolute;left:80px;right:288px;bottom:132px;z-index:25;
@@ -442,7 +536,25 @@
   .res-card .presentation-detail{margin-top:2px}
   #hud-bottom{max-height:25vh}
   @media(max-height:800px){.gate-feedback{display:none}#hud-bottom{max-height:180px}.res-card .rc-foot{display:none}}
+  .scene-view-switch{position:absolute;right:20px;top:78px;z-index:24;display:flex;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:3px}
+  .scene-view-switch button,.site-context button{font:10px var(--sans);letter-spacing:.06em;padding:6px 10px;color:var(--ink);background:transparent;border:1px solid transparent;border-radius:4px;cursor:pointer}
+  .scene-view-switch [aria-pressed=true],.site-context [aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  .site-context{position:absolute;inset:112px 18px 78px 76px;z-index:23;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:28px;color:var(--ink)}
+  .site-context[hidden]{display:none}.site-heading>span{font-size:10px;letter-spacing:.14em;color:var(--ink-soft)}
+  .site-heading h2{font:28px var(--serif);margin:8px 0 20px}.site-modes{display:flex;gap:6px;margin-top:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
+  .site-content{height:calc(100% - 180px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+  .site-content strong{font-size:14px;letter-spacing:.1em}.site-content p{max-width:490px;font-size:13px;color:var(--ink-soft);line-height:1.7}.site-content iframe{width:100%;height:100%;border:0}
+  .scene-view-switch,.site-context,.site-modes{border-color:var(--hairline)}.site-context{background:var(--panel-solid)}
+  .scene-view-switch{right:calc(var(--status-width) + 32px)}
+  .scene-focus .scene-view-switch{right:20px}.reservoir-view .scene-view-switch{right:340px}
+  .site-open .flabel,.site-open #hud-connectors{visibility:hidden}.workspace-open .scene-view-switch{display:none}
+  .flabel.selected{outline:2px solid var(--accent);box-shadow:0 0 0 5px rgba(70,145,126,.18)}
+  .flabel .fl-risk{display:inline-block;font-size:8px;margin-left:15px}
+  .flabel .fl-detail{display:block;width:100%;margin-left:15px;font-size:9px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  #visual-quality{font:10px var(--sans);color:var(--ink);background:var(--panel-solid);border:1px solid var(--hairline);border-radius:4px;padding:4px;max-width:112px}
+  @media(max-width:1000px){.scene-view-switch{top:58px}.site-context{left:16px}}
 </style>
+<link rel="stylesheet" href="/presentation.css">
 </head>
 <body>
 <div id="twin-root">
@@ -453,9 +565,21 @@
   </div>
 </div>
 
-<!-- CDN watchdog: if the module fails to load, say so instead of hanging forever -->
+<!-- A local file has no backend; otherwise detect modules that fail to load. -->
 <script>
-  window.addEventListener('load', () => {
+  if (window.location.protocol === 'file:') {
+    document.getElementById('boot').innerHTML = `
+      <div class="boot-mark">Aqua Flow</div>
+      <div class="boot-help">
+        <strong>Start the Python server to open the simulation.</strong>
+        <p>Open the AquaFlow-Presentation folder and double-click
+        <strong>START_PRESENTATION.cmd</strong>, or run this command from that folder:</p>
+        <code>python app.py</code>
+        <p>Keep the terminal open. Once the server starts, open
+        <a href="http://127.0.0.1:8000/">http://127.0.0.1:8000/</a>.</p>
+        <p>This HTML file cannot run the live simulation by itself.</p>
+      </div>`;
+  } else window.addEventListener('load', () => {
     setTimeout(() => {
       if (!window.__twinReady) {
         const b = document.getElementById('boot');
@@ -479,6 +603,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { TwinAPI } from './api.js';
+import { PresentationUI } from './presentation.js';
+import { terrainMaterial, forestCrown, forestMaterial, partitionForest, addDistantRidges, createSiteView } from './realism.js';
 
 /* ================================================================
    AQUA FLOW THEME MANAGER — light / dark, localStorage, no reload.
@@ -486,12 +612,12 @@ import { TwinAPI } from './api.js';
    ================================================================ */
 const THEMES = {
   light: {
-    fogColor: 0xcfd8d2, fogDensity: 0.00062,
-    hemiSky: 0xdfe8e2, hemiGround: 0x4a5a44, hemiInt: 1.05,
-    sunColor: 0xfff4e0, sunInt: 1.9,
+    fogColor: 0xb7c9d1, fogDensity: 0.00030,
+    hemiSky: 0xc6d8e4, hemiGround: 0x354034, hemiInt: 1.65,
+    sunColor: 0xfff1da, sunInt: 2.6,
     skyStops: ['#7d97a8', '#a8bcc6', '#cfd8d2', '#d8dfd9'],
-    waterDeep: 0x084b59, waterShallow: 0x238f83, waterSky: 0x87abb1,
-    rainColor: 0xb8ccc4, exposure: 1.12,
+    waterDeep: 0x15363c, waterShallow: 0x3e6056, waterSky: 0x9eb6c6,
+    rainColor: 0xb8ccc4, exposure: 1.0,
   },
   dark: {
     fogColor: 0x1a2320, fogDensity: 0.00065,
@@ -639,14 +765,26 @@ function fbm(x, y, oct = 5) {
 const VALLEY_Z0 = -450, VALLEY_Z1 = 450;
 const valleyFloor = z => 150 - ((z - VALLEY_Z0) / (VALLEY_Z1 - VALLEY_Z0)) * 170;
 const valleyCenterX = z => 70 * Math.sin(z * 0.0045) + 25 * Math.sin(z * 0.011 + 1.7);
+const DOWNSTREAM_HOUSE_SITES = Object.freeze([
+  { side: -1, z: 565 }, { side: 1, z: 590 },
+  { side: -1, z: 675 }, { side: 1, z: 700 },
+]);
 
 const BASINS = [
-  { id: 1, cz: -380, up: 75, dn: 65, rx: 64, depth: 38 },
-  { id: 2, cz: -170, up: 95, dn: 75, rx: 85, depth: 44 },
-  { id: 3, cz:   65, up: 110, dn: 85, rx: 110, depth: 48 },
-  { id: 4, cz:  335, up: 125, dn: 105, rx: 136, depth: 58 },
+  // Scene units, NOT surveyed dimensions or capacity-derived surface areas.
+  // Relative prominence follows the project inventory; storage changes height only.
+  { id: 1, cz: -380, up: 85, dn: 65, rx: 66, depth: 34 },
+  { id: 2, cz: -170, up: 100, dn: 75, rx: 92, depth: 44 },
+  { id: 3, cz:   65, up: 115, dn: 85, rx: 132, depth: 48 },
+  { id: 4, cz:  335, up: 145, dn: 105, rx: 235, depth: 74 },
 ];
 const DAMSITES = BASINS.map(B => ({ B, zd: B.cz + B.dn, xc: valleyCenterX(B.cz + B.dn) }));
+
+function basinWidth(B, z) {
+  const t = clamp01((z - B.cz + B.up) / (B.up + B.dn));
+  const lobes = 1 + Math.sin(t * 13 + B.id * 2.1) * 0.17 + Math.sin(t * 27 + B.id) * 0.07;
+  return B.rx * (0.24 + 0.76 * Math.pow(Math.sin(t * Math.PI * 0.85), 0.65)) * lobes;
+}
 
 /* Bathymetry: carve is deepest AT the dam and shoals upstream (real reservoirs) */
 function basinCarve(x, z) {
@@ -686,28 +824,73 @@ function abutmentRaise(x, z) {
   let r = 0;
   for (const D of DAMSITES) {
     const lat = Math.abs(x - D.xc);
-    if (lat < 55 || lat > 200) continue;
+    const shoulder = D.B.rx * 0.83;
+    if (lat < shoulder * 0.72 || lat > shoulder + 120) continue;
     if (Math.abs(z - D.zd) > 60) continue;
-    const latT = clamp01(1 - Math.abs(lat - 130) / 75);
+    const latT = clamp01(1 - Math.abs(lat - shoulder - 35) / 90);
     const zT = clamp01(1 - Math.abs(z - D.zd) / 60);
-    r = Math.max(r, latT * smooth01(zT) * (D.B.id === 4 ? 72 : 28));
+    r = Math.max(r, latT * smooth01(zT) * 48);
   }
   return r;
 }
 function terrainHeight(x, z) {
   const vf = valleyFloor(z);
   const dist = Math.abs(x - valleyCenterX(z));
-  const m = smooth01((dist - 110) / 260);
-  const mountains = (fbm(x * 0.004, z * 0.004) * 130 + fbm(x * 0.015, z * 0.015) * 32) * m;
-  const undul = (fbm(x * 0.008 + 7.3, z * 0.008 + 2.1) - 0.5) * 15 * (1 - m);
+  const valleyWidth = 85 + 145 * Math.exp(-Math.pow((z - 330) / 170, 2));
+  const m = smooth01((dist - valleyWidth) / 230);
+  const warp = fbm(x * 0.003 + 8, z * 0.003) * 90;
+  const ridge = 1 - Math.abs(2 * vnoise((x + warp) * 0.005, z * 0.004) - 1);
+  const foreground = lerp(0.32, 1, smooth01((x + 160) / 380));
+  const mountains = (65 + Math.pow(ridge, 2.4) * 210 + fbm(x * 0.012, z * 0.012, 5) * 65) * m * foreground;
+  const undul = (fbm(x * 0.012 + 7.3, z * 0.012 + 2.1) - 0.5) * 23;
   let h = vf + mountains + undul + abutmentRaise(x, z);
-  h -= basinCarve(x, z);
+  for (const B of BASINS) {
+    const t = (z - B.cz + B.up) / (B.up + B.dn);
+    if (t < -0.08 || t > 1.035) continue;
+    const width = basinWidth(B, z);
+    const offset = Math.sin(clamp01(t) * Math.PI) * Math.sin(t * 8 + B.id) * B.rx * 0.15;
+    const lateral = Math.abs(x - valleyCenterX(z) - offset) / width;
+    const tip = 1 - smooth01(clamp01(t) / 0.16);
+    const bank = Math.max(lateral, tip);
+    const pool = valleyFloor(B.cz) - 4;
+    const bed = pool - B.depth * (1 - Math.pow(Math.min(bank, 1), 4)) + fbm(x * 0.06, z * 0.06, 3) * 2;
+    const blend = (1 - smooth01((bank - 0.83) / 0.38)) * smooth01((t + 0.08) / 0.08) * (1 - smooth01((t - 1) / 0.035));
+    h = lerp(h, bed, blend);
+  }
   h -= channelCarve(x, z);
   h -= plungeCarve(x, z);
+  // Cut a continuous river gorge through the inlet bank rather than draping a
+  // ribbon over a vertical basin edge. This is scenic geometry, not hydraulics.
+  for(let i=0;i<BASINS.length;i++) {
+    const source=BASINS[i],next=BASINS[i+1];
+    const start=source.cz+source.dn+22,end=next ? next.cz+15 : 1300;
+    if(z<start || z>end)continue;
+    const t=(z-start)/(end-start),d=Math.abs(x-valleyCenterX(z));
+    const bed0=valleyFloor(start)-7;
+    const bed1=next ? valleyFloor(next.cz)-4-next.depth+4 : valleyFloor(end)-7;
+    const bed=lerp(bed0,bed1,t);
+    const cut=1-smooth01((d-11)/19);
+    h=lerp(h,Math.min(h,bed),cut);
+  }
   return h;
 }
 function terrainSlope(x, z, h) {
   return (Math.abs(terrainHeight(x + 3, z) - h) + Math.abs(terrainHeight(x, z + 3) - h)) / 3;
+}
+let terrainGrid = null;
+const TERRAIN_SIZE=2600, TERRAIN_SEGMENTS=400;
+function terrainSurfaceHeight(x,z) {
+  // Interpolate the ACTUAL rendered triangles, so river ribbons cannot vanish
+  // below a coarse triangle bridging a narrow analytical channel.
+  if(!terrainGrid)return terrainHeight(x,z);
+  const cell=TERRAIN_SIZE/TERRAIN_SEGMENTS,N=TERRAIN_SEGMENTS+1;
+  const gx=(x+TERRAIN_SIZE/2)/cell,gz=(z+TERRAIN_SIZE/2)/cell;
+  const ix=Math.max(0,Math.min(TERRAIN_SEGMENTS-1,Math.floor(gx)));
+  const iz=Math.max(0,Math.min(TERRAIN_SEGMENTS-1,Math.floor(gz)));
+  const u=clamp01(gx-ix),v=clamp01(gz-iz);
+  const a=terrainGrid[iz*N+ix],b=terrainGrid[(iz+1)*N+ix];
+  const c=terrainGrid[(iz+1)*N+ix+1],d=terrainGrid[iz*N+ix+1];
+  return u+v<=1 ? a*(1-u-v)+d*u+b*v : b*(1-u)+d*(1-v)+c*(u+v-1);
 }
 
 /* ---------------- canvas textures ---------------- */
@@ -800,10 +983,12 @@ void main(){
 const WATER_FRAG = /* glsl */`
 uniform float uTime;
 uniform float uRain;
+uniform float uSelected;
 uniform vec3 uDeep;
 uniform vec3 uShallow;
 uniform vec3 uSky;
 uniform vec3 uSunDir;
+uniform samplerCube uEnvironment;
 uniform vec3 uFogColor;
 uniform float uFogDensity;
 varying vec3 vWorldPos;
@@ -824,7 +1009,9 @@ void main(){
   float shoreMask = smoothstep(-0.6, 1.6, vDepth);
   if (shoreMask < 0.02) discard;             /* water exists only where terrain is below surface */
 
-  vec3 N = normalize(vNrm);
+  vec2 wp = vWorldPos.xz;
+  vec2 detailN = vec2(vnoiseg(wp*.47+vec2(-uTime*.35,uTime*.1)),vnoiseg(wp*.61+vec2(19.7-uTime*.22,7.1)))-0.5;
+  vec3 N = normalize(vNrm + vec3(detailN.x,0.0,detailN.y)*0.085);
   vec3 V = normalize(cameraPosition - vWorldPos);
   float fres = pow(1.0 - max(dot(N, V), 0.0), 3.0);
   fres = 0.05 + 0.95 * fres;
@@ -835,6 +1022,8 @@ void main(){
   vec3 R = reflect(-V, N);
   float upness = smoothstep(-0.05, 0.45, R.y);
   vec3 skyRef = mix(uSky * 0.55, uSky, upness);
+  vec3 environment = textureCube(uEnvironment,vec3(-R.x,R.y,R.z)).rgb;
+  skyRef = mix(skyRef, environment, 0.78);
   float spec = pow(max(dot(R, normalize(uSunDir)), 0.0), 120.0);
 
   float r1 = vnoiseg(vUv2 * 220.0 + vec2(uTime * 2.6, -uTime * 1.9));
@@ -843,15 +1032,18 @@ void main(){
 
   float crest = smoothstep(0.30, 0.70, vWave);
   float shoreFoam = 1.0 - smoothstep(0.3, 3.2, depth);
-  float foam = clamp(crest * 0.4 + shoreFoam * 0.85 + ripples * 0.35, 0.0, 1.0);
+  float foam = clamp(shoreFoam * 0.13 + ripples * 0.12, 0.0, 0.25);
 
   vec3 col = body * (1.0 - fres * 0.6);
-  col = mix(col, skyRef, fres * 0.6);
-  col += spec * vec3(1.0, 0.99, 0.92) * 1.1;
+  float mountainRef = smoothstep(0.1, 0.7, vnoiseg(vec2(R.x * 9.0, R.z * 9.0))) * (1.0 - smoothstep(0.1, 0.55, R.y));
+  skyRef = mix(skyRef, vec3(0.055,0.095,0.075), mountainRef * 0.6);
+  col = mix(col, skyRef, 0.16 + fres * 0.65);
+  col += spec * vec3(1.0, 0.99, 0.92) * 0.45;
   col = mix(col, vec3(0.94, 0.98, 1.0), foam);
   col += vec3(0.05, 0.08, 0.09) * ripples;
+  col = mix(col,vec3(0.18,0.42,0.32),uSelected*(1.0-smoothstep(1.0,4.0,depth))*0.5);
 
-  float alpha = (0.88 + fres * 0.12) * shoreMask;
+  float alpha = 0.98 * shoreMask;
   float dist = length(cameraPosition - vWorldPos);
   float fogF = 1.0 - exp(-pow(dist * uFogDensity, 2.0));
   col = mix(col, uFogColor, fogF);
@@ -887,16 +1079,28 @@ float vnoiseg(vec2 p){
              mix(hashg(i + vec2(0.0, 1.0)), hashg(i + vec2(1.0, 1.0)), u.x), u.y);
 }
 void main(){
-  float a = clamp(uFlow * 2.4, 0.0, 1.0);
-  float speed = 0.5 + uFlow * 2.6;
-  float n1 = vnoiseg(vec2(vUv2.x * 5.0,  vUv2.y * 42.0 - uTime * speed * 3.0));
-  float n2 = vnoiseg(vec2(vUv2.x * 11.0 + 4.7, vUv2.y * 80.0 - uTime * speed * 5.2));
-  float streak = smoothstep(0.36, 0.74, n1 * 0.6 + n2 * 0.4);
-  float edge = smoothstep(0.0, 0.09, vUv2.x) * (1.0 - smoothstep(0.91, 1.0, vUv2.x));
-  float ends = smoothstep(0.0, 0.05, vUv2.y) * (1.0 - smoothstep(0.88, 1.0, vUv2.y));
-  vec3 base = mix(vec3(0.05, 0.16, 0.17), vec3(0.62, 0.72, 0.76), uWhite);
-  vec3 col = mix(base, vec3(0.95, 0.98, 1.0), streak * (0.3 + 0.5 * a));
-  float alpha = (0.62 + streak * 0.45) * edge * ends * a;
+  // A square-root display curve keeps low positive releases legible while
+  // preserving a monotonic strength difference; zero remains fully hidden.
+  float a = sqrt(clamp(uFlow, 0.0, 1.0));
+  float speed = 0.45 + uFlow * 1.35;
+  // A continuous, softly bounded water surface keeps the channel readable;
+  // broad crest bands translate toward increasing v (the downstream end).
+  float wave = sin((vUv2.y * 13.0 - uTime * speed * 0.35) * 6.2831853);
+  float crest = smoothstep(-0.15, 0.92, wave);
+  float fine = sin(vUv2.y * 95.0 - uTime * speed * 3.2 + vUv2.x * 3.0) * 0.5 + 0.5;
+  // Sparse foam glints translate along the same downstream UV axis; they make
+  // direction legible at overview scale without adding per-frame scene objects.
+  float markerPhase = fract(vUv2.y * 4.0 - uTime * speed * 0.22);
+  float marker = 1.0 - smoothstep(0.0, 0.05, abs(markerPhase - 0.5));
+  float edge = smoothstep(0.0, 0.055, vUv2.x) * (1.0 - smoothstep(0.945, 1.0, vUv2.x));
+  // Keep the ribbon visible through its geometric endpoint: the end is placed
+  // within the receiving basin so the animated current reads as an inlet.
+  float ends = smoothstep(0.0, 0.035, vUv2.y) * (1.0 - smoothstep(0.965, 1.0, vUv2.y));
+  vec3 base = mix(vec3(0.018, 0.075, 0.08), vec3(0.52, 0.65, 0.61), uWhite * uWhite);
+  float center = smoothstep(0.08, 0.38, vUv2.x) * (1.0 - smoothstep(0.62, 0.92, vUv2.x));
+  float highlight = clamp(0.08 + center * (crest * 0.16 + fine * 0.06 * a + marker * 0.34 * a), 0.0, 0.58);
+  vec3 col = mix(base, vec3(0.68, 0.84, 0.87), highlight);
+  float alpha = (0.78 + crest * 0.06) * edge * ends * a;
   if (alpha < 0.01) discard;
   float dist = length(cameraPosition - vWorldPos);
   float fogF = 1.0 - exp(-pow(dist * uFogDensity, 2.0));
@@ -909,14 +1113,15 @@ void main(){
 /* ---------------- geometry helpers ---------------- */
 const UP = new THREE.Vector3(0, 1, 0);
 
-function ribbonGeometry(pts, width) {   /* pts: Vector3[] in world space; v runs 0→1 along path */
+function ribbonGeometry(pts, width, irregular = false) {   /* pts: Vector3[] in world space; v runs 0→1 along path */
   const pos = [], uv = [], idx = [];
   const dir = new THREE.Vector3(), side = new THREE.Vector3();
   for (let i = 0; i < pts.length; i++) {
     const p = pts[i];
     const prev = pts[Math.max(0, i - 1)], next = pts[Math.min(pts.length - 1, i + 1)];
     dir.subVectors(next, prev).normalize();
-    side.crossVectors(dir, UP).normalize().multiplyScalar(width / 2);
+    const localWidth = width * (irregular ? 0.88 + Math.sin(i*0.39)*0.12 + Math.sin(i*0.81)*0.07 : 1);
+    side.crossVectors(dir, UP).normalize().multiplyScalar(localWidth / 2);
     const l = p.clone().sub(side), r = p.clone().add(side);
     pos.push(l.x, l.y, l.z, r.x, r.y, r.z);
     const v = i / (pts.length - 1);
@@ -950,6 +1155,40 @@ function waypointRibbon(waypoints, width) {
   }
   return ribbonGeometry(pts, width);
 }
+/* A link is a world-space hydraulic path from the dam plunge to the next
+   basin. Follow the valley centerline, then project every sample onto the
+   existing terrain so the water ribbon stays seated in the carved channel. */
+function hydraulicLinkRibbon(upstream, downstream, terminal = false, startOffset = 22) {
+  const startZ = upstream.D.zd + startOffset; // overlaps the outlet or spill confluence
+  const start = new THREE.Vector3(startOffset === 22 ? upstream.D.xc : valleyCenterX(startZ), 0, startZ);
+  // Continue to the existing basin center: its upstream terrain edge can be
+  // dry at ordinary reported levels, which made a shorter link look detached.
+  const endZ = terminal ? 1250 : downstream.B.cz + 15;
+  const endX = valleyCenterX(endZ);
+  const end = new THREE.Vector3(endX, 0, endZ);
+  const points = [start];
+  const step = 38;
+  for (let z = startZ + step; z < endZ; z += step) {
+    points.push(new THREE.Vector3(valleyCenterX(z), 0, z));
+  }
+  points.push(end);
+  const path = new THREE.CatmullRomCurve3(points, false, 'centripetal');
+  const length = Math.max(1, path.getLength());
+  const samples = Math.max(12, Math.ceil(length / 3.5));
+  const surface = [];
+  for (let i = 0; i <= samples; i++) {
+    const p = path.getPointAt(i / samples);
+    // Sit above the carved channel bed so the terrain mesh cannot flicker or
+    // clip the moving surface between sampled ribbon vertices.
+    p.y = terrainSurfaceHeight(p.x, p.z) + 2.2;
+    surface.push(p);
+  }
+  const geo = ribbonGeometry(surface, terminal ? 23 : 19, true);
+  // Blend the final 30 world units to the receiving basin's live surface so
+  // the channel visibly merges into the pool instead of disappearing below it.
+  geo.userData.inletBlendStart = terminal ? null : Math.max(0, 1 - 30 / length);
+  return geo;
+}
 /* organic blob jitter — position-based, so duplicated vertices stay welded */
 function jitterGeometry(geo, amp, yScale, yLift, seed) {
   const p = geo.attributes.position;
@@ -967,12 +1206,15 @@ function jitterGeometry(geo, amp, yScale, yLift, seed) {
 
 /* ---------------- camera presets ---------------- */
 const PRESETS = {
-  overview:   { p: [-720, 780, 220], t: [0, 40, 0] },
-  reservoir1: { p: [180, 280, -170], t: [-70, 115, -380] },
-  reservoir2: { p: [230, 230, 50], t: [-65, 70, -170] },
-  reservoir3: { p: [350, 200, 290], t: [40, 25, 65] },
-  reservoir4: { p: [380, 200, 610], t: [50, -5, 335] },
-  downstream: { p: [250, 160, 740], t: [35, -30, 540] },
+  overview:   { p: [-820, 1550, 360], t: [0, 25, 20] },
+  aerial:     { p: [90, 1080, 35], t: [0, 15, 25] },
+  camera1:    { p: [-980, 1400, 780], t: [0, 20, 15] },
+  camera2:    { p: [980, 1400, -780], t: [0, 20, 15] },
+  reservoir1: { p: [-270, 330, -120], t: [-70, 115, -365] },
+  reservoir2: { p: [-310, 320, 100], t: [-65, 70, -160] },
+  reservoir3: { p: [-350, 330, 375], t: [40, 25, 85] },
+  reservoir4: { p: [-430, 390, 750], t: [50, -5, 355] },
+  downstream: { p: [-240, 250, 840], t: [35, -30, 555] },
 };
 
 /* ================================================================
@@ -1063,9 +1305,13 @@ class ReservoirTwinRenderer {
     this.resNames = ['Anayirankal', 'Ponmudi', 'Idamalayar', 'Idukki'];
 
     this._initCore();
+    this.visualQuality='BALANCED';
+    this._qualityClock=0;
     this._initTerrain();
     this._initVegetation();
+    this._initSettlement();
     this._initDams();
+    this.applyTheme3D(ThemeManager.current || 'light');
     this._initWater();
     this._initChannels();
     this._initRain();
@@ -1077,11 +1323,14 @@ class ReservoirTwinRenderer {
     for (const r of this.R) { r.levelCur = r.levelTgt; r.gateCur = r.gateTgt; }
 
     this._onResize = () => {
+      this._connectorDirty=true;
       const focus = this.container.classList.contains('scene-focus');
+      const twinWide = focus || this.container.classList.contains('workspace-simulation');
       const drawer = this.container.classList.contains('reservoir-view');
-      const right = focus ? 16 : drawer ? 328 : parseFloat(getComputedStyle(this.container).getPropertyValue('--status-width')) + 24;
-      const bottom = focus || drawer ? Math.max(72, (this.barRoot?.offsetHeight || 48) + 24) : (this.barRoot ? this.container.clientHeight - this.barRoot.offsetTop + 8 : 300);
-      const left = focus ? 16 : 76, top = 110;
+      const pv = window.__aquaPresentation?.viewport();
+      const right = pv ? pv.right : twinWide ? 16 : drawer ? 328 : parseFloat(getComputedStyle(this.container).getPropertyValue('--status-width')) + 24;
+      const bottom = pv ? pv.bottom : twinWide || drawer ? Math.max(72, (this.barRoot?.offsetHeight || 48) + 24) : (this.barRoot ? this.container.clientHeight - this.barRoot.offsetTop + 8 : 300);
+      const left = pv ? pv.left : focus ? 16 : 76, top = pv ? pv.top : 110;
       const w = Math.max(300, this.container.clientWidth - left - right);
       const h = Math.max(200, this.container.clientHeight - top - bottom);
       this.renderer.domElement.style.left = left + 'px';
@@ -1127,11 +1376,84 @@ class ReservoirTwinRenderer {
   }
 
   /* ================= public API ================= */
+  setVisualQuality(name) {
+    const profiles={ULTRA:{min:1.25,max:1.25,lod:1100,shadow:2048},HIGH:{min:.9,max:1,lod:850,shadow:2048},
+      BALANCED:{min:.8,max:1,lod:680,shadow:2048},PERFORMANCE:{min:.65,max:.85,lod:500,shadow:1024}};
+    if(!profiles[name])return;
+    this.visualQuality=name;this._qualityProfile=profiles[name];this._qualityClock=0;
+    this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,profiles[name].max));
+    if(this.sun.shadow.mapSize.x!==profiles[name].shadow){
+      this.sun.shadow.mapSize.setScalar(profiles[name].shadow);
+      this.sun.shadow.map?.dispose();this.sun.shadow.map=null;this.renderer.shadowMap.needsUpdate=true;
+    }
+    try{localStorage.setItem('aquaflow-visual-quality',name);}catch(_){}
+  }
+  _adaptResolution(dt) {
+    this._qualityClock+=dt;
+    if(this._qualityClock<3 || !this._qualityProfile || !this._fps || document.hidden)return;
+    this._qualityClock=0;
+    const q=this._qualityProfile,max=Math.min(devicePixelRatio||1,q.max),min=Math.min(max,q.min);
+    const current=this.renderer.getPixelRatio();
+    const next=this._fps<50 ? Math.max(min,current-.1) : this._fps>59 ? Math.min(max,current+.025) : current;
+    if(Math.abs(next-current)>.015)this.renderer.setPixelRatio(next);
+  }
+  _updateDiscordPanel(discord, incidents = []) {
+    if (!this._settingsView || !discord) return;
+    const q = selector => this._settingsView.querySelector(selector);
+    q('[data-discord-status]').textContent = discord.status || 'Unavailable';
+    q('[data-discord-webhook]').textContent = discord.masked_webhook || '—';
+    q('[data-discord-enabled]').checked = discord.enabled === true;
+    q('[data-discord-delivery]').textContent = discord.last_delivery || 'NOT_CONFIGURED';
+    q('[data-discord-time]').textContent = discord.last_delivery_timestamp || '—';
+    q('[data-discord-test]').disabled = discord.last_delivery === 'PENDING';
+    q('[data-discord-result]').textContent = discord.error || '';
+    const signature = JSON.stringify(incidents);
+    if (signature === this._incidentPanelSignature) return;
+    this._incidentPanelSignature = signature;
+    const list = q('[data-active-incidents]');
+    list.replaceChildren();
+    if (!incidents.length) { list.textContent = 'No active downstream incidents.'; return; }
+    for (const incident of incidents) {
+      const row = document.createElement('div'); row.className = 'settings-row';
+      const text = document.createElement('span'); text.className = 'settings-label';
+      text.textContent = `${incident.incident_id} · ${incident.severity} · ${incident.status}`;
+      const button = document.createElement('button'); button.className = 'settings-button';
+      button.dataset.ackIncident = incident.incident_id;
+      button.textContent = incident.acknowledged ? 'Acknowledged' : 'Acknowledge';
+      button.disabled = incident.acknowledged === true;
+      row.append(text, button); list.append(row);
+    }
+  }
+
   updateState(state) {
     if (!state || this._disposed) return;
     const signature = JSON.stringify(state);
     if (signature === this._stateSignature) return;
     this._stateSignature = signature;
+    if (this._settingsView && !this._settingsView.hidden && state.notification) {
+      const note = state.notification, last = note.last_notification || {};
+      this._updateDiscordPanel(note.discord, note.active_incidents || []);
+      const test = note.test_email;
+      const status = this._settingsView.querySelector('[data-last-notification-status]');
+      const stamp = this._settingsView.querySelector('[data-last-notification-time]');
+      if (status) status.textContent = last.status || 'NOT_CONFIGURED';
+      if (stamp) stamp.textContent = last.timestamp || '—';
+      const send = this._settingsView.querySelector('[data-send-test]');
+      const input = this._settingsView.querySelector('[data-alert-recipient]');
+      if (send && input) send.disabled = !!note.test_pending || !input.value.includes('@') || input.value.trim() !== this._settingsSavedRecipient;
+      const result = this._settingsView.querySelector('[data-test-result]');
+      if (result && test) result.textContent = test.status === 'PENDING' ? 'Test email PENDING…' : `Test email ${test.status}${test.error ? ': ' + test.error : ''}`;
+      const telegram = note.telegram;
+      if (telegram) {
+        const q = selector => this._settingsView.querySelector(selector);
+        q('[data-telegram-status]').textContent = telegram.status;
+        q('[data-telegram-chat]').textContent = telegram.chat_id || '—';
+        q('[data-telegram-delivery]').textContent = telegram.last_delivery;
+        q('[data-telegram-time]').textContent = telegram.last_delivery_timestamp || '—';
+        q('[data-telegram-test]').disabled = telegram.last_delivery === 'PENDING';
+        q('[data-telegram-result]').textContent = telegram.error || '';
+      }
+    }
     this.renderer.shadowMap.needsUpdate = true;
     const rs = state.reservoirs || {};
     for (let i = 0; i < this.R.length; i++) {
@@ -1140,7 +1462,7 @@ class ReservoirTwinRenderer {
       const level = value(src.water_level), gate = value(src.gate);
       if (level !== null) { r.levelTgt = clamp01(level); if (!this.data.hasState) r.levelCur = r.levelTgt; }
       if (gate !== null) { r.gateTgt = clamp01(gate); if (!this.data.hasState) r.gateCur = r.gateTgt; }
-      r.waterMesh.visible = level !== null;
+      r.waterMesh.visible = level !== null && level > 0;
       r.gateMesh.visible = gate !== null;
       r.data = { level, gate, storage: value(src.storage), inflow: value(src.inflow),
         release: value(src.release), controlledRelease: value(src.controlled_release),
@@ -1187,6 +1509,8 @@ class ReservoirTwinRenderer {
     this.data.autoControl = state.auto_control || null;
     this.data.forecastSourceSelection = state.forecast_source_selection || null;
     this.data.eventLog = Array.isArray(state.event_log) ? state.event_log : null;
+    this.data.notification = state.notification || null;
+    this.data.rawState = state;
     /* Stage 11 — the backend's mass-balance audit of the last authoritative
      * step (display only; nothing about it is computed in JavaScript). */
     this.data.massBalance = state.mass_balance || null;
@@ -1241,12 +1565,22 @@ class ReservoirTwinRenderer {
     for (const fm of this.flowMeshes) {
       const src = rs['reservoir_' + fm.key.slice(-1)] || {};
       const inflow = fm.key.startsWith('in');
-      const value = fm.key === 'ch4' ? down?.flow_m3_s : inflow ? src.inflow : src.release;
-      fm.mesh.visible = typeof value === 'number' && value > 0;
-      fm.mat.uniforms.uFlow.value = 0;
-      if (typeof value === 'number' && Number.isFinite(value)) {
-        fm.mat.uniforms.uFlow.value = clamp01(value / (inflow ? 120 : 70));
-      }
+      // River links show only the directed, controlled release. Spill has its
+      // own authoritative ribbon at the dam and must not be folded into this.
+      const overflow = fm.key.startsWith('sp');
+      const value = fm.key === 'ch4' ? this.data.downstream : overflow ? src.spill_mcm : inflow ? src.inflow : src.controlled_release;
+      fm.flowTarget = typeof value === 'number' && Number.isFinite(value) && value > 0
+        ? value / (value + (overflow ? 5 : inflow ? 120 : 70)) : 0;
+      fm.mesh.visible = typeof value === 'number' && Number.isFinite(value) && value > 0;
+    }
+    if (this._renderWorkspacePage && this._workspaceView && !this._workspaceView.hidden
+      && !this._workspaceInteracting && !this._workspaceView.contains(document.activeElement) && !this._workspaceRefreshScheduled) {
+      this._workspaceRefreshScheduled = true;
+      setTimeout(() => {
+        this._workspaceRefreshScheduled = false;
+        if (!this._disposed && this._workspaceView && !this._workspaceView.hidden
+          && !this._workspaceInteracting && !this._workspaceView.contains(document.activeElement)) this._renderWorkspacePage();
+      }, 500);
     }
   }
 
@@ -1548,6 +1882,10 @@ class ReservoirTwinRenderer {
     if (name === 'overview') { const scale = Math.min(1, Math.max(0.62, this.renderer.domElement.clientHeight / 420));
       p = {t: p.t, p: p.p.map((v, i) => p.t[i] + (v - p.t[i]) * scale)}; }
     if (!p || this._disposed) return;
+    const selected = /^reservoir[1-4]$/.test(name) ? Number(name.slice(-1))-1 : -1;
+    this.fLabels?.forEach((label,i)=>label.classList.toggle('selected',i===selected));
+    this.R.forEach((r,i)=>{if(r.waterMat)r.waterMat.uniforms.uSelected.value=i===selected ? 1 : 0;});
+    if(selected>=0)this.siteView?.select(selected);
     this.el?.camBtns.forEach(b => b.classList.toggle('on', b.dataset.cam === name));
     this._tween = {
       t: 0,
@@ -1566,6 +1904,8 @@ class ReservoirTwinRenderer {
     window.removeEventListener('resize', this._onResize);
     if (this._layoutObserver) this._layoutObserver.disconnect();
     this.controls.dispose();
+    for(const r of this.R)r.environmentTarget?.dispose();
+    for(const lod of this.forestLODs || []){lod.near.dispose();lod.far.dispose();}
 
     this.scene.traverse(obj => {
       if (obj.geometry) obj.geometry.dispose();
@@ -1611,13 +1951,26 @@ class ReservoirTwinRenderer {
 
     if (this.onTick) this.onTick(dt);        /* test driver / future Python bridge */
     this._updateCameraTween(dt);
+    this._updateSettlement(dt);
     this._updateStorm(visualDt);
     this._updateWater(visualDt);
     this._updateGatesAndJets(visualDt);
     this._updateRain(visualDt);
     this._updateMist(visualDt);
     this.controls.update();
-    this._updateConnectors();
+    this._adaptResolution(dt);
+    const broadView=this.camera.position.distanceToSquared(this.controls.target)>950*950;
+    for(const batch of this.forestLODs.combined){batch.mesh.visible=broadView && batch.mesh.name!=='FOREST_TRUNKS';batch.mesh.geometry=batch.geometry;}
+    for(const patch of this.forestLODs.patches)patch.visible=!broadView &&
+      (patch.name!=='FOREST_TRUNKS_PATCH' || this.camera.position.distanceToSquared(patch.boundingSphere.center)<550*550);
+    for(const lod of this.forestLODs || []) {
+      const distance=this._qualityProfile?.lod || 680;
+      const far=this.camera.position.distanceToSquared(lod.center)>distance*distance;
+      const geometry=far ? lod.far : lod.near;
+      if(lod.mesh.geometry!==geometry)lod.mesh.geometry=geometry;
+    }
+    this._connectorClock=(this._connectorClock||0)+dt;
+    if(this._connectorClock>=.066){this._connectorClock=0;this._updateConnectors();}
     this._updateHUD(dt);
     this.renderer.render(this.scene, this.camera);
     if (this.connectionStatus !== 'CONNECTED' && this.el) {
@@ -1661,11 +2014,11 @@ class ReservoirTwinRenderer {
     this.hemi = new THREE.HemisphereLight(0xc6d3de, 0x33502c, 0.85);
     this.scene.add(this.hemi);
     this.sun = new THREE.DirectionalLight(0xf2f6fa, 1.5);
-    this.sun.position.set(250, 400, 150);
+    this.sun.position.set(-350, 650, 320);
     this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(1024, 1024);
+    this.sun.shadow.mapSize.set(2048, 2048);
     const sc = this.sun.shadow.camera;
-    sc.left = -460; sc.right = 460; sc.top = 460; sc.bottom = -460; sc.near = 50; sc.far = 1400;
+    sc.left = -750; sc.right = 750; sc.top = 750; sc.bottom = -750; sc.near = 50; sc.far = 1800;
     this.sun.shadow.bias = -0.0004;
     this.sun.shadow.normalBias = 2;
     this.scene.add(this.sun);
@@ -1681,7 +2034,8 @@ class ReservoirTwinRenderer {
 
   /* ================= theme mood (presentation only — no physics) ================= */
   applyTheme3D(theme) {
-    const T = THEMES[theme] || THEMES.dark;
+    // UI theme does not turn an engineering inspection into a night scene.
+    const T = THEMES.light;
     this._themeBase = {
       fogDensity: T.fogDensity, sunInt: T.sunInt, hemiInt: T.hemiInt,
     };
@@ -1725,7 +2079,7 @@ class ReservoirTwinRenderer {
 
   /* ================= terrain (two-pass: heights grid, then slope+color) ================= */
   _initTerrain() {
-    const SIZE = 1400, SEG = 160, N = SEG + 1, cell = SIZE / SEG;
+    const SIZE = TERRAIN_SIZE, SEG = TERRAIN_SEGMENTS, N = SEG + 1, cell = SIZE / SEG;
     const geo = new THREE.PlaneGeometry(SIZE, SIZE, SEG, SEG);
     geo.rotateX(-Math.PI / 2);
     const pos = geo.attributes.position;
@@ -1735,6 +2089,7 @@ class ReservoirTwinRenderer {
       heights[i] = h;
       pos.setY(i, h);
     }
+    terrainGrid=heights;
     const colors = new Float32Array(pos.count * 3);
     const col = new THREE.Color();
     for (let i = 0; i < pos.count; i++) {
@@ -1748,15 +2103,15 @@ class ReservoirTwinRenderer {
 
       const n1 = fbm(wx * 0.02 + 11.3, wz * 0.02 + 5.7);
       const n2 = fbm(wx * 0.09 + 3.1, wz * 0.09 + 8.2);
-      let r = 0.12 + n1 * 0.15 + n2 * 0.05;
-      let g = 0.31 + n1 * 0.14 + n2 * 0.06;
-      let b = 0.09 + n1 * 0.07 + n2 * 0.03;
-      const dry = clamp01((h - 120) / 80);
-      r += dry * 0.10; g += dry * 0.02;
-      const rockT = clamp01((slope - 0.55) / 0.45) * (0.6 + n2 * 0.4);
-      r = lerp(r, 0.33 + n2 * 0.10, rockT);
-      g = lerp(g, 0.34 + n2 * 0.08, rockT);
-      b = lerp(b, 0.32 + n2 * 0.08, rockT);
+      let r = 0.10 + n1 * 0.13 + n2 * 0.05;
+      let g = 0.19 + n1 * 0.16 + n2 * 0.05;
+      let b = 0.12 + n1 * 0.07 + n2 * 0.035;
+      const dry = clamp01((h - 270) / 140);
+      r += dry * 0.07; g += dry * 0.01;
+      const rockT = clamp01((slope - 1.05) / 1.3) * (0.6 + n2 * 0.4);
+      r = lerp(r, 0.25 + n2 * 0.10, rockT);
+      g = lerp(g, 0.27 + n2 * 0.08, rockT);
+      b = lerp(b, 0.23 + n2 * 0.08, rockT);
       let wet = 0;                                    /* soaked dark ground near all water lines */
       for (const B of BASINS) {
         const dz = wz - B.cz;
@@ -1772,30 +2127,37 @@ class ReservoirTwinRenderer {
     }
     geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
     geo.computeVertexNormals();
-    const mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({
-      vertexColors: true, roughness: 0.95, metalness: 0,
-    }));
+    const mesh = new THREE.Mesh(geo, terrainMaterial());
     mesh.name = 'TERRAIN_WESTERN_GHATS';
     mesh.receiveShadow = true;
     this.scene.add(mesh);
+    addDistantRidges(this.scene, terrainHeight);
   }
 
   /* ================= vegetation & rocks — InstancedMesh(BufferGeometry) only ================= */
   _initVegetation() {
     const group = new THREE.Group();
     group.name = 'VEGETATION';
+    const housePads = DOWNSTREAM_HOUSE_SITES.map(site => ({
+      x: valleyCenterX(site.z) + site.side * 145, z: site.z,
+    }));
 
     const scatter = (count, cfg) => {
       const pts = []; let tries = 0;
       while (pts.length < count && tries < count * 40) {
         tries++;
-        const x = (rng() * 2 - 1) * 640, z = (rng() * 2 - 1) * 640;
+        const x = (rng() * 2 - 1) * 780, z = (rng() * 2 - 1) * 780;
+        if (housePads.some(p => (x-p.x)*(x-p.x) + (z-p.z)*(z-p.z) < 28*28)) continue;
         const h = terrainHeight(x, z);
         if (h > cfg.maxH) continue;
         if (terrainSlope(x, z, h) > cfg.maxSlope) continue;
         let skip = false;
         for (const B of BASINS) {
           const dz = z - B.cz;
+          const damZ=B.cz+B.dn;
+          if(cfg.avoidPlunge && z>damZ-20 && z<damZ+45 && Math.abs(x-valleyCenterX(damZ))<B.rx*0.98) {
+            skip=true;break; // Keep crowns/trunks clear of the crest, gate, and stilling basin.
+          }
           if (dz > -B.up - 12 && dz < B.dn + 16 && Math.abs(x - valleyCenterX(z)) < B.rx + 22) {
             if (h < valleyFloor(B.cz) - 4 + (cfg.shore ? -1 : 2.5)) { skip = true; break; }
           }
@@ -1828,21 +2190,28 @@ class ReservoirTwinRenderer {
         if (hue) mesh.setColorAt(i, c);
       }
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-      mesh.frustumCulled = false;               /* instance spread exceeds geometry bounds */
+      mesh.computeBoundingSphere();
+      mesh.frustumCulled = true;
       mesh.castShadow = !!shadow;
+      mesh.receiveShadow = true;
       group.add(mesh);
       return mesh;
     };
 
     /* trees: shared transform list drives trunk + canopy InstancedMesh pair */
-    const treePts = scatter(850, { maxSlope: 0.5, maxH: 175, avoidChannel: true, avoidPlunge: true, gate: 0.34 });
-    const treeTf = transforms(treePts, 1.1, 2.9);
+    const treePts = scatter(12500, { maxSlope: 2.7, maxH: 530, avoidChannel: true, avoidPlunge: true, gate: 0.26 });
+    const treeTf = transforms(treePts, 1.3, 3.0);
     const trunkGeo = new THREE.CylinderGeometry(0.13, 0.24, 2.6, 7).translate(0, 1.3, 0);
-    const canopyGeo = jitterGeometry(new THREE.SphereGeometry(1.5, 8, 6), 0.5, 0.85, 2.4, 3.7);
-    instanced(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x4e3a2a, roughness: 0.95 }), treeTf, null, false);
-    const canopy = instanced(canopyGeo, new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.88 }),
-      treeTf, [0.30, 0.07, 0.55, 0.22, 0.10], true);
+    const canopyGeo = forestCrown(3.7);
+    instanced(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x4e3a2a, roughness: 0.95 }), treeTf, null, false).name='FOREST_TRUNKS';
+    const canopy = instanced(canopyGeo, forestMaterial(),
+      treeTf.filter((_,i)=>i%3 !== 0), [0.23, 0.12, 0.30, 0.13, 0.12], true);
     canopy.name = 'FOREST_CANOPY';
+    const tallCanopy=instanced(forestCrown(9.1, true), canopy.material, treeTf.filter((_,i)=>i%3 === 0),
+      [0.25, 0.10, 0.32, 0.12, 0.12], true);
+    tallCanopy.name = 'FOREST_UPPER_CANOPY';
+    this.forestLODs=[{mesh:canopy,near:canopy.geometry,far:forestCrown(3.7,false,true)},
+      {mesh:tallCanopy,near:tallCanopy.geometry,far:forestCrown(9.1,true,true)}];
 
     const shrubPts = scatter(650, { maxSlope: 0.8, maxH: 200, avoidChannel: true, avoidPlunge: true, gate: 0.30 });
     instanced(jitterGeometry(new THREE.SphereGeometry(0.9, 6, 4), 0.4, 0.65, 0.45, 9.2),
@@ -1854,13 +2223,150 @@ class ReservoirTwinRenderer {
       new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1.0 }),
       transforms(grassPts, 0.5, 1.2), [0.24, 0.08, 0.60, 0.28, 0.12], false);
 
-    const rockPts = scatter(850, { maxSlope: 2.0, maxH: 320, shore: true, avoidChannel: false, avoidPlunge: false });
+    const rockPts = scatter(1400, { maxSlope: 3.5, maxH: 600, shore: true, avoidChannel: false, avoidPlunge: false });
     const rock = instanced(jitterGeometry(new THREE.DodecahedronGeometry(1.1, 0), 0.28, 1, 0, 21.4),
       new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0.05 }),
-      transforms(rockPts, 0.6, 2.6), [0.58, 0.02, 0.05, 0.26, 0.22], true);
+      transforms(rockPts, 1.0, 4.4), [0.12, 0.02, 0.08, 0.22, 0.15], true);
     rock.name = 'ROCKS';
 
+    this.forestLODs=partitionForest(group,this.forestLODs);
     this.scene.add(group);
+  }
+
+  /* ================= downstream village (presentation only) ================= */
+  _initSettlement() {
+    const houseBody = new THREE.BoxGeometry(15, 8, 13);
+    const roofGeo = new THREE.ConeGeometry(10.8, 7, 4);
+    roofGeo.rotateY(Math.PI / 4);
+    const foundationGeo = new THREE.BoxGeometry(16.5, 1.1, 14.5);
+    const porchGeo = new THREE.BoxGeometry(5.5, 0.55, 3.2);
+    const windowGeo = new THREE.BoxGeometry(2.1, 2.2, 0.24);
+    const roofMat = new THREE.MeshStandardMaterial({ color: 0x55473c, roughness: 0.94 });
+    const foundationMat = new THREE.MeshStandardMaterial({ color: 0x77766c, roughness: 1 });
+    const windowMat = new THREE.MeshStandardMaterial({ color: 0x354c4b, roughness: 0.48, metalness: 0.08 });
+    const porchMat = new THREE.MeshStandardMaterial({ color: 0x9a866a, roughness: 1 });
+    this.downstreamSettlement = new THREE.Group();
+    this.downstreamSettlement.name = 'DOWNSTREAM_RIVERSIDE_SETTLEMENT_PRESENTATION';
+    this.downstreamSettlement.userData.presentationOnly = true;
+    const sites = DOWNSTREAM_HOUSE_SITES.map(site => {
+      const x = valleyCenterX(site.z) + site.side * 145;
+      const y = terrainSurfaceHeight(x, site.z);
+      return { x, y, z: site.z, yaw: site.side > 0 ? -Math.PI / 2 : Math.PI / 2 };
+    });
+    const placeBatch = (name, geometry, material, placements, colors = null) => {
+      const mesh = new THREE.InstancedMesh(geometry, material, placements.length);
+      mesh.name = name;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.instanceMatrix.setUsage(THREE.StaticDrawUsage);
+      const transform = new THREE.Object3D();
+      placements.forEach((part, i) => {
+        transform.position.set(part.site.x, part.site.y, part.site.z);
+        transform.rotation.set(0, part.site.yaw, 0);
+        transform.position.add(new THREE.Vector3(...part.offset).applyAxisAngle(new THREE.Vector3(0, 1, 0), part.site.yaw));
+        transform.updateMatrix();
+        mesh.setMatrixAt(i, transform.matrix);
+        if (colors) mesh.setColorAt(i, new THREE.Color(colors[part.siteIndex]));
+      });
+      this.downstreamSettlement.add(mesh);
+    };
+    const oneEach = offset => sites.map((site, siteIndex) => ({ site, siteIndex, offset }));
+    placeBatch('DOWNSTREAM_HOUSES_FOUNDATIONS', foundationGeo, foundationMat, oneEach([0, 0.55, 0]));
+    placeBatch('DOWNSTREAM_HOUSES_WALLS', houseBody,
+      new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.92 }), oneEach([0, 5, 0]),
+      [0xd4c1a1, 0xc5d2c8, 0xd9b98f, 0xb9c9c4]);
+    placeBatch('DOWNSTREAM_HOUSES_ROOFS', roofGeo, roofMat, oneEach([0, 11.8, 0]));
+    placeBatch('DOWNSTREAM_HOUSES_PORCHES', porchGeo, porchMat, oneEach([0, 1.15, 8.2]));
+    placeBatch('DOWNSTREAM_HOUSES_WINDOWS', windowGeo, windowMat,
+      sites.flatMap((site, siteIndex) => [-4, 4].map(x => ({ site, siteIndex, offset: [x, 5.1, 6.62] }))));
+    this.scene.add(this.downstreamSettlement);
+
+    const torsoGeo = new THREE.CapsuleGeometry(0.58, 1.45, 2, 6);
+    const headGeo = new THREE.SphereGeometry(0.48, 8, 6);
+    const limbGeo = new THREE.CapsuleGeometry(0.25, 1.05, 2, 5);
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xb9825f, roughness: 0.94 });
+    const trouserMat = new THREE.MeshStandardMaterial({ color: 0x354044, roughness: 0.96 });
+    const addWalkerInstances = (name, geometry, material, count = 4) => {
+      const mesh = new THREE.InstancedMesh(geometry, material, count);
+      mesh.name = name;
+      mesh.castShadow = false;
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      this.downstreamSettlement.add(mesh);
+      return mesh;
+    };
+    this.downstreamWalkerMeshes = {
+      torso: addWalkerInstances('DOWNSTREAM_WALKERS_TORSOS', torsoGeo,
+        new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.93 })),
+      head: addWalkerInstances('DOWNSTREAM_WALKERS_HEADS', headGeo, skinMat),
+      arm: addWalkerInstances('DOWNSTREAM_WALKERS_ARMS', limbGeo, skinMat, 8),
+      leg: addWalkerInstances('DOWNSTREAM_WALKERS_LEGS', limbGeo, trouserMat, 8),
+    };
+    const shirtColors = [0x3b8d79, 0xc17648, 0x617fa0, 0xc1a64c];
+    const shirtColor = new THREE.Color();
+    shirtColors.forEach((color, i) => {
+      shirtColor.setHex(color, THREE.SRGBColorSpace);
+      this.downstreamWalkerMeshes.torso.setColorAt(i, shirtColor);
+    });
+    this.downstreamWalkers = [];
+    for (let i = 0; i < 4; i++) {
+      const side = i % 2 ? 1 : -1;
+      const group = new THREE.Group();
+      group.name = `DOWNSTREAM_WALKER_${i + 1}_PRESENTATION`;
+      const addPart = (parent, geometry, material, x, y, z) => {
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(x, y, z);
+        parent.add(mesh);
+        return mesh;
+      };
+      addPart(group, torsoGeo, this.downstreamWalkerMeshes.torso.material, 0, 1.95, 0);
+      addPart(group, headGeo, skinMat, 0, 3.55, 0);
+      const arms = [], legs = [];
+      for (const sign of [-1, 1]) {
+        const arm = new THREE.Group();
+        arm.position.set(sign * 0.72, 2.55, 0);
+        addPart(arm, limbGeo, skinMat, 0, -0.48, 0);
+        group.add(arm);
+        arms.push(arm);
+        const leg = new THREE.Group();
+        leg.position.set(sign * 0.34, 1.25, 0);
+        addPart(leg, limbGeo, trouserMat, 0, -0.47, 0);
+        group.add(leg);
+        legs.push(leg);
+      }
+      this.downstreamWalkers.push({ group, arms, legs, side, phase: i * 1.55, speed: 0.48 + (i % 2) * 0.08 });
+    }
+    this._updateSettlement(0);
+  }
+
+  _updateSettlement(dt) {
+    if (!this.downstreamWalkers) return;
+    for (let index = 0; index < this.downstreamWalkers.length; index++) {
+      const walker = this.downstreamWalkers[index];
+      walker.phase += dt * walker.speed;
+      const z = 630 + Math.sin(walker.phase) * 38;
+      const x = valleyCenterX(z) + walker.side * (103 + Math.cos(walker.phase) * 9);
+      const nextZ = 630 + Math.sin(walker.phase + 0.02) * 38;
+      const nextX = valleyCenterX(nextZ) + walker.side * (103 + Math.cos(walker.phase + 0.02) * 9);
+      const stride = Math.sin(walker.phase * 5);
+      walker.group.position.set(x, terrainSurfaceHeight(x, z) + 0.08, z);
+      walker.group.rotation.y = Math.atan2(nextX - x, nextZ - z);
+      walker.legs[0].rotation.x = stride * 0.42;
+      walker.legs[1].rotation.x = -stride * 0.42;
+      walker.arms[0].rotation.x = -stride * 0.34;
+      walker.arms[1].rotation.x = stride * 0.34;
+      walker.group.updateMatrixWorld(true);
+      const meshes = this.downstreamWalkerMeshes;
+      meshes.torso.setMatrixAt(index, walker.group.children[0].matrixWorld);
+      meshes.head.setMatrixAt(index, walker.group.children[1].matrixWorld);
+      meshes.arm.setMatrixAt(index * 2, walker.arms[0].children[0].matrixWorld);
+      meshes.arm.setMatrixAt(index * 2 + 1, walker.arms[1].children[0].matrixWorld);
+      meshes.leg.setMatrixAt(index * 2, walker.legs[0].children[0].matrixWorld);
+      meshes.leg.setMatrixAt(index * 2 + 1, walker.legs[1].children[0].matrixWorld);
+    }
+    for (const mesh of Object.values(this.downstreamWalkerMeshes)) {
+      mesh.instanceMatrix.needsUpdate = true;
+      mesh.computeBoundingSphere();
+    }
   }
 
   /* ================= dams, gates, spillways ================= */
@@ -1873,7 +2379,7 @@ class ReservoirTwinRenderer {
       const { D, base, crest, sill } = r;
       const H = crest - base;
       const parts = [];
-      const segs = 9, span = r.B.rx * 2.4, radius = r.B.id === 4 ? 440 : 900, segW = span / segs;
+      const segs = r.B.id === 4 ? 56 : 28, span = r.B.rx * 1.9, radius = r.B.id === 4 ? 330 : 1100, segW = span / segs;
 
       /* arched gravity wall (convex upstream) + crest road + railings */
       for (let s = 0; s < segs; s++) {
@@ -1881,8 +2387,22 @@ class ReservoirTwinRenderer {
         const ang = frac * (span / radius);
         const x = D.xc + Math.sin(ang) * radius;
         const z = D.zd + (Math.cos(ang) - 1) * radius;
-        const yaw = -ang;
-        const wall = new THREE.BoxGeometry(segW + 2.2, H, 12);
+        const yaw = ang;
+        const wall = new THREE.BoxGeometry(segW + 0.15, H, 12);
+        const face = wall.attributes.position;
+        for (let v=0;v<face.count;v++) {
+          // Gravity section widens toward its foundation, rather than a cuboid.
+          const elevation = (face.getY(v) + H / 2) / H;
+          if (r.B.id === 4) {
+            // Schematic double-curvature arch: slender crest and tapered foundation.
+            const halfThickness = 3.2 + (1 - elevation) * 5.5;
+            const cantileverBow = -10 * Math.sin(elevation * Math.PI);
+            face.setZ(v, Math.sign(face.getZ(v)) * halfThickness + cantileverBow);
+          } else if (face.getZ(v)>0) {
+            face.setZ(v, 6 + (1 - elevation) * 12);
+          }
+        }
+        wall.computeVertexNormals();
         wall.rotateY(yaw); wall.translate(x, base + H / 2, z); parts.push(wall);
         const road = new THREE.BoxGeometry(segW + 2.2, 1.2, 14.5);
         road.rotateY(yaw); road.translate(x, crest + 0.6, z); parts.push(road);
@@ -1906,16 +2426,40 @@ class ReservoirTwinRenderer {
         new THREE.Vector3().addVectors(cTop, cBot).multiplyScalar(0.5),
         new THREE.Quaternion().setFromUnitVectors(UP, cDir),
         new THREE.Vector3(1, 1, 1)));
+      chute.translate(0,-3,0); // Seat concrete below the water sheet, including its upper face.
       parts.push(chute);
       /* control tower on right abutment */
-      const tX = D.xc + 62, tZ = D.zd - 10, tY = terrainHeight(tX, tZ) - 2;
+      const tX = D.xc + span * 0.42, tZ = D.zd - 10, tY = crest - 16;
       parts.push(new THREE.CylinderGeometry(2.6, 3.2, 16, 10).translate(tX, tY + 8, tZ));
       parts.push(new THREE.BoxGeometry(8, 3.5, 8).translate(tX, tY + 17, tZ));
 
-      const dam = new THREE.Mesh(mergeGeometries(parts, false), this.concreteMat);
+      // Spillway at the crest is a separate structure and separate water path.
+      for (const xo of [18, 38]) {
+        parts.push(new THREE.BoxGeometry(2.4, 10, 11).translate(D.xc+xo,crest+3,D.zd));
+      }
+      parts.push(new THREE.BoxGeometry(24, 1.3, 5).translate(D.xc+28,crest+8,D.zd));
+      parts.push(new THREE.BoxGeometry(34, 2, 28).translate(D.xc, cBot.y-1, D.zd+25));
+      // Stilling basin walls and baffles connect the gate chute to its channel.
+      for (const xo of [-16,16]) parts.push(new THREE.BoxGeometry(2,5,27).translate(D.xc+xo,cBot.y+1,D.zd+25));
+      for (const xo of [-9,-3,3,9]) parts.push(new THREE.BoxGeometry(2,3,2).translate(D.xc+xo,cBot.y+1,D.zd+34));
+
+      const wallMaterial = r.B.id === 4 ? this.concreteMat.clone() : this.concreteMat;
+      if (r.B.id === 4) wallMaterial.color.setHex(0xc9c5b7);
+      const dam = new THREE.Mesh(mergeGeometries(parts, false), wallMaterial);
+      dam.userData.structure = r.B.id === 4 ? 'schematic double-curvature arch dam' : 'schematic gravity dam';
       dam.castShadow = true; dam.receiveShadow = true;
       dam.name = 'DAM_0' + r.B.id;
       this.scene.add(dam);
+      const roadPoints=[];
+      const roadAngle=span/(2*radius);
+      const roadX=D.xc+Math.sin(roadAngle)*radius, roadZ=D.zd+(Math.cos(roadAngle)-1)*radius;
+      for(let s=0;s<=28;s++) {
+        const t=s/28,x=roadX+t*100,z=roadZ-t*55+Math.sin(t*Math.PI)*18;
+        roadPoints.push(new THREE.Vector3(x,lerp(crest+1.3,terrainHeight(x,z)+0.8,smooth01(t)),z));
+      }
+      const roadGeometry=ribbonGeometry(roadPoints,5);roadGeometry.computeVertexNormals();
+      const access=new THREE.Mesh(roadGeometry,new THREE.MeshStandardMaterial({color:0x6a6b60,roughness:1,side:THREE.DoubleSide}));
+      access.name='SERVICE_ACCESS_0'+r.B.id;access.receiveShadow=true;this.scene.add(access);
 
       /* hoist beam (metal, static) */
       const hoist = new THREE.Mesh(new THREE.BoxGeometry(34, 1.5, 3), this.metalMat);
@@ -1924,15 +2468,15 @@ class ReservoirTwinRenderer {
       dam.add(hoist);
 
       /* dark gate opening on the visible downstream face — revealed as the gate lifts */
-      const opening = new THREE.Mesh(new THREE.BoxGeometry(24, 8.5, 0.6), this.darkMat);
+      const opening = new THREE.Mesh(new THREE.BoxGeometry(24, 8.5, 1.2), this.darkMat);
       opening.name = 'GATE_OPENING_0' + r.B.id;
-      opening.position.set(D.xc, sill + 3.5, D.zd + 6.4);
+      opening.position.set(D.xc, sill + 3.5, D.zd + 11);
       dam.add(opening);
 
       /* GATE — the only animated dam part; slide = gate opening */
       const gate = new THREE.Mesh(new THREE.BoxGeometry(22, 9, 1.4), this.metalMat);
       gate.name = 'GATE_0' + r.B.id;
-      gate.position.set(D.xc, sill + 3.8, D.zd + 7.5);
+      gate.position.set(D.xc, sill + 3.8, D.zd + 12);
       gate.castShadow = true;
       dam.add(gate);
       r.gateMesh = gate;
@@ -1940,9 +2484,9 @@ class ReservoirTwinRenderer {
       r.gateTravel = 8;
 
       /* spillway jet (flow-driven) + plunge spray */
-      const jTop = new THREE.Vector3(D.xc, sill + 1, D.zd + 4);
-      const jBot = new THREE.Vector3(D.xc, terrainHeight(D.xc, D.zd + 22) + 1.2, D.zd + 22);
-      const jCtrl = new THREE.Vector3(D.xc, sill + 5, D.zd + 11);
+      const jTop = new THREE.Vector3(D.xc, sill + 1, D.zd + 13);
+      const jBot = new THREE.Vector3(D.xc, terrainSurfaceHeight(D.xc, D.zd + 22) + 2.2, D.zd + 22);
+      const jCtrl = new THREE.Vector3(D.xc, sill + 2, D.zd + 18);
       r.jetMat = new THREE.ShaderMaterial({
         vertexShader: FLOW_VERT, fragmentShader: FLOW_FRAG, transparent: true,
         depthWrite: false, side: THREE.DoubleSide,
@@ -1960,8 +2504,15 @@ class ReservoirTwinRenderer {
       r.jetMesh = jet;
       // Local-spill ribbon, driven only by reported spill volume.
       r.spillMat = r.jetMat.clone();
-      r.spillMesh = new THREE.Mesh(jet.geometry, r.spillMat);
-      r.spillMesh.position.x = 28;
+      const spillPath = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(D.xc+28,crest-1,D.zd-5),
+        new THREE.Vector3(D.xc+28,crest-1,D.zd+8),
+        new THREE.Vector3(D.xc+26,jBot.y+5,D.zd+27),
+        new THREE.Vector3(valleyCenterX(D.zd+42),terrainSurfaceHeight(valleyCenterX(D.zd+42),D.zd+42)+2.4,D.zd+42),
+      ]);
+      r.spillMesh = new THREE.Mesh(ribbonGeometry(spillPath.getPoints(36),16), r.spillMat);
+      r.spillMesh.name = 'SEPARATE_OVERFLOW_0' + r.B.id;
+      r.spillImpact = spillPath.getPoint(1);
       r.spillMesh.visible = false;
       r.spillMesh.renderOrder = 1;
       this.scene.add(r.spillMesh);
@@ -1999,13 +2550,20 @@ class ReservoirTwinRenderer {
     for (const r of this.R) {
       const B = r.B;
       const cx = valleyCenterX(B.cz);
+      // Static local environment capture: actual 3D ridges/forest/sky, no photograph.
+      // Baked once; the animation loop never renders reflection cameras.
+      const environment = new THREE.WebGLCubeRenderTarget(64,{type:THREE.HalfFloatType});
+      const probe = new THREE.CubeCamera(2,5000,environment);
+      probe.position.set(cx,r.full+5,B.cz);
+      probe.update(this.renderer,this.scene);
+      r.environmentTarget=environment;
       const zC = B.cz + (B.dn - B.up) / 2;                       /* asymmetric: upstream margin, ends inside dam wall */
       const L = B.up + B.dn + 15;
-      const geo = new THREE.PlaneGeometry(B.rx * 3, L, 40, 56);
+      const geo = new THREE.PlaneGeometry(B.rx * 3, L, 96, 80);
       const pos = geo.attributes.position;
       const aTerrain = new Float32Array(pos.count);
       for (let i = 0; i < pos.count; i++) {
-        aTerrain[i] = terrainHeight(pos.getX(i) + cx, -pos.getY(i) + zC);
+        aTerrain[i] = terrainSurfaceHeight(pos.getX(i) + cx, -pos.getY(i) + zC);
       }
       geo.setAttribute('aTerrain', new THREE.BufferAttribute(aTerrain, 1));
       r.waterMat = new THREE.ShaderMaterial({
@@ -2014,10 +2572,12 @@ class ReservoirTwinRenderer {
         uniforms: {
           uTime: { value: 0 }, uWaveAmp: { value: 0.8 }, uLevelY: { value: r.minY },
           uRain: { value: 0.5 },
+          uSelected: { value: 0 },
           uDeep: { value: new THREE.Color(0x0a3d46) },
           uShallow: { value: new THREE.Color(0x1f6e64) },
           uSky: { value: new THREE.Color(0xb9c8d2) },
-          uSunDir: { value: new THREE.Vector3(250, 400, 150).normalize() },
+          uEnvironment: { value: environment.texture },
+          uSunDir: { value: this.sun.position.clone().normalize() },
           uFogColor: { value: new THREE.Color(0xb9c3ca) },
           uFogDensity: { value: 0.0016 },
         },
@@ -2051,23 +2611,45 @@ class ReservoirTwinRenderer {
       const mat = flowMat(white);
       const mesh = new THREE.Mesh(geo, mat);
       mesh.name = name;
-      mesh.renderOrder = 1;
+      const inletBlendStart = geo.userData.inletBlendStart;
+      const hasReceiver = typeof inletBlendStart === 'number';
+      mesh.renderOrder = hasReceiver ? 3 : 1;
       this.scene.add(mesh);
-      this.flowMeshes.push({ mat, key, mesh });
+      const receiver = hasReceiver ? this.R[Number(key.slice(-1))] : null;
+      this.flowMeshes.push({ mat, key, mesh, flowCur: 0, flowTarget: 0,
+        receiver, inletBlendStart,
+        basePositions: receiver ? geo.attributes.position.array.slice() : null });
+      const flow = this.flowMeshes[this.flowMeshes.length-1];
+      const foam = new THREE.InstancedMesh(new THREE.SphereGeometry(1,6,4),
+        new THREE.MeshBasicMaterial({color:0xc9dfdb,transparent:true,opacity:0.65,depthWrite:false}),3);
+      foam.name = name + '_TRAVELLING_FOAM'; foam.renderOrder=4;
+      foam.frustumCulled=false; this.scene.add(foam);
+      flow.foam=foam; flow.foamPhase=0; flow.foamTransform=new THREE.Object3D();
+      flow.foamOffsets=[0.03,0.383,0.771];
+      const points=geo.attributes.position;
+      let length=0;
+      for(let i=2;i<points.count;i+=2)length+=Math.hypot(points.getX(i)-points.getX(i-2),points.getZ(i)-points.getZ(i-2));
+      flow.pathLength=Math.max(1,length);
     };
-    // A → B → C → D → downstream. Geometry is schematic, not routing physics.
+    // A → B → C → D → downstream. Visual paths only; backend flow remains authoritative.
     this.R.forEach((r, i) => {
       const next = this.R[i + 1];
-      const end = next ? next.B.cz - next.B.up + 20 : 590;
-      addFlow(terrainRibbon(r.D.zd + 20, end, 4, 20),
-        'CHANNEL_0' + (i + 1), 0.45, 'ch' + (i + 1));
-      const z = (r.D.zd + 20 + end) / 2, x = valleyCenterX(z);
+      addFlow(hydraulicLinkRibbon(r, next, !next),
+        'CHANNEL_0' + (i + 1), 0.18, 'ch' + (i + 1));
+      const z = (r.D.zd + 22 + (next ? next.B.cz + 15 : 590)) / 2;
+      const x = valleyCenterX(z);
       const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 1),
         new THREE.Vector3(x, terrainHeight(x,z) + 9, z - 9), 22, 0xe9c86b, 9, 6);
       arrow.name = 'TOPOLOGY_DIRECTION_0' + (i + 1);
       this.scene.add(arrow);
     });
     addFlow(terrainRibbon(-520, -435, 4, 16), 'INFLOW_01', 0.42, 'in1');
+    // Overflow remains independently bound and independently meshed after its
+    // confluence. Terminal river already uses the authoritative downstream total.
+    this.R.slice(0,3).forEach((r,i)=>{
+      addFlow(hydraulicLinkRibbon(r,this.R[i+1],false,42),'SPILL_CONTINUATION_0'+(i+1),0.65,'sp'+(i+1));
+      this.flowMeshes[this.flowMeshes.length-1].mesh.position.y=0.12;
+    });
 
   }
 
@@ -2151,10 +2733,10 @@ class ReservoirTwinRenderer {
     this.sun.intensity = base.sunInt - c * (base.sunInt * 0.5);
     this.hemi.intensity = base.hemiInt - c * (base.hemiInt * 0.35);
     this.rainMat.opacity = 0.28 + c * 0.42;
-    this.rainGeo.setDrawRange(0, 900 + Math.floor(c * 5100));
+    this.rainGeo.setDrawRange(0, Math.floor(c * 6000));
     for (const r of this.R) {
       r.waterMat.uniforms.uRain.value = c;
-      r.waterMat.uniforms.uWaveAmp.value = 0.55 + c * 0.55;
+      r.waterMat.uniforms.uWaveAmp.value = 0.12 + c * 0.18;
     }
   }
 
@@ -2162,13 +2744,50 @@ class ReservoirTwinRenderer {
     for (const r of this.R) {
       r.levelCur += (r.levelTgt - r.levelCur) * Math.min(1, dt * 0.8);
       const y = lerp(r.minY, r.full, r.levelCur);
+      if(Math.abs(r.waterMesh.position.y-y)>.001)this._connectorDirty=true;
       r.waterMesh.position.y = y;                 /* REAL surface movement, not a label */
       r.waterMat.uniforms.uTime.value = this._time;
       r.waterMat.uniforms.uLevelY.value = y;
       r.waterY = y;
     }
     for (const fm of this.flowMeshes) {
+      if (fm.receiver && fm.lastReceiverY!==fm.receiver.waterY) {
+        fm.lastReceiverY=fm.receiver.waterY;
+        const position = fm.mesh.geometry.attributes.position;
+        const uv = fm.mesh.geometry.attributes.uv;
+        const base = fm.basePositions;
+        const start = fm.inletBlendStart;
+        for (let i = 0; i < position.count; i++) {
+          const blend = smooth01(clamp01((uv.getY(i) - start) / (1 - start)));
+          const yIndex = i * 3 + 1;
+          position.array[yIndex] = Math.max(base[yIndex],lerp(base[yIndex], fm.receiver.waterY + 0.28, blend));
+        }
+        position.needsUpdate = true;
+      }
       fm.mat.uniforms.uTime.value = this._time;
+      fm.flowCur += (fm.flowTarget - fm.flowCur) * (1 - Math.exp(-dt * 3));
+      fm.mat.uniforms.uFlow.value = fm.flowCur;
+      fm.foam.visible=fm.mesh.visible && fm.flowCur>0.001;
+      if(fm.foam.visible) {
+        // Less than half a marker spacing per second avoids stroboscopic reversal.
+        // Presentation speed only; this is not a reported hydraulic velocity.
+        fm.foamPhase=(fm.foamPhase+dt*(0.035+fm.flowCur*0.025))%1;
+        const pos=fm.mesh.geometry.attributes.position, pairs=pos.count/2;
+        const object=fm.foamTransform;
+        for(let i=0;i<3;i++) {
+          const t=(fm.foamPhase+fm.foamOffsets[i])%1;
+          const f=t*(pairs-1), a=Math.floor(f)*2,b=Math.min(a+2,pos.count-2), k=f-Math.floor(f);
+          const ax=(pos.getX(a)+pos.getX(a+1))/2,az=(pos.getZ(a)+pos.getZ(a+1))/2;
+          const bx=(pos.getX(b)+pos.getX(b+1))/2,bz=(pos.getZ(b)+pos.getZ(b+1))/2;
+          object.position.set(lerp(ax,bx,k),lerp(pos.getY(a),pos.getY(b),k)+0.55,lerp(az,bz,k));
+          object.rotation.y=Math.atan2(bx-ax,bz-az);
+          const fade=Math.min(1,t*20,(1-t)*20)*Math.sqrt(fm.flowCur);
+          const shape=i===0 ? 1 : i===1 ? 0.72 : 0.48;
+          object.scale.set(2.8*fade*shape,0.17,5.5*fade*shape);object.updateMatrix();
+          fm.foam.setMatrixAt(i,object.matrix);
+        }
+        fm.foam.instanceMatrix.needsUpdate=true;
+      }
     }
   }
 
@@ -2181,30 +2800,36 @@ class ReservoirTwinRenderer {
       // Unknown flow is hidden; no gate/head inference.
       r.jetMesh.visible = false; r.spillMesh.visible = false; r.jetTgt = 0;
       if (typeof r.data.controlledRelease === 'number' && Number.isFinite(r.data.controlledRelease)) {
-        r.jetTgt = clamp01(r.data.controlledRelease / 70);
+        r.jetTgt = Math.max(0,r.data.controlledRelease) / (Math.max(0,r.data.controlledRelease)+70);
         r.jetMesh.visible = r.data.controlledRelease > 0;
       }
       if (typeof r.data.spill === 'number' && Number.isFinite(r.data.spill)) {
         r.spillMesh.visible = r.data.spill > 0;
-        r.spillMat.uniforms.uFlow.value = clamp01(r.data.spill / 50);
+        r.spillMat.uniforms.uFlow.value = Math.max(0,r.data.spill) / (Math.max(0,r.data.spill)+5);
       }
       r.spillMat.uniforms.uTime.value = this._time;
       r.jetFlow += (r.jetTgt - r.jetFlow) * Math.min(1, dt * 3);
       r.jetMat.uniforms.uFlow.value = r.jetFlow;
       r.jetMat.uniforms.uTime.value = this._time;
 
-      const active = r.jetMesh.visible && r.jetFlow > 0.06;
+      const sprayStrength = Math.max(r.jetMesh.visible ? r.jetFlow : 0, r.spillMesh.visible ? r.spillMat.uniforms.uFlow.value : 0);
+      const active = sprayStrength > 0.06;
       r.spray.visible = active;
-      r.sprayMat.opacity = r.jetFlow * 0.7;
+      r.sprayMat.opacity = sprayStrength * 0.7;
       if (active) {
         const p = r.spray.geometry.attributes.position.array;
+        const origin = r.jetMesh.visible ? r.plunge : r.spillImpact;
+        if(r.lastSprayOrigin !== origin) {
+          for(let i=0;i<p.length;i+=3){p[i]=origin.x;p[i+1]=origin.y;p[i+2]=origin.z;}
+          r.lastSprayOrigin=origin;
+        }
         for (let i = 0; i < p.length / 3; i++) {
           p[i * 3] += r.sprayVel[i * 3] * dt;
           p[i * 3 + 1] += r.sprayVel[i * 3 + 1] * dt;
           p[i * 3 + 2] += r.sprayVel[i * 3 + 2] * dt;
           r.sprayVel[i * 3 + 1] -= 30 * dt;
-          if (p[i * 3 + 1] < r.plunge.y) {
-            p[i * 3] = r.plunge.x; p[i * 3 + 1] = r.plunge.y; p[i * 3 + 2] = r.plunge.z;
+          if (p[i * 3 + 1] < origin.y) {
+            p[i * 3] = origin.x; p[i * 3 + 1] = origin.y; p[i * 3 + 2] = origin.z;
             this._respawnSpray(r, i);
           }
         }
@@ -2214,6 +2839,7 @@ class ReservoirTwinRenderer {
   }
 
   _updateRain(dt) {
+    if(this.rainGeo.drawRange.count===0)return;
     this.rain.position.x += (this.controls.target.x - this.rain.position.x) * Math.min(1, dt * 1.5);
     this.rain.position.z += (this.controls.target.z - this.rain.position.z) * Math.min(1, dt * 1.5);
     const p = this.rainGeo.attributes.position.array;
@@ -2298,6 +2924,105 @@ class ReservoirTwinRenderer {
         </button>
       </div>`;
     hud.appendChild(header);
+
+    const workspaceView = document.createElement('section');
+    workspaceView.className = 'workspace-view';
+    workspaceView.hidden = true;
+    workspaceView.setAttribute('aria-live', 'polite');
+    hud.appendChild(workspaceView);
+    this._workspaceView = workspaceView;
+    this._workspacePage = 'reservoirs';
+    this._selectedReservoir = null;
+
+    const settingsView = document.createElement('section');
+    settingsView.className = 'settings-view';
+    settingsView.hidden = true;
+    settingsView.setAttribute('aria-label', 'AquaFlow settings');
+    settingsView.innerHTML = `
+      <nav class="settings-nav" aria-label="Settings sections"><h2>SETTINGS</h2>
+        <button data-settings-section="general">General</button>
+        <button data-settings-section="simulation">Simulation</button>
+        <button data-settings-section="notifications" class="on">Notifications</button>
+      </nav>
+      <main class="settings-main"><div class="settings-top"><div><h1>SETTINGS</h1><div class="settings-crumb" data-settings-crumb>Notifications / Gmail Alerts</div></div>
+        <button class="settings-button" data-settings-close aria-label="Back to dashboard">← BACK</button></div>
+        <section data-settings-page="notifications">
+          <div class="settings-channel-grid">
+          <div class="settings-card"><h3>GMAIL ALERTS</h3>
+            <div class="settings-row"><span class="settings-label">Gmail connection</span><span class="settings-status" data-gmail-status>● NOT CONNECTED</span></div>
+            <div class="settings-row" data-gmail-account-row hidden><span class="settings-label">Google account / email</span><strong data-gmail-account>—</strong></div>
+            <div class="settings-row"><button class="settings-button primary" data-gmail-connect>Connect Gmail</button>
+              <button class="settings-button" data-gmail-disconnect hidden>DISCONNECT</button></div>
+            <div class="settings-error" data-gmail-config-error hidden></div>
+            <p class="settings-hint">Connect through Google OAuth. AquaFlow never asks for your Google password. If OAuth is unavailable, configured Gmail SMTP can continue as the delivery fallback.</p>
+          </div>
+          <div class="settings-card" data-discord-card><h3>DISCORD</h3>
+            <div class="settings-row"><span class="settings-label">Status</span><strong data-discord-status>Loading…</strong></div>
+            <div class="settings-row"><span class="settings-label">Webhook</span><strong data-discord-webhook>—</strong></div>
+            <div class="settings-row"><span class="settings-label">Downstream alerts</span><input class="settings-toggle" type="checkbox" data-discord-enabled aria-label="Discord downstream alerts"></div>
+            <div class="settings-row"><span class="settings-label">Last delivery</span><strong data-discord-delivery>NOT_CONFIGURED</strong></div>
+            <div class="settings-row"><span class="settings-label">Last delivery timestamp</span><strong data-discord-time>—</strong></div>
+            <button class="settings-button primary" data-discord-test>Send Test Discord Alert</button>
+            <span class="settings-hint" data-discord-result aria-live="polite"></span>
+            <p class="settings-hint" data-discord-policy>Immediate WARNING/CRITICAL alert per incident, then reminders every 5 minutes until acknowledged here. 30-second cooldown; one recovery message on NORMAL. Gmail delivery is independent.</p>
+          </div>
+          </div>
+          <div class="settings-card"><h3>ACTIVE INCIDENTS</h3>
+            <div data-active-incidents aria-live="polite">No active downstream incidents.</div>
+            <span class="settings-hint" data-ack-result aria-live="polite"></span>
+            <p class="settings-hint">Acknowledgement stops Discord reminders. It does not change gates or resolve downstream risk.</p>
+          </div>
+          <div class="settings-card"><h3>DOWNSTREAM ALERTS</h3>
+            <div class="settings-row"><label class="settings-label" for="alert-recipient">Alert recipient email</label><input class="settings-input" id="alert-recipient" type="email" autocomplete="email" placeholder="operator@example.com" data-alert-recipient></div>
+            <div class="settings-row"><span class="settings-label">Downstream HIGH alert</span><input class="settings-toggle" type="checkbox" data-high-enabled aria-label="Downstream HIGH alert"></div>
+            <div class="settings-row"><span class="settings-label">Downstream CRITICAL alert</span><input class="settings-toggle" type="checkbox" data-critical-enabled aria-label="Downstream CRITICAL alert"></div>
+            <div class="settings-row"><span class="settings-label">Incident delivery</span><strong>ONE EMAIL PER INCIDENT</strong></div>
+            <button class="settings-button" data-save-notification-settings>SAVE ALERT SETTINGS</button>
+            <span class="settings-hint" data-settings-save-result aria-live="polite"></span>
+          </div>
+          <div class="settings-card"><h3>DELIVERY STATUS</h3>
+            <div class="settings-row"><span class="settings-label">Last notification status</span><strong data-last-notification-status>NOT_CONFIGURED</strong></div>
+            <div class="settings-row"><span class="settings-label">Last notification timestamp</span><strong data-last-notification-time>—</strong></div>
+            <button class="settings-button primary" data-send-test> SEND TEST EMAIL </button>
+            <span class="settings-hint" data-test-result aria-live="polite"></span>
+            <p class="settings-hint" style="margin-top:8px">Test messages go only to the saved recipient. The action stays disabled until a valid recipient is configured.</p>
+          </div>
+          <div class="settings-card" data-telegram-card><h3>TELEGRAM</h3>
+            <div class="settings-row"><span class="settings-label">Status</span><strong data-telegram-status>Loading…</strong></div>
+            <div class="settings-row"><span class="settings-label">Chat ID</span><strong data-telegram-chat>—</strong></div>
+            <div class="settings-row"><span class="settings-label">Downstream alerts</span><input class="settings-toggle" type="checkbox" data-telegram-enabled aria-label="Telegram downstream alerts"></div>
+            <p class="settings-hint">One notification per incident</p>
+            <p class="settings-hint">Telegram sends authoritative downstream WARNING/CRITICAL alerts. It does not control the simulation.</p>
+            <div class="settings-row"><span class="settings-label">Last delivery</span><strong data-telegram-delivery>NOT_CONFIGURED</strong></div>
+            <div class="settings-row"><span class="settings-label">Last delivery timestamp</span><strong data-telegram-time>—</strong></div>
+            <button class="settings-button primary" data-telegram-test>Send Test Telegram Alert</button>
+            <span class="settings-hint" data-telegram-result aria-live="polite"></span>
+          </div>
+        </section>
+        <section data-settings-page="general" hidden><div class="settings-card"><h3>GENERAL</h3><p class="settings-hint">AquaFlow operator settings. Regional and display preferences are unchanged.</p></div><div class="settings-card"><h3>GPU DIAGNOSTICS</h3><div class="settings-row"><span class="settings-label">GPU</span><strong data-gpu-name>Detecting…</strong></div><div class="settings-row"><span class="settings-label">WebGL version</span><strong data-gpu-api>—</strong></div><div class="settings-row"><span class="settings-label">Renderer</span><strong data-gpu-renderer>—</strong></div><div class="settings-row"><span class="settings-label">Vendor</span><strong data-gpu-vendor>—</strong></div><div class="settings-row"><span class="settings-label">Mode</span><strong>HIGH PERFORMANCE REQUESTED</strong></div><p class="settings-hint">Browser and operating system GPU preferences determine the physical adapter. AquaFlow requests the high-performance adapter and reports the WebGL information the browser exposes.</p></div></section>
+        <section data-settings-page="simulation" hidden><div class="settings-card"><h3>SIMULATION</h3><p class="settings-hint">Simulation controls remain available on the dashboard while this settings view is open.</p></div></section>
+      </main>`;
+    const readGpuDiagnostics = () => {
+      const gl = this.renderer && this.renderer.getContext();
+      if (!gl) return { gpu: 'Unavailable', api: 'Unavailable', renderer: 'Unavailable', vendor: 'Unavailable' };
+      let renderer = 'Not exposed', vendor = 'Not exposed';
+      try {
+        const ext = gl.getExtension('WEBGL_debug_renderer_info');
+        if (ext) { renderer = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) || renderer; vendor = gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) || vendor; }
+      } catch (_) { /* Privacy settings may block unmasked WebGL information. */ }
+      const gpu = /nvidia/i.test(renderer) ? renderer : /intel/i.test(renderer) ? renderer : renderer;
+      return { gpu, api: gl.getParameter(gl.VERSION) || 'Unknown', renderer, vendor };
+    };
+    window.aquaFlowGpuDiagnostics = readGpuDiagnostics;
+    const paintGpuDiagnostics = () => {
+      const info = readGpuDiagnostics();
+      for (const [key, value] of Object.entries(info)) {
+        const node = settingsView.querySelector(`[data-gpu-${key === 'gpu' ? 'name' : key}]`);
+        if (node) node.textContent = value;
+      }
+    };
+    paintGpuDiagnostics();
+    hud.appendChild(settingsView);
 
     /* — RIGHT control panel — */
     const right = document.createElement('aside');
@@ -2482,7 +3207,8 @@ class ReservoirTwinRenderer {
       d.className = 'flabel';
       const gateHtml = f.id !== 'DS' ? `<span class="fl-gate" data-fl="gate">--%</span>` : '';
       d.innerHTML = `<span class="fl-dot" style="background:var(--accent)"></span>
-        <span class="fl-id">${f.id === 'DS' ? 'DS' : 'ABCD'[idx]}</span><span class="fl-name">${fname}</span><span class="fl-lvl" data-fl="lvl">--</span>${gateHtml}<span class="fl-risk" data-fl="risk">NO DATA</span>`;
+        <span class="fl-id">${f.id === 'DS' ? 'DS' : 'ABCD'[idx]}</span><span class="fl-name">${fname}</span><span class="fl-lvl" data-fl="lvl">--</span>${gateHtml}<span class="fl-risk" data-fl="risk">NO DATA</span><span class="fl-detail"></span>`;
+      d._detail = d.querySelector('.fl-detail');
       hud.appendChild(d);
       this.fLabels.push(d);
     }
@@ -2508,6 +3234,9 @@ class ReservoirTwinRenderer {
     bar.innerHTML = `
       <div class="ctl-group"><span class="ctl-cap">CAMERA</span>
         <button class="cbtn on" data-cam="overview">OVERVIEW</button>
+        <button class="cbtn" data-cam="aerial">AERIAL</button>
+        <button class="cbtn" data-cam="camera1">C1</button>
+        <button class="cbtn" data-cam="camera2">C2</button>
         <button class="cbtn" data-cam="reservoir1">A</button>
         <button class="cbtn" data-cam="reservoir2">B</button>
         <button class="cbtn" data-cam="reservoir3">C</button>
@@ -2558,6 +3287,21 @@ class ReservoirTwinRenderer {
       '<span class="db-sub" data-ref="dbsub"></span>';
     hud.appendChild(demoBadge);
 
+    const operatorAlert = document.createElement('div');
+    operatorAlert.id = 'operator-alert';
+    operatorAlert.hidden = true;
+    operatorAlert.setAttribute('role', 'status');
+    operatorAlert.setAttribute('aria-live', 'polite');
+    hud.appendChild(operatorAlert);
+    const notificationDetail = document.createElement('div');
+    notificationDetail.id = 'downstream-notification-detail';
+    notificationDetail.hidden = true;
+    notificationDetail.style.cssText = 'position:absolute;top:140px;left:50%;transform:translateX(-50%);z-index:30;white-space:pre-line;max-width:min(460px,calc(100% - 32px));padding:12px;background:var(--panel);border:1px solid var(--hairline);border-radius:8px;color:var(--ink);font-size:10px;line-height:1.6;pointer-events:auto';
+    hud.appendChild(notificationDetail);
+    operatorAlert.style.cursor = 'pointer';
+    operatorAlert.title = 'Select to view downstream incident details';
+    operatorAlert.addEventListener('click', () => { notificationDetail.hidden = !notificationDetail.hidden; });
+
     this.container.appendChild(hud);
     this.container.appendChild(bar);
     this.hudRoot = hud;
@@ -2593,6 +3337,8 @@ class ReservoirTwinRenderer {
       gnnstat: q(hud, '[data-ref="gnnstat"]'), gnngraph: q(hud, '[data-ref="gnngraph"]'),
       gnnrel: q(hud, '[data-ref="gnnrel"]'),
       demoBadge: q(hud, '#demo-badge'), demoBadgeSub: q(hud, '#demo-badge [data-ref="dbsub"]'),
+      operatorAlert: q(hud, '#operator-alert'),
+      notificationDetail: q(hud, '#downstream-notification-detail'),
       /* STAGE 18 — AUTO CONTROL panel + control-bar mode/source/lock refs.
        * All are display targets: the values/classes written into them come from
        * the authoritative payload, never from a local decision. */
@@ -2661,6 +3407,14 @@ class ReservoirTwinRenderer {
     drawer.innerHTML = `<div class="drawer-heading"><strong>RESERVOIRS</strong><button class="cbtn" data-close>CLOSE</button></div>
       <div class="ctl-group">${rCards.map((_, i) => `<button class="cbtn" data-res="${i}">R${i + 1}</button>`).join('')}</div><div data-card></div>`;
     hud.appendChild(drawer);
+    this.siteView = createSiteView(this.container, i=>this.resNames[i], i=>this.setCameraPreset('reservoir'+(i+1)));
+    const quality=document.createElement('select');quality.id='visual-quality';quality.setAttribute('aria-label','Visual quality');
+    for(const name of ['ULTRA','HIGH','BALANCED','PERFORMANCE']){const option=document.createElement('option');option.value=name;option.textContent=name;quality.append(option);}
+    let initialQuality='BALANCED';try{initialQuality=localStorage.getItem('aquaflow-visual-quality')||'BALANCED';}catch(_){}
+    if(!['ULTRA','HIGH','BALANCED','PERFORMANCE'].includes(initialQuality))initialQuality='BALANCED';
+    quality.value=initialQuality;this.setVisualQuality(initialQuality);
+    quality.addEventListener('change',()=>this.setVisualQuality(quality.value));
+    this.container.querySelector('.scene-view-switch').append(quality);
     const restoreCards = () => rCards.forEach(card => bottom.appendChild(card));
     const closeDrawer = () => {
       restoreCards();
@@ -2706,6 +3460,7 @@ class ReservoirTwinRenderer {
     focusButton.addEventListener('click', () => setFocus(!this.container.classList.contains('scene-focus')));
     this.container.addEventListener('keydown', event => {
       if (event.key === 'Escape') {
+        if (!settingsView.hidden) closeSettings();
         if (!drawer.hidden) drawer.querySelector('[data-close]').click();
         if (this.container.classList.contains('scene-focus')) { setFocus(false); focusButton.focus(); }
       }
@@ -2715,17 +3470,283 @@ class ReservoirTwinRenderer {
     secondary.innerHTML = '<summary>System, weather &amp; hardware details</summary>';
     Array.from(right.children).filter(p => !['hud-auto', 'hud-ds'].includes(p.id)).forEach(p => secondary.appendChild(p));
     right.appendChild(secondary);
-    /* Nav rail: visual state + camera shortcuts (single-page twin) */
-    rail.querySelectorAll('.rail-item').forEach(item => item.addEventListener('click', () => {
-      rail.querySelectorAll('.rail-item').forEach(b => b.classList.remove('on'));
-      item.classList.add('on');
-      if (item.dataset.nav === 'reservoirs') showReservoir(0);
-      else closeDrawer();
-      const cam = { home: 'overview', reservoirs: null, forecasting: null, simulation: 'overview', risk: null, reports: null, settings: null }[item.dataset.nav];
-      if (cam) {
-        this.el.camBtns.forEach(b => b.classList.toggle('on', b.dataset.cam === cam));
-        this.setCameraPreset(cam);
+    let savedNotificationRecipient = '';
+    const setting = selector => settingsView.querySelector(selector);
+    this._settingsView = settingsView;
+    this._settingsSavedRecipient = '';
+    const loadNotificationSettings = async () => {
+      try {
+        const response = await fetch('/api/notifications/settings', {cache:'no-store'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Unable to load notification settings');
+        const gmail = data.gmail || {};
+        this._updateDiscordPanel(data.discord, data.active_incidents || []);
+        const telegram = data.telegram || {};
+        setting('[data-telegram-status]').textContent = telegram.status || 'Unavailable';
+        setting('[data-telegram-chat]').textContent = telegram.chat_id || '—';
+        setting('[data-telegram-enabled]').checked = telegram.enabled === true;
+        setting('[data-telegram-delivery]').textContent = telegram.last_delivery || 'NOT_CONFIGURED';
+        setting('[data-telegram-time]').textContent = telegram.last_delivery_timestamp || '—';
+        setting('[data-telegram-test]').disabled = telegram.last_delivery === 'PENDING';
+        setting('[data-telegram-result]').textContent = telegram.error || '';
+        this._gmailSettingsSnapshot = {connected:!!gmail.connected,recipient:data.recipient || '',high_enabled:data.high_enabled === true,critical_enabled:data.critical_enabled === true};
+        if (this._workspacePage === 'risk' && this._renderWorkspacePage) this._renderWorkspacePage();
+        setting('[data-gmail-status]').textContent = gmail.connected ? '● CONNECTED' : gmail.auth_error ? '● AUTHENTICATION ERROR' : '● NOT CONNECTED';
+        setting('[data-gmail-account-row]').hidden = !gmail.email;
+        setting('[data-gmail-account]').textContent = gmail.email || '—';
+        setting('[data-gmail-connect]').hidden = !!gmail.connected;
+        setting('[data-gmail-connect]').textContent = gmail.auth_error ? 'RECONNECT GMAIL' : 'CONNECT GMAIL';
+        setting('[data-gmail-disconnect]').hidden = !gmail.connected;
+        setting('[data-gmail-config-error]').hidden = !!gmail.oauth_configured && !gmail.auth_error;
+        setting('[data-gmail-config-error]').textContent = gmail.auth_error ? 'Google authorization needs to be completed again.' : gmail.oauth_configured ? '' : (data.configuration_error || 'Google OAuth is not configured. Administrator OAuth credentials are required.');
+        setting('[data-alert-recipient]').value = data.recipient || '';
+        savedNotificationRecipient = data.recipient || '';
+        this._settingsSavedRecipient = savedNotificationRecipient;
+        setting('[data-high-enabled]').checked = data.high_enabled !== false;
+        setting('[data-critical-enabled]').checked = data.critical_enabled !== false;
+        setting('[data-last-notification-status]').textContent = data.last_notification_status || 'NOT_CONFIGURED';
+        setting('[data-last-notification-time]').textContent = data.last_notification_timestamp || '—';
+        const send = setting('[data-send-test]');
+        send.disabled = !gmail.connected || !!data.test_pending || !String(data.recipient || '').includes('@');
+        setting('[data-test-result]').textContent = data.test_pending ? 'Test email PENDING…' : '';
+        if (!data.test_pending && data.last_notification_kind === 'TEST' && data.last_notification_status) {
+          setting('[data-test-result]').textContent = `Test email ${data.last_notification_status}${data.last_notification_error ? ': ' + data.last_notification_error : ''}`;
+        }
+      } catch (error) {
+        setting('[data-gmail-status]').textContent = '● NOT CONNECTED';
+        setting('[data-gmail-config-error]').hidden = false;
+        setting('[data-gmail-config-error]').textContent = error.message;
       }
+    };
+    const closeSettings = () => {
+      settingsView.hidden = true;
+      workspaceView.hidden = true;
+      this.container.classList.remove('workspace-open','workspace-simulation');
+      if(this._onResize) this._onResize();
+      rail.querySelectorAll('.rail-item').forEach(b => {b.classList.toggle('on', b.dataset.nav === 'home');b.setAttribute('aria-current',b.dataset.nav==='home'?'page':'false')});
+    };
+    const openSettings = (section='notifications') => {
+      closeDrawer();
+      this.container.classList.add('workspace-open'); this.container.classList.remove('workspace-simulation');
+      if(this._onResize) this._onResize();
+      workspaceView.hidden = true;
+      settingsView.hidden = false;
+      rail.querySelectorAll('.rail-item').forEach(b => {b.classList.toggle('on', b.dataset.nav === 'settings');b.setAttribute('aria-current',b.dataset.nav==='settings'?'page':'false')});
+      selectSettingsSection(section);
+      loadNotificationSettings();
+    };
+    const selectSettingsSection = section => {
+      settingsView.querySelectorAll('[data-settings-section]').forEach(b => b.classList.toggle('on', b.dataset.settingsSection === section));
+      settingsView.querySelectorAll('[data-settings-page]').forEach(p => p.hidden = p.dataset.settingsPage !== section);
+      setting('[data-settings-crumb]').textContent = section === 'notifications' ? 'Notifications / Gmail, Discord & Telegram Alerts' : section;
+    };
+    settingsView.querySelectorAll('[data-settings-section]').forEach(button => button.addEventListener('click', () => selectSettingsSection(button.dataset.settingsSection)));
+    setting('[data-settings-close]').addEventListener('click', closeSettings);
+    setting('[data-gmail-connect]').addEventListener('click', async () => {
+      const button = setting('[data-gmail-connect]'); button.disabled = true;
+      setting('[data-gmail-status]').textContent = '● CONNECTING...';
+      setting('[data-gmail-config-error]').hidden = false;
+      setting('[data-gmail-config-error]').textContent = 'Connecting to Google…';
+      try {
+        const response = await fetch('/api/notifications/gmail/connect', {method:'POST'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Google OAuth could not be started');
+        window.location.assign(data.authorization_url);
+      } catch (error) {
+        setting('[data-gmail-status]').textContent = '● NOT CONNECTED';
+        setting('[data-gmail-config-error]').hidden = false;
+        setting('[data-gmail-config-error]').textContent = error.message;
+      } finally { button.disabled = false; }
+    });
+    setting('[data-gmail-disconnect]').addEventListener('click', async () => {
+      await fetch('/api/notifications/gmail/disconnect', {method:'POST'});
+      await loadNotificationSettings();
+    });
+    setting('[data-save-notification-settings]').addEventListener('click', async () => {
+      const result = setting('[data-settings-save-result]'); result.textContent = 'Saving…';
+      const response = await fetch('/api/notifications/settings', {method:'PUT',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({recipient:setting('[data-alert-recipient]').value,high_enabled:setting('[data-high-enabled]').checked,critical_enabled:setting('[data-critical-enabled]').checked})});
+      const data = await response.json();
+      result.textContent = response.ok ? 'Settings saved.' : (data.detail || 'Settings could not be saved.');
+      if (response.ok) await loadNotificationSettings();
+    });
+    setting('[data-send-test]').addEventListener('click', async () => {
+      const button = setting('[data-send-test]'), message = setting('[data-test-result]');
+      button.disabled = true; message.textContent = 'Test email PENDING…';
+      try {
+        const response = await fetch('/api/notifications/test', {method:'POST'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Test email failed to start');
+        message.textContent = `Test email ${data.status}`;
+        if (data.status === 'PENDING') {
+          const pollCompletion = async remaining => {
+            if (!remaining || settingsView.hidden) return;
+            await new Promise(resolve => setTimeout(resolve, 700));
+            await loadNotificationSettings();
+            if (setting('[data-test-result]').textContent.includes('PENDING')) pollCompletion(remaining - 1);
+          };
+          pollCompletion(40);
+        }
+      } catch (error) { message.textContent = error.message; }
+      await loadNotificationSettings();
+    });
+    setting('[data-discord-enabled]').addEventListener('change', async () => {
+      const toggle = setting('[data-discord-enabled]'); toggle.disabled = true;
+      let failure = '';
+      try {
+        const response = await fetch('/api/notifications/settings', {method:'PUT',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({discord_enabled:toggle.checked})});
+        if (!response.ok) throw new Error('Discord settings could not be saved');
+      } catch (error) { failure = error.message; }
+      await loadNotificationSettings(); toggle.disabled = false;
+      if (failure) setting('[data-discord-result]').textContent = failure;
+    });
+    setting('[data-discord-test]').addEventListener('click', async () => {
+      const button = setting('[data-discord-test]'); button.disabled = true;
+      let failure = '';
+      try {
+        const response = await fetch('/api/notifications/discord/test', {method:'POST'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Discord test could not be started');
+        await loadNotificationSettings();
+        for (let remaining = 40; data.status === 'PENDING' && remaining && !settingsView.hidden; remaining--) {
+          await new Promise(resolve => setTimeout(resolve, 700));
+          await loadNotificationSettings();
+          if (setting('[data-discord-delivery]').textContent !== 'PENDING') break;
+        }
+      } catch (error) { failure = error.message; }
+      await loadNotificationSettings();
+      if (failure) setting('[data-discord-result]').textContent = failure;
+    });
+    setting('[data-active-incidents]').addEventListener('click', async event => {
+      const button = event.target.closest('button[data-ack-incident]');
+      if (!button || button.disabled) return;
+      button.disabled = true;
+      const result = setting('[data-ack-result]'); result.textContent = 'Acknowledging…';
+      try {
+        const response = await fetch(`/api/notifications/incidents/${encodeURIComponent(button.dataset.ackIncident)}/acknowledge`, {method:'POST'});
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Acknowledgement failed');
+        result.textContent = 'Incident acknowledged. Discord reminders stopped.';
+        await loadNotificationSettings();
+      } catch (error) { result.textContent = error.message; button.disabled = false; }
+    });
+    setting('[data-telegram-enabled]').addEventListener('change', async () => {
+      try {
+        const response = await fetch('/api/notifications/settings', {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({telegram_enabled:setting('[data-telegram-enabled]').checked})});
+        if (!response.ok) throw new Error('Telegram settings could not be saved');
+        await loadNotificationSettings();
+      } catch (error) { setting('[data-telegram-result]').textContent = error.message; }
+    });
+    setting('[data-telegram-test]').addEventListener('click', async () => {
+      const button = setting('[data-telegram-test]'); button.disabled = true;
+      setting('[data-telegram-delivery]').textContent = 'PENDING';
+      try {
+        const response = await fetch('/api/notifications/telegram/test', {method:'POST'});
+        const data = await response.json();
+        if (!response.ok) throw new Error('Telegram test could not be started');
+        await loadNotificationSettings();
+        for (let remaining = 40; data.status === 'PENDING' && remaining && !settingsView.hidden; remaining--) {
+          await new Promise(resolve => setTimeout(resolve, 700));
+          await loadNotificationSettings();
+          if (setting('[data-telegram-delivery]').textContent !== 'PENDING') break;
+        }
+      } catch (error) {
+        setting('[data-telegram-delivery]').textContent = 'FAILED';
+        setting('[data-telegram-result]').textContent = error.message;
+      } finally { button.disabled = false; }
+    });
+    const esc = value => String(value == null || value === '' ? '—' : value).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const val = (value, digits=1) => typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(undefined,{maximumFractionDigits:digits}) : '—';
+    const pill = value => {
+      const text = String(value || 'Not available'), key = text.toUpperCase();
+      const tone = /CRITICAL|HIGH RISK|ALERT|FAILED|ERROR|BLOCKED/.test(key) ? 'bad' : /WATCH|PENDING|NOT_CONFIGURED|STALE|NOT ELIGIBLE/.test(key) ? 'warn' : /NORMAL|SAFE|SENT|CONNECTED|ELIGIBLE/.test(key) ? 'ok' : '';
+      return `<span class="page-pill ${tone}">${esc(text)}</span>`;
+    };
+    const metric = (label, value, unit='') => `<div class="metric"><div class="k">${esc(label)}</div><div class="v">${esc(value)}${unit ? ` <span class="u">${esc(unit)}</span>` : ''}</div></div>`;
+    const heading = (eyebrow,title,subtitle,action='') => `<header class="page-heading"><div><div class="page-eyebrow">${esc(eyebrow)}</div><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div>${action}</header>`;
+    const raw = () => this.data.rawState || {};
+    const reservoirState = (state,index) => (state.reservoirs || {})['reservoir_' + (index + 1)] || {};
+    const renderWorkspace = () => {
+      if (!workspaceView || workspaceView.hidden) return;
+      const state = raw(), page = this._workspacePage;
+      workspaceView.classList.toggle('simulation-view', page === 'simulation');
+      const rs = state.reservoirs || {}, names = this.resNames || [];
+      const resName = i => (rs['reservoir_' + (i+1)] || {}).repository_name || names[i] || `Reservoir ${i+1}`;
+      const statusClass = s => /CRITICAL|HIGH RISK/i.test(String(s || '')) ? 'bad' : /WATCH|WARNING/i.test(String(s || '')) ? 'warn' : 'ok';
+      if (page === 'reservoirs' && this._selectedReservoir !== null) {
+        const i = this._selectedReservoir, r = reservoirState(state,i), title = resName(i), risk = r.risk || 'Not available';
+        const focus = `<button class="page-action" data-focus-reservoir="${i}">FOCUS IN DIGITAL TWIN</button>`;
+        const topology = state.physical_control_topology || (state.metadata || {}).physical_control_topology;
+        const links = topology && Array.isArray(topology.links) ? topology.links.filter(link => link.from === title || link.to === title) : [];
+        const connectionText = links.length ? links.map(link => `${link.from} → ${link.to}`).join(' · ') : 'Physical flow relationships are not available in the current state payload.';
+        const riskReason = r.risk_reason ? `<p class="page-note" style="margin-top:10px">${esc(r.risk_reason)}</p>` : '';
+        workspaceView.innerHTML = `<div class="workspace-inner">${heading('Reservoirs / Asset detail',`R${i+1} · ${title}`,'Current operational state from the authoritative simulation payload.',`<button class="page-action" data-fleet>← BACK TO RESERVOIRS</button>`)}<div class="page-grid"><section class="page-card wide"><h2>Operational status ${pill(risk)}</h2><div class="metric-grid">${metric('Storage fraction',val(r.storage,3))}${metric('Inflow',val(r.inflow),'m³/s')}${metric('Controlled release',val(r.controlled_release),'m³/s')}${metric('Total outflow',val(r.release),'m³/s')}${metric('Gate position',val(typeof r.gate==='number'?r.gate*100:null),'%')}${metric('Spill',val(r.spill_mcm),'MCM / step')}${metric('Trend',r.trend)}${metric('Last state',state.state_identity && state.state_identity.state_id)}</div>${riskReason}</section><section class="page-card"><h2>Risk &amp; safety</h2><div class="metric-grid">${metric('Risk state',risk)}${metric('Safety layer',(state.auto_control || {}).safety_layer_status)}${metric('Downstream status',(state.downstream || {}).status)}${metric('State identity source',(state.state_identity || {}).source)}</div></section><section class="page-card"><h2>Flow connections</h2><p>${esc(connectionText)}</p></section><section class="page-card wide"><h2>Digital twin</h2><p>Open the live scene and focus this reservoir. Simulation state continues while pages change.</p><div style="margin-top:12px">${focus}</div></section></div></div>`;
+      } else if (page === 'reservoirs') {
+        const entries = Object.keys(rs).filter(key => /^reservoir_\d+$/.test(key)).sort((a,b)=>Number(a.slice(10))-Number(b.slice(10)));
+        const rows = entries.map(key => { const i=Number(key.slice(10))-1,r=rs[key],risk=r.risk || 'Not available'; return `<tr data-open-reservoir="${i}"><td><button class="asset-link" data-open-reservoir="${i}">${esc(resName(i))}</button></td><td>${esc(val(r.storage,3))}</td><td>${esc(val(r.inflow))} m³/s</td><td>${esc(val(r.controlled_release))} m³/s</td><td>${esc(val(r.release))} m³/s</td><td>${esc(val(typeof r.gate==='number'?r.gate*100:null))}%</td><td>${esc(val(r.spill_mcm))} MCM</td><td>${pill(risk)}</td><td>${esc(r.trend || '—')}</td></tr>`; }).join('');
+        workspaceView.innerHTML = `<div class="workspace-inner">${heading('Operations / Reservoirs','RESERVOIR FLEET','Real-time operational status across the connected reservoir network.') }<section class="page-card wide">${entries.length ? `<div style="overflow:auto"><table class="data-table"><thead><tr><th>Reservoir</th><th>Storage fraction</th><th>Inflow</th><th>Controlled release</th><th>Total outflow</th><th>Gate</th><th>Spill</th><th>Risk</th><th>Trend</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<p>Awaiting authoritative reservoir state.</p>'}</section></div>`;
+      } else if (page === 'forecasting') {
+        const fs=state.forecast_source_selection || {}, fp=state.forecast_provenance || {}, eligible=fs.control_forecast_validated;
+        const forecastRows=Object.keys(rs).filter(key=>/^reservoir_\d+$/.test(key)).map(key=>{const i=Number(key.slice(10))-1,r=rs[key];return `<tr><td>${esc(resName(i))}</td><td>${esc(r.forecast_status || '—')}</td><td>${esc(val(r.forecast_1d))}</td><td>${esc(val(r.forecast_3d))}</td><td>${esc(val(r.forecast_7d))}</td><td>${esc(r.forecast_source || '—')}</td><td>${pill(r.forecast_is_simulated === true ? 'SIMULATION INPUT' : r.forecast_provenance || 'Not available')}</td></tr>`}).join('');
+        const replayNote=fs.replay_is_historical_not_live===true ? 'Validated replay is historical data and is not a prediction of current live conditions.' : 'Forecast source description is shown as reported by the backend.';
+        workspaceView.innerHTML=`<div class="workspace-inner">${heading('Operations / Forecasting','FORECASTING','Forecast provenance, horizon values, and controller eligibility from current state.')}<div class="page-grid"><section class="page-card third"><h2>Forecast source</h2><div class="metric-grid">${metric('Selected source',fs.selected)}${metric('Model',fp.model)}${metric('Forecast status',(state.forecast_summary || {}).status)}</div><p style="margin-top:12px">${esc(replayNote)}</p></section><section class="page-card third"><h2>Control eligibility</h2><div class="metric-grid">${metric('Forecast eligible',eligible===true?'ELIGIBLE':eligible===false?'NOT ELIGIBLE':'Not available')}${metric('AUTO forecast gate',(state.auto_control || {}).forecast_control_eligible===true?'ELIGIBLE':(state.auto_control || {}).forecast_control_eligible===false?'NOT ELIGIBLE':'Not available')}</div><p style="margin-top:12px">Eligibility is displayed directly from the authoritative forecast selection and control state.</p></section><section class="page-card third"><h2>Provenance</h2><p>${esc(fp.live_path)}</p><p style="margin-top:8px">${esc(fp.provenance_note)}</p></section><section class="page-card wide"><h2>Reservoir forecast horizons <span class="page-note">${esc(fp.display_forecast_unit || 'm³/s')}</span></h2><div style="overflow:auto"><table class="data-table"><thead><tr><th>Reservoir</th><th>Status</th><th>1 day</th><th>3 days</th><th>7 days</th><th>Source</th><th>Provenance</th></tr></thead><tbody>${forecastRows || '<tr><td colspan="7">Awaiting authoritative forecast state.</td></tr>'}</tbody></table></div></section></div></div>`;
+      } else if (page === 'simulation') {
+        const sim=state.simulation || {}, fs=state.forecast_source_selection || {};
+        const demo=state.classroom_demo || {}, boundary=state.final_safety || {};
+        const demoRows=(demo.reservoirs || []).map(r=>`<tr><td>${esc(r.node.replace('Virtual Reservoir ','R'))}</td><td>${val(r.storage,3)}</td><td>${val(r.local_inflow,2)}</td><td>${val(r.routed_inflow,2)}</td><td>${val(r.controlled_release,2)}</td><td>${val(r.spill,2)}</td><td>${val(r.gate_pct,1)}%</td></tr>`).join('');
+        const demoPanel=`<section class="classroom-panel" data-classroom-panel><button class="page-action" data-classroom-load>INITIALIZE SCENARIO</button> <span>Backend day ${esc(demo.day)} &middot; ${esc(demo.units)}</span>${demo.active?`<p>1. STEP with gates closed. 2. Set A to 50%, then STEP. 3. STEP twice more: A's release arrives at B after 2 days. 4. Select VALIDATED REPLAY and AUTO, then STEP to run MPC on historical forecast inputs.</p><table><thead><tr><th>Node</th><th>Storage</th><th>Local in</th><th>Routed in</th><th>Release</th><th>Spill</th><th>Gate</th></tr></thead><tbody>${demoRows}</tbody></table><p>${(demo.routes || []).map(r=>`${esc(r.source.slice(-1))} &rarr; ${esc(r.destination.slice(-1))}: ${esc(r.delay_days)} days, &times;${esc(r.attenuation)}, queued ${val(r.queued_mcm,2)} MCM`).join(' &middot; ')}</p><p>Final safety: ${esc(boundary.gate_status || 'not stepped')} &middot; Downstream: ${esc(boundary.downstream?.status || 'not checked')}. ${esc(boundary.downstream?.reason || '')}</p><p>${esc(demo.spill_policy)} Forecast replay is a historical what-if scenario, not a forecast of these synthetic inflows.</p>`:''}</section>`;
+        workspaceView.innerHTML=`<div class="workspace-inner">${heading('Operations / Digital twin','SIMULATION','Live Three.js reservoir network. Simulation controls remain available below.') }<div class="simulation-strip">${metric('Simulation state',sim.running===true?'RUNNING':sim.running===false?'PAUSED':'Not available')}${metric('Controller',state.controller_mode)}${metric('Forecast source',fs.selected)}${metric('State ID',(state.state_identity || {}).state_id)}${metric('Simulation clock',state.simulation_time)}</div><div class="sim-camera-controls"><span class="k">CAMERA PRESETS</span><button class="page-action" data-camera="overview">OVERVIEW</button>${[1,2,3,4].map(n=>`<button class="page-action" data-camera="reservoir${n}">R${n}</button>`).join('')}<button class="page-action" data-camera="downstream">DOWNSTREAM</button></div>${demoPanel}</div>`;
+      } else if (page === 'risk') {
+        const entries=Object.keys(rs).filter(key=>/^reservoir_\d+$/.test(key));
+        const counts={'NORMAL':0,'WATCH':0,'ALERT':0,'HIGH RISK':0,'CRITICAL':0,'UNKNOWN':0};
+        entries.forEach(key=>{const risk=String(rs[key].risk || '').toUpperCase();if(risk.includes('CRITICAL'))counts.CRITICAL++;else if(risk.includes('HIGH'))counts['HIGH RISK']++;else if(risk.includes('WATCH')||risk.includes('WARNING'))counts.WATCH++;else if(risk.includes('ALERT'))counts.ALERT++;else if(risk.includes('NORMAL'))counts.NORMAL++;else counts.UNKNOWN++});
+        const d=state.downstream || {}, ac=state.auto_control || {}, note=state.notification || {}, mb=state.mass_balance || {}, gmail=this._gmailSettingsSnapshot || null;
+        const active=note.incident_id && /HIGH|CRITICAL/.test(String(note.severity || '').toUpperCase());
+        const alertEnabled = String(note.severity || '').toUpperCase() === 'CRITICAL' ? gmail && gmail.critical_enabled : String(note.severity || '').toUpperCase() === 'HIGH' ? gmail && gmail.high_enabled : null;
+        const recipient = gmail && gmail.recipient ? gmail.recipient.replace(/^(.).+(@.*)$/, '$1***$2') : (note.recipient ? String(note.recipient).replace(/^(.).+(@.*)$/, '$1***$2') : null);
+        const emailSettings=`<button class="page-action" data-open-settings>OPEN GMAIL ALERT SETTINGS</button>`;
+        workspaceView.innerHTML=`<div class="workspace-inner">${heading('Operations / Risk & safety','RISK OVERVIEW','Current operator attention items from reservoir risk, safety, downstream, and notification state.') }<div class="page-grid"><section class="page-card wide"><h2>Current risk overview</h2><div class="metric-grid">${Object.entries(counts).map(([k,v])=>metric(k,entries.length?String(v):'—')).join('')}</div><div class="page-list" style="margin-top:12px">${entries.map(key=>{const i=Number(key.slice(10))-1,r=rs[key];return `<div class="page-list-row"><strong>${esc(resName(i))}</strong><span>${esc(r.risk_reason || 'No risk explanation available.')}</span>${pill(r.risk || 'Not available')}</div>`}).join('') || '<p>Awaiting authoritative risk state.</p>'}</div></section><section class="page-card"><h2>Downstream risk</h2><div class="metric-grid">${metric('Current flow',val(d.flow_m3_s),'m³/s')}${metric('Safe limit',val(d.capacity_m3_s),'m³/s')}${metric('Status',d.status)}${metric('Safety state',ac.safety_layer_status)}${metric('Mass balance',mb.status)}${metric('Notification',note.status)}</div></section><section class="page-card"><h2>Active incidents</h2>${active?`<div class="metric-grid">${metric('Incident state',note.severity)}${metric('Incident ID',note.incident_id)}${metric('Started',note.timestamp)}${metric('Notification state',note.status)}${metric('Recipient',recipient)}</div>${note.status==='NOT_CONFIGURED'?'<p style="margin-top:10px">Operator notification required.</p>':''}`:'<p>No active high or critical incident is reported in the notification state.</p>'}</section><section class="page-card wide"><h2>Operator notification</h2><div class="metric-grid">${metric('Gmail',gmail ? (gmail.connected?'CONNECTED':'NOT CONNECTED') : 'Not available')}${metric('Alert condition',alertEnabled===null?'Not available':alertEnabled?'ENABLED':'DISABLED')}${metric('Last notification',(note.last_notification || {}).status || note.status)}${metric('Recipient',recipient)}</div><div style="margin-top:12px">${emailSettings}</div></section></div></div>`;
+      } else if (page === 'reports') {
+        const events=Array.isArray(state.event_log)?state.event_log.slice().reverse():[];
+        const groups=[['RISK EVENTS',e=>/risk|incident|downstream/i.test(String(e.kind || ''))],['CONTROL EVENTS',e=>/gate|control|mode/i.test(String(e.kind || ''))],['NOTIFICATION EVENTS',e=>/notification|email|alert/i.test(String(e.kind || ''))],['SYSTEM EVENTS',e=>!/risk|incident|downstream|gate|control|mode|notification|email|alert/i.test(String(e.kind || ''))]];
+        const groupHTML=groups.map(([title,match])=>{const rows=events.filter(match);return `<details class="page-card wide page-event-group"><summary>${title} · ${rows.length}</summary>${rows.length?`<div class="page-list">${rows.map(e=>`<div class="page-list-row"><span class="meta">${esc(e.timestamp)}</span><span>${esc(e.text || e.kind)}</span>${pill(e.status || e.severity || e.kind)}</div>`).join('')}</div>`:'<p style="padding:0 16px 14px">No events recorded.</p>'}</details>`}).join('');
+        const sim=state.simulation || {}, down=state.downstream || {}, notification=state.notification || {};
+        workspaceView.innerHTML=`<div class="workspace-inner">${heading('Operations / Records','REPORTS','Event history from the backend state log. No events are synthesized.') }<div class="page-grid"><section class="page-card wide"><h2>Operations summary</h2><div class="metric-grid">${metric('Simulation',sim.running===true?'RUNNING':sim.running===false?'PAUSED':'Not available')}${metric('Controller',state.controller_mode)}${metric('Forecast source',(state.forecast_source_selection || {}).selected)}${metric('State ID',(state.state_identity || {}).state_id)}${metric('Downstream flow',val(down.flow_m3_s),'m³/s')}${metric('Downstream status',down.status)}${metric('Last notification',(notification.last_notification || {}).status || notification.status)}</div></section>${events.length?groupHTML:'<section class="page-card wide"><h2>Event history</h2><p>No events recorded.</p></section>'}</div></div>`;
+      }
+    };
+    this._renderWorkspacePage = renderWorkspace;
+    const openWorkspace = page => {
+      closeDrawer(); settingsView.hidden=true; workspaceView.hidden=false; this._workspacePage=page;
+      this.container.classList.add('workspace-open'); this.container.classList.toggle('workspace-simulation',page==='simulation');
+      if(this._onResize) this._onResize();
+      rail.querySelectorAll('.rail-item').forEach(b=>{b.classList.toggle('on',b.dataset.nav===page);b.setAttribute('aria-current',b.dataset.nav===page?'page':'false')});
+      if(page!=='reservoirs') this._selectedReservoir=null;
+      if(page==='simulation') { const focus=this.container.classList.contains('scene-focus'); if(focus) setFocus(false); this.el.camBtns.forEach(b=>b.classList.toggle('on',b.dataset.cam==='overview')); this.setCameraPreset('overview'); }
+      renderWorkspace();
+      if(page==='risk') loadNotificationSettings();
+    };
+    workspaceView.addEventListener('click',event=>{
+      const open=event.target.closest('[data-open-reservoir]'); if(open){this._selectedReservoir=Number(open.dataset.openReservoir);renderWorkspace();return;}
+      if(event.target.closest('[data-fleet]')){this._selectedReservoir=null;renderWorkspace();return;}
+      const focus=event.target.closest('[data-focus-reservoir]'); if(focus){const i=Number(focus.dataset.focusReservoir);workspaceView.hidden=true;this.container.classList.remove('workspace-open','workspace-simulation');if(this._onResize)this._onResize();this._workspacePage='simulation';rail.querySelectorAll('.rail-item').forEach(b=>b.classList.toggle('on',b.dataset.nav==='simulation'));showReservoir(i);return;}
+      const camera=event.target.closest('[data-camera]');if(camera){this.setCameraPreset(camera.dataset.camera);return;}
+      if(event.target.closest('[data-open-settings]'))openSettings('notifications');
+    });
+    workspaceView.addEventListener('pointerenter',()=>{this._workspaceInteracting=true});
+    workspaceView.addEventListener('pointerleave',()=>{this._workspaceInteracting=false;if(!workspaceView.hidden)renderWorkspace()});
+    workspaceView.addEventListener('focusout',()=>{queueMicrotask(()=>{if(!workspaceView.hidden&&!workspaceView.contains(document.activeElement))renderWorkspace()})});
+    /* Nav rail: single-page workspace views; the scene and renderer remain mounted. */
+    rail.querySelectorAll('.rail-item').forEach(item => item.addEventListener('click', () => {
+      if (item.dataset.nav === 'settings') { openSettings(); return; }
+      if (item.dataset.nav === 'home') {
+        settingsView.hidden=true; workspaceView.hidden=true; this._selectedReservoir=null; closeDrawer();
+        this.container.classList.remove('workspace-open','workspace-simulation');
+        if(this._onResize) this._onResize();
+        rail.querySelectorAll('.rail-item').forEach(b=>{b.classList.toggle('on',b.dataset.nav==='home');b.setAttribute('aria-current',b.dataset.nav==='home'?'page':'false')});
+        this.setCameraPreset('overview'); return;
+      }
+      openWorkspace(item.dataset.nav);
     }));
     rail.querySelectorAll('.rail-item').forEach(item => {
       item.tabIndex = 0;
@@ -2734,6 +3755,14 @@ class ReservoirTwinRenderer {
         if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); item.click(); }
       });
     });
+    setting('[data-alert-recipient]').addEventListener('input', event => {
+      setting('[data-send-test]').disabled = event.target.value.trim() !== savedNotificationRecipient || !event.target.value.includes('@');
+    });
+    const oauthResult = new URLSearchParams(window.location.search).get('gmail_oauth');
+    if (new URLSearchParams(window.location.search).get('settings') === 'notifications') {
+      openSettings('notifications');
+      if (oauthResult === 'error') setting('[data-gmail-config-error]').textContent = 'Google authorization did not complete. Check OAuth configuration and try again.';
+    }
     this._cachePanelAnchors();
     // Track actual dock dimensions instead of overlapping fixed bottom offsets.
     this._layoutObserver = new ResizeObserver(() => {
@@ -2758,6 +3787,9 @@ class ReservoirTwinRenderer {
 
   _updateConnectors() {
     if (!this.connLines || !this.panelAnchors) return;
+    this._connectorCamera ||= new THREE.Matrix4();
+    if(!this._connectorDirty && this._connectorVersion===this._labelVersion && this._connectorCamera.equals(this.camera.matrixWorld))return;
+    this._connectorDirty=false;this._connectorVersion=this._labelVersion;this._connectorCamera.copy(this.camera.matrixWorld);
     const w = this.renderer.domElement.clientWidth, h = this.renderer.domElement.clientHeight;
     const viewport = this.renderer.domElement.getBoundingClientRect();
     /* floating label anchor points: R1/R2/R3 above their basins, DS at the downstream pool */
@@ -2782,8 +3814,9 @@ class ReservoirTwinRenderer {
       if (label) {
         setStyle(label, 'opacity', '1');
         const lx = Math.max(viewport.left + 76, Math.min(viewport.right - 76, sx));
-        let ly = Math.max(viewport.top + 50, Math.min(viewport.bottom - 6, sy));
-        if (Math.abs(lx - previousX) < 155 && Math.abs(ly - previousY) < 48) ly = previousY + 52;
+        const labelBottom = viewport.bottom - (window.__aquaPresentation?.active ? 48 : 6);
+        let ly = Math.max(viewport.top + 100, Math.min(labelBottom, sy));
+        if (Math.abs(lx - previousX) < 155 && Math.abs(ly - previousY) < 90) ly = Math.min(labelBottom,previousY+94);
         previousX = lx; previousY = ly;
         setStyle(label, 'left', lx.toFixed(2) + 'px');
         setStyle(label, 'top', ly.toFixed(2) + 'px');
@@ -2791,9 +3824,11 @@ class ReservoirTwinRenderer {
           label._stateVersion = this._labelVersion;
           const d = i < this.R.length ? this.R[i].data : null;
           const dOk = !!(this.data.hasState && d && typeof d.level === 'number');
-          this.el.flLvl[i].textContent = dOk ? (d.level * 100).toFixed(0) + '%'
+          this.el.flLvl[i].textContent = dOk ? (typeof d.storage === 'number' ? 'Storage ' + (d.storage * 100).toFixed(0) + '%' : 'Storage --')
             : (i === this.R.length && typeof this.data.downstream === 'number'
                ? this.data.downstream.toFixed(0) + ' m³/s' : '--');
+          setText(label._detail, d ? 'Inflow ' + (typeof d.inflow === 'number' ? d.inflow.toFixed(1) + ' m³/s' : '--')
+            : 'Safe limit ' + (typeof this.data.downstreamCapacity === 'number' ? this.data.downstreamCapacity.toFixed(1) + ' m³/s' : '--'));
           if (dOk) {
             /* gate % — reservoirs only */
             if (this.el.flGate[i]) this.el.flGate[i].textContent = (typeof d.gate === 'number' ? (d.gate * 100).toFixed(0) + '%' : '--');
@@ -2803,14 +3838,12 @@ class ReservoirTwinRenderer {
               this.el.flRisk[i].textContent = ru.label;
               this.el.flRisk[i].className = 'fl-risk chip ' + ru.cls;
             }
-            label.className = 'flabel r-' + ru.cls;
+            label.className = 'flabel r-' + ru.cls + (label.classList.contains('selected') ? ' selected' : '');
           } else {
             /* STAGE 12 — DS label. The severity string is the BACKEND's; the
              * browser no longer applies its own flow thresholds. */
             const dst = this.data.hasState ? String(this.data.downstreamStatus || 'UNKNOWN') : 'UNKNOWN';
-            const ru = dst === 'WARNING' ? RISK_UI.warning
-                     : dst === 'CRITICAL' ? RISK_UI.danger
-                     : dst === 'NORMAL' ? RISK_UI.normal : {cls:'unknown', label:'UNKNOWN'};
+            const ru = riskUi(dst) || {cls:'unknown', label:'UNKNOWN'};
             if (this.el.flRisk[i]) {
               this.el.flRisk[i].textContent = ru.label;
               this.el.flRisk[i].className = 'fl-risk chip ' + ru.cls;
@@ -2908,6 +3941,38 @@ class ReservoirTwinRenderer {
     const st = hasState ? String(this.data.downstreamStatus || 'UNKNOWN') : 'UNKNOWN';
     const stColor = st === 'NORMAL' ? 'var(--ok)' : st === 'WARNING' ? 'var(--warn)'
                   : st === 'CRITICAL' ? 'var(--bad)' : 'var(--ink-faint)';
+    if (el.operatorAlert) {
+      const normalized = st.toUpperCase().replace(/[_-]+/g, ' ').trim();
+      const severe = ['ALERT', 'HIGH RISK', 'DANGER', 'CRITICAL'].includes(normalized);
+      const watch = ['WATCH', 'WARNING'].includes(normalized);
+      el.operatorAlert.hidden = !hasState;
+      el.operatorAlert.dataset.severity = severe ? 'critical' : 'watch';
+      if (severe) {
+        const notification = this.data.notification || {};
+        const delivery = notification.status || 'NOT_CONFIGURED';
+        const deliveryLabel = notification.error === 'Alert disabled in notification settings' ? 'EMAIL DISABLED'
+          : ({PENDING:'EMAIL PENDING', SENT:'EMAIL SENT', FAILED:'EMAIL FAILED', NOT_CONFIGURED:'EMAIL NOT CONFIGURED'}[delivery] || 'EMAIL NOT CONFIGURED');
+        el.operatorAlert.textContent = 'DOWNSTREAM · HIGH RISK · ' + deliveryLabel;
+        const raw = this.data.rawState || {};
+        const reason = Object.values(raw.reservoirs || {}).map(r => r.risk_reason).filter(Boolean).join('; ') || 'Not supplied by authoritative state';
+        const source = (raw.forecast_source_selection || {}).selected || (raw.forecast_provenance || {}).live_path || 'UNKNOWN';
+        const mode = raw.controller_mode || 'UNKNOWN';
+        const incident = notification.incident_id || 'Pending incident evaluation';
+        const recipient = notification.recipient || 'Not configured';
+        const timestamp = notification.timestamp || '—';
+        const forecastStatus = (raw.forecast_summary || {}).status || 'UNKNOWN';
+        if (el.notificationDetail) el.notificationDetail.textContent = `DOWNSTREAM HIGH RISK\nRisk reason: ${reason}\nDownstream flow: ${dsKnown ? ds.toFixed(2) + ' m³/s' : '—'}\nCapacity: ${typeof this.data.downstreamCapacity === 'number' ? this.data.downstreamCapacity.toFixed(1) + ' m³/s' : '—'}\nMode: ${mode}\nSource: ${source}\nForecast status: ${forecastStatus}\nIncident: ${incident}\nNotification: ${delivery}\nTimestamp: ${timestamp}\nRecipient: ${recipient}\nDelivery detail: ${notification.error || '—'}`;
+      } else if (watch) {
+        el.operatorAlert.textContent = 'DOWNSTREAM · WARNING';
+        if (el.notificationDetail) el.notificationDetail.hidden = true;
+      } else if (st === 'NORMAL') {
+        el.operatorAlert.textContent = 'DOWNSTREAM · SAFE';
+        if (el.notificationDetail) el.notificationDetail.hidden = true;
+      } else {
+        el.operatorAlert.textContent = 'DOWNSTREAM · STATUS UNKNOWN';
+        if (el.notificationDetail) el.notificationDetail.hidden = true;
+      }
+    }
     const util = (hasState && typeof this.data.downstreamUtil === 'number')
       ? clamp01(this.data.downstreamUtil) : 0;
     const capTxt = (hasState && typeof this.data.downstreamCapacity === 'number')
@@ -3162,14 +4227,17 @@ if (app) {
   /* Initialize API connection */
   const api = new TwinAPI((state) => {
     app.updateState(state);
+    window.__aquaPresentation?.update(state);
   }, status => {
     if (app.connectionStatus !== status) app._hudDirty = true;
     app.connectionStatus = status;
+    window.__aquaPresentation?.setConnection(status);
     const connection = document.querySelector('[data-ref="connection"]');
     setText(connection, status === 'CONNECTED' ? 'BACKEND VERIFIED' : status === 'STALE DATA' ? status : status === 'CONNECTING' ? 'VERIFYING BACKEND' : 'BACKEND DISCONNECTED');
     setStatus(connection, status);
   }, status => {
     document.querySelector('[data-ref="command-feedback"]').textContent = status;
+    window.__aquaPresentation?.setCommand(status);
   }, health => {
     const put = (key, value) => { const target = document.querySelector(`[data-ref="${key}"]`); if (target) target.textContent = value; };
     put('rest-health', health.rest);
@@ -3178,17 +4246,38 @@ if (app) {
     put('state-received', health.receivedAt ? `ID ${health.stateId} at ${new Date(health.receivedAt).toLocaleTimeString()}` : 'NO STATE YET');
   });
   window.__twin_api = api;
+  const presentation = new PresentationUI(app, api);
+  window.__aquaPresentation = presentation;
+  presentation.resize();
   Object.defineProperty(window, '__twinDiagnostics', {get: () => ({
     fps: app._fps, frameMs: app._fps ? 1000 / app._fps : null,
     connection: app.connectionStatus, stateId: app.data.stateId,
     camera: app.camera.position.toArray(), target: app.controls.target.toArray(),
+    settlement: { houses: DOWNSTREAM_HOUSE_SITES.length,
+      walkers: app.downstreamWalkers.map(w => w.group.position.toArray()),
+      instances: Object.fromEntries(Object.entries(app.downstreamWalkerMeshes).map(([key, mesh]) => [key, mesh.count])) },
     memory: {...app.renderer.info.memory}, drawCalls: app.renderer.info.render.calls,
+    triangles: app.renderer.info.render.triangles,
+    rendering:{quality:app.visualQuality,pixelRatio:app.renderer.getPixelRatio(),devicePixelRatio:window.devicePixelRatio,
+      canvas:[app.renderer.domElement.width,app.renderer.domElement.height],
+      shadowMaps:1,shadowSize:app.sun.shadow.mapSize.toArray(),shadowAutoUpdate:app.renderer.shadowMap.autoUpdate,
+      contextLost:app.renderer.getContext().isContextLost(),
+      requestedGpuMode:app.renderer.getContext().getContextAttributes()?.powerPreference ?? null,
+      webgl:app.renderer.getContext().getParameter(app.renderer.getContext().VERSION)},
     reservoirs: app.R.map(r => ({id:r.B.id, level:r.data.level, gate:r.data.gate,
       waterY:r.waterMesh.position.y, gateY:r.gateMesh.position.y,
       gateTargetY:r.gateClosedY + r.gateTgt * r.gateTravel,
       waterVisible:r.waterMesh.visible, jetVisible:r.jetMesh.visible,
       spillVisible:r.spillMesh.visible, basin:{...r.B}})),
-    channels: app.flowMeshes.map(f => ({key:f.key, flow:f.mat.uniforms.uFlow.value,visible:f.mesh.visible})),
+    channels: app.flowMeshes.map(f => ({key:f.key, flow:f.mat.uniforms.uFlow.value,visible:f.mesh.visible,
+      foamPhase:f.foamPhase, pathLength:f.pathLength,
+      screenPath:Array.from({length:17},(_,i)=>{
+        const p=f.mesh.geometry.attributes.position;
+        const n=Math.min(p.count-2,Math.floor(i/16*(p.count/2-1))*2);
+        const point=new THREE.Vector3((p.getX(n)+p.getX(n+1))/2,p.getY(n),(p.getZ(n)+p.getZ(n+1))/2).project(app.camera);
+        const rect=app.renderer.domElement.getBoundingClientRect();
+        return [rect.left+(point.x*.5+.5)*rect.width,rect.top+(-point.y*.5+.5)*rect.height];
+      })})),
     objects: app.scene.children.map(o=>o.name).filter(Boolean)
   })});
 
@@ -3219,6 +4308,9 @@ if (app) {
     } else if (step === 'rain') await api.setStorm(35);
     else await api.setMode('AI');
   }));
+  document.addEventListener('click', event => {
+    if (event.target.closest('[data-classroom-load]')) api.classroomDemo();
+  });
   bindClick('#btn-play', () => api.play());
   bindClick('#btn-pause', () => api.pause());
   bindClick('#btn-step', () => api.step());
@@ -3257,3 +4349,4 @@ if (app) {
 </script>
 </body>
 </html>
+

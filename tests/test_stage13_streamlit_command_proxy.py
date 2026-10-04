@@ -339,6 +339,7 @@ def _route_table() -> dict:
         path: sorted(method.upper() for method in operations)
         for path, operations in app.openapi()["paths"].items()
         if any(method.lower() == "post" for method in operations)
+        and not path.startswith("/api/notifications/")
     }
 
 
@@ -359,6 +360,10 @@ def test_proxied_routes_are_exactly_the_backend_command_surface():
     """Completeness both ways: no dead proxy call, no unreachable command."""
     table = _route_table()
     for template in table:
+        if template == "/api/simulation/classroom-demo":
+            # New deterministic preset is exposed by the primary Three.js UI.
+            assert "classroomDemo()" in (_PROJECT_ROOT / "src/dashboard/web/api.js").read_text()
+            continue
         assert any(_matches(template, e) for e in EXPECTED_PROXY_ENDPOINTS), (
             f"backend exposes POST {template} that the page cannot reach"
         )

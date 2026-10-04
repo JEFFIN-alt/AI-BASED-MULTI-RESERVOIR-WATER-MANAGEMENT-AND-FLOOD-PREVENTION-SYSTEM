@@ -1,0 +1,3475 @@
+{
+  "transport": "real local HTTP + WebSocket",
+  "steps": [
+    {
+      "click_to_observed_state_ms": 2616.0299999974086,
+      "backend_step_ms": 0.9753000049386173,
+      "state_id": "step1-t1",
+      "telemetry": {
+        "active": true,
+        "day": 1,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 6.41,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 11.13,
+            "local_inflow": 0.5,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 182.145,
+            "local_inflow": 8.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 200.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "MANUAL",
+        "gate_status": "SAFE",
+        "violations": [],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "downstream": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 5,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 5 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_provenance": {},
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+        "safety_is_safe": false,
+        "safety_violations": [],
+        "safety_modified": false,
+        "proposed_gate_positions_fraction": {},
+        "action_space": {},
+        "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+        "downstream_capacity_mcm_day": 0.0,
+        "downstream_predicted_flow_mcm_day": null,
+        "downstream_proposed_predicted_flow_mcm_day": null,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": false,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 0,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "NO_DECISION_YET",
+        "downstream_capacity_protection": {},
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 0.0,
+        "final_safe_control_action_fraction": {},
+        "final_safe_control_action_pct": {},
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "control_applied": false,
+        "blocked_reason": "NO_DECISION_YET",
+        "reasons": []
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 0.0,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:48:33.606185+00:00",
+        "step_index": null,
+        "timestep": 1,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 5.41 -> 6.41 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 5.41,
+            "storage_after_mcm": 6.41,
+            "storage_change_mcm": 1.0,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 10.63 -> 11.13 MCM, in 0.5 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 10.63,
+            "storage_after_mcm": 11.13,
+            "storage_change_mcm": 0.5,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 174.145 -> 182.145 MCM, in 8.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 174.145,
+            "storage_after_mcm": 182.145,
+            "storage_change_mcm": 8.0,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 200.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 200.715,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.0957000011112541
+      }
+    },
+    {
+      "click_to_observed_state_ms": 12304.014000001189,
+      "backend_step_ms": 0.9841999999480322,
+      "state_id": "step2-t2",
+      "telemetry": {
+        "active": true,
+        "day": 2,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 4.91,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 2.5,
+            "spill": 0.0,
+            "gate_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 11.63,
+            "local_inflow": 0.5,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 190.145,
+            "local_inflow": 8.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 200.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 2.5
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "MANUAL",
+        "gate_status": "SAFE",
+        "violations": [],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "downstream": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 5,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 5 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_provenance": {},
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+        "safety_is_safe": false,
+        "safety_violations": [],
+        "safety_modified": false,
+        "proposed_gate_positions_fraction": {},
+        "action_space": {},
+        "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+        "downstream_capacity_mcm_day": 0.0,
+        "downstream_predicted_flow_mcm_day": null,
+        "downstream_proposed_predicted_flow_mcm_day": null,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": false,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 0,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "NO_DECISION_YET",
+        "downstream_capacity_protection": {},
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 0.0,
+        "final_safe_control_action_fraction": {},
+        "final_safe_control_action_pct": {},
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "control_applied": false,
+        "blocked_reason": "NO_DECISION_YET",
+        "reasons": []
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 0.0,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:48:48.624594+00:00",
+        "step_index": null,
+        "timestep": 2,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 6.41 -> 4.91 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 2.5 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 6.41,
+            "storage_after_mcm": 4.91,
+            "storage_change_mcm": -1.5,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.5,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 2.5,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 11.13 -> 11.63 MCM, in 0.5 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 11.13,
+            "storage_after_mcm": 11.63,
+            "storage_change_mcm": 0.5,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 182.145 -> 190.145 MCM, in 8.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 182.145,
+            "storage_after_mcm": 190.145,
+            "storage_change_mcm": 8.0,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 200.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 200.715,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.5,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.11729999823728576
+      }
+    },
+    {
+      "click_to_observed_state_ms": 2664.4811000005575,
+      "backend_step_ms": 1.1330999986967072,
+      "state_id": "step3-t3",
+      "telemetry": {
+        "active": true,
+        "day": 3,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 3.41,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 2.5,
+            "spill": 0.0,
+            "gate_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 12.13,
+            "local_inflow": 0.5,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 198.145,
+            "local_inflow": 8.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 200.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 5.0
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "MANUAL",
+        "gate_status": "SAFE",
+        "violations": [],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "downstream": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 5,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 5 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_provenance": {},
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+        "safety_is_safe": false,
+        "safety_violations": [],
+        "safety_modified": false,
+        "proposed_gate_positions_fraction": {},
+        "action_space": {},
+        "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+        "downstream_capacity_mcm_day": 0.0,
+        "downstream_predicted_flow_mcm_day": null,
+        "downstream_proposed_predicted_flow_mcm_day": null,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": false,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 0,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "NO_DECISION_YET",
+        "downstream_capacity_protection": {},
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 0.0,
+        "final_safe_control_action_fraction": {},
+        "final_safe_control_action_pct": {},
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "control_applied": false,
+        "blocked_reason": "NO_DECISION_YET",
+        "reasons": []
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 0.0,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:48:52.379342+00:00",
+        "step_index": null,
+        "timestep": 3,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 4.91 -> 3.41 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 2.5 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 4.91,
+            "storage_after_mcm": 3.41,
+            "storage_change_mcm": -1.5,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.5,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 2.5,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 11.63 -> 12.13 MCM, in 0.5 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 11.63,
+            "storage_after_mcm": 12.13,
+            "storage_change_mcm": 0.5,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 190.145 -> 198.145 MCM, in 8.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 190.145,
+            "storage_after_mcm": 198.145,
+            "storage_change_mcm": 8.0,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 200.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 200.715,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.5,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.12840000272262841
+      }
+    },
+    {
+      "click_to_observed_state_ms": 2312.000799996895,
+      "backend_step_ms": 0.7116999986465089,
+      "state_id": "step4-t4",
+      "telemetry": {
+        "active": true,
+        "day": 4,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 1.9100000000000001,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 2.5,
+            "spill": 0.0,
+            "gate_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 14.88,
+            "local_inflow": 0.5,
+            "routed_inflow": 2.25,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 206.145,
+            "local_inflow": 8.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 200.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 5.0
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "MANUAL",
+        "gate_status": "SAFE",
+        "violations": [],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "downstream": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 5,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 5 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "UNAVAILABLE",
+        "forecast_control_eligible": false,
+        "forecast_provenance": {},
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "NOT_APPLIED_MPC_BLOCKED",
+        "safety_is_safe": false,
+        "safety_violations": [],
+        "safety_modified": false,
+        "proposed_gate_positions_fraction": {},
+        "action_space": {},
+        "downstream_status": "NOT_APPLIED_MPC_BLOCKED",
+        "downstream_capacity_mcm_day": 0.0,
+        "downstream_predicted_flow_mcm_day": null,
+        "downstream_proposed_predicted_flow_mcm_day": null,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": false,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 0,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "NO_DECISION_YET",
+        "downstream_capacity_protection": {},
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 0.0,
+        "final_safe_control_action_fraction": {},
+        "final_safe_control_action_pct": {},
+        "final_safe_control_action_source": "NOT_APPLIED",
+        "control_applied": false,
+        "blocked_reason": "NO_DECISION_YET",
+        "reasons": []
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 5.551115123125783e-17,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:48:55.388102+00:00",
+        "step_index": null,
+        "timestep": 4,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 3.41 -> 1.9100000000000001 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 2.5 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 3.41,
+            "storage_after_mcm": 1.9100000000000001,
+            "storage_change_mcm": -1.5,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 2.5,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 2.5,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 12.13 -> 14.88 MCM, in 0.5 (local) + 2.25 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 12.13,
+            "storage_after_mcm": 14.88,
+            "storage_change_mcm": 2.75,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 2.25,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 198.145 -> 206.145 MCM, in 8.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 198.145,
+            "storage_after_mcm": 206.145,
+            "storage_change_mcm": 8.0,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 200.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 200.715,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.5,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 50.0,
+          "Virtual Reservoir B": 0.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.08379999781027436
+      }
+    },
+    {
+      "click_to_observed_state_ms": 2049.0372000058414,
+      "backend_step_ms": 212.0437999983551,
+      "state_id": "step5-t5",
+      "telemetry": {
+        "active": true,
+        "day": 5,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 2.91,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 12.630000000000003,
+            "local_inflow": 0.5,
+            "routed_inflow": 2.25,
+            "controlled_release": 5.0,
+            "spill": 0.0,
+            "gate_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 214.145,
+            "local_inflow": 8.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 200.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 2.5
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 5.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "AI",
+        "gate_status": "SAFE",
+        "violations": [],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "downstream": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 8,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "ACTIVE",
+        "forecast_control_eligible": true,
+        "forecast_provenance": {
+          "forecast_date": "2025-01-05",
+          "nodes": {
+            "Virtual Reservoir A": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir B": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir C": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir D": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            }
+          },
+          "reason_strings": [],
+          "rule": "validated_metrics_apply == true for EVERY controlled reservoir"
+        },
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "SAFE",
+        "safety_is_safe": true,
+        "safety_violations": [],
+        "safety_modified": false,
+        "control_applied": true,
+        "blocked_reason": "",
+        "reasons": [
+          "t=4: Virtual Reservoir B spill=1.03 MCM",
+          "t=5: Virtual Reservoir B spill=2.62 MCM",
+          "t=6: Virtual Reservoir B spill=2.71 MCM",
+          "t=7: Virtual Reservoir B spill=2.79 MCM",
+          "t=8: Virtual Reservoir B spill=2.87 MCM"
+        ],
+        "gate_positions_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "proposed_gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "safety_layer_gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "safety_layer_gate_positions_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "mpc_status": "OPTIMAL",
+        "mpc_objective_score": 1255.22717411,
+        "final_action_objective_score": 1255.22717411,
+        "prediction_timeline": "daily offsets 0..7; model anchors 1,3,7; linear interpolation between anchors",
+        "mpc_forecast_used": true,
+        "mpc_forecast_status": "FORECAST_USED",
+        "mpc_safety_status": "SAFE",
+        "candidates_evaluated": 384,
+        "action_space": {
+          "dimension": 4,
+          "node_ids": [
+            "Virtual Reservoir A",
+            "Virtual Reservoir B",
+            "Virtual Reservoir C",
+            "Virtual Reservoir D"
+          ],
+          "gate_levels": [
+            0.0,
+            0.15,
+            0.3,
+            0.5,
+            0.7,
+            1.0
+          ],
+          "candidate_vectors": 1296,
+          "coordinated": true
+        },
+        "downstream_status": "PROTECTED",
+        "downstream_capacity_mcm_day": 50.0,
+        "downstream_predicted_flow_mcm_day": 0.0,
+        "downstream_proposed_predicted_flow_mcm_day": 0.0,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": true,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 8,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged",
+        "downstream_capacity_protection": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 8,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        },
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 1.524699997389689,
+        "final_safe_control_action_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "final_safe_control_action_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "final_safe_control_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "per_node": {
+          "Virtual Reservoir A": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.17652495378927913,
+            "reason": "storage=17.7%, V3_1d=0.18, V3_3d=0.21",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir B": {
+            "gate_position": 0.5,
+            "estimated_release": 5.0,
+            "storage_fraction": 0.6999059266227657,
+            "reason": "storage=70.0%, V3_1d=7.40, V3_3d=7.54",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.5,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir C": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.5918774584398059,
+            "reason": "storage=59.2%, V3_1d=1.97, V3_3d=2.11",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir D": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.5,
+            "reason": "storage=50.0%, V3_1d=11.06, V3_3d=10.86",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          }
+        },
+        "gate_unit": "percent [0, 100] (external); fraction [0.0, 1.0] (internal)"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 1.7763568394002505e-15,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:49:04.076389+00:00",
+        "step_index": null,
+        "timestep": 5,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 1.9100000000000001 -> 2.91 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 1.9100000000000001,
+            "storage_after_mcm": 2.91,
+            "storage_change_mcm": 1.0,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 14.88 -> 12.630000000000003 MCM, in 0.5 (local) + 2.25 (routed) MCM/day, out 5.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 14.88,
+            "storage_after_mcm": 12.630000000000003,
+            "storage_change_mcm": -2.2499999999999982,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 2.25,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 5.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 5.0,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 1.7763568394002505e-15,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 206.145 -> 214.145 MCM, in 8.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 206.145,
+            "storage_after_mcm": 214.145,
+            "storage_change_mcm": 8.0,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 200.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 200.715,
+            "storage_change_mcm": 0.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": true,
+        "matches_final_safe_control_action": true,
+        "checked_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "action_check_note": "the gates applied to ReservoirNetwork are the controller's FINAL_SAFE_CONTROL_ACTION",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.2745000019785948
+      }
+    },
+    {
+      "click_to_observed_state_ms": 3043.7906999941333,
+      "backend_step_ms": 7.488499999453779,
+      "state_id": "step6-t6",
+      "telemetry": {
+        "active": true,
+        "day": 6,
+        "units": "storage MCM; flow MCM/day; one step = one day",
+        "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+        "reservoirs": [
+          {
+            "node": "Virtual Reservoir A",
+            "storage": 3.91,
+            "local_inflow": 1.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir B",
+            "storage": 10.380000000000003,
+            "local_inflow": 0.5,
+            "routed_inflow": 2.25,
+            "controlled_release": 5.0,
+            "spill": 0.0,
+            "gate_pct": 50.0
+          },
+          {
+            "node": "Virtual Reservoir C",
+            "storage": 226.395,
+            "local_inflow": 8.0,
+            "routed_inflow": 4.25,
+            "controlled_release": 0.0,
+            "spill": 0.0,
+            "gate_pct": 0.0
+          },
+          {
+            "node": "Virtual Reservoir D",
+            "storage": 150.715,
+            "local_inflow": 0.0,
+            "routed_inflow": 0.0,
+            "controlled_release": 50.0,
+            "spill": 0.0,
+            "gate_pct": 25.0
+          }
+        ],
+        "routes": [
+          {
+            "source": "Virtual Reservoir A",
+            "destination": "Virtual Reservoir B",
+            "delay_days": 2,
+            "attenuation": 0.9,
+            "queued_mcm": 0.0
+          },
+          {
+            "source": "Virtual Reservoir B",
+            "destination": "Virtual Reservoir C",
+            "delay_days": 1,
+            "attenuation": 0.85,
+            "queued_mcm": 5.0
+          },
+          {
+            "source": "Virtual Reservoir C",
+            "destination": "Virtual Reservoir D",
+            "delay_days": 1,
+            "attenuation": 0.8,
+            "queued_mcm": 0.0
+          }
+        ]
+      },
+      "safety": {
+        "checked": true,
+        "mode": "MANUAL",
+        "gate_status": "CORRECTED",
+        "violations": [
+          "Virtual Reservoir D: gate movement 1.0000 exceeds limit 0.5000 \u2014 rate-limited to 0.5000"
+        ],
+        "requested_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 100.0
+        },
+        "applied_gate_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 25.0
+        },
+        "downstream": {
+          "status": "CORRECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 5,
+          "proposed_predicted_flow_mcm_day": 100.0,
+          "predicted_flow_mcm_day": 50.0,
+          "min_achievable_flow_mcm_day": 0.0,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": true,
+          "candidates_evaluated": 10,
+          "reason": "proposed action predicted 100.000000 MCM/day > capacity 50.000000 MCM/day; replaced with the nearest admissible downstream-safe action (predicted 50.000000 MCM/day)",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        }
+      },
+      "control": {
+        "controller_type": "MPC",
+        "controller_status": "ACTIVE",
+        "forecast_control_eligible": true,
+        "forecast_provenance": {
+          "forecast_date": "2025-01-05",
+          "nodes": {
+            "Virtual Reservoir A": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir B": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir C": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            },
+            "Virtual Reservoir D": {
+              "eligible": true,
+              "reasons": [],
+              "issue": null,
+              "declared_status": "VALIDATED",
+              "validated_metrics_apply": true,
+              "is_simulated": false
+            }
+          },
+          "reason_strings": [],
+          "rule": "validated_metrics_apply == true for EVERY controlled reservoir"
+        },
+        "safety_layer_integrated": true,
+        "safety_layer_version": "PHASE_15_3_VALIDATED",
+        "safety_layer_status": "SAFE",
+        "safety_is_safe": true,
+        "safety_violations": [],
+        "safety_modified": false,
+        "control_applied": true,
+        "blocked_reason": "",
+        "reasons": [
+          "t=4: Virtual Reservoir B spill=1.03 MCM",
+          "t=5: Virtual Reservoir B spill=2.62 MCM",
+          "t=6: Virtual Reservoir B spill=2.71 MCM",
+          "t=7: Virtual Reservoir B spill=2.79 MCM",
+          "t=8: Virtual Reservoir B spill=2.87 MCM"
+        ],
+        "gate_positions_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "proposed_gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "safety_layer_gate_positions_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "safety_layer_gate_positions_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "mpc_status": "OPTIMAL",
+        "mpc_objective_score": 1255.22717411,
+        "final_action_objective_score": 1255.22717411,
+        "prediction_timeline": "daily offsets 0..7; model anchors 1,3,7; linear interpolation between anchors",
+        "mpc_forecast_used": true,
+        "mpc_forecast_status": "FORECAST_USED",
+        "mpc_safety_status": "SAFE",
+        "candidates_evaluated": 384,
+        "action_space": {
+          "dimension": 4,
+          "node_ids": [
+            "Virtual Reservoir A",
+            "Virtual Reservoir B",
+            "Virtual Reservoir C",
+            "Virtual Reservoir D"
+          ],
+          "gate_levels": [
+            0.0,
+            0.15,
+            0.3,
+            0.5,
+            0.7,
+            1.0
+          ],
+          "candidate_vectors": 1296,
+          "coordinated": true
+        },
+        "downstream_status": "PROTECTED",
+        "downstream_capacity_mcm_day": 50.0,
+        "downstream_predicted_flow_mcm_day": 0.0,
+        "downstream_proposed_predicted_flow_mcm_day": 0.0,
+        "downstream_min_achievable_flow_mcm_day": null,
+        "downstream_capacity_achieved": true,
+        "downstream_protection_modified": false,
+        "downstream_horizon_steps": 8,
+        "downstream_candidates_evaluated": 0,
+        "downstream_reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged",
+        "downstream_capacity_protection": {
+          "status": "PROTECTED",
+          "active": true,
+          "is_protected": true,
+          "capacity_mcm_day": 50.0,
+          "horizon_steps": 8,
+          "proposed_predicted_flow_mcm_day": 0.0,
+          "predicted_flow_mcm_day": 0.0,
+          "min_achievable_flow_mcm_day": null,
+          "feasibility_scope": "finite tested candidates; not a global infeasibility proof",
+          "capacity_achieved": true,
+          "modified": false,
+          "candidates_evaluated": 0,
+          "reason": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged",
+          "tolerance_mcm_day": 1e-09,
+          "unit": "MCM/day",
+          "physics": "ReservoirNetwork (authoritative)"
+        },
+        "applied_action_safety_layer_clean": true,
+        "downstream_latency_ms": 1.524699997389689,
+        "final_safe_control_action_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "final_safe_control_action_pct": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.0
+        },
+        "final_safe_control_action_source": "DOWNSTREAM_CAPACITY_GUARD",
+        "per_node": {
+          "Virtual Reservoir A": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.17652495378927913,
+            "reason": "storage=17.7%, V3_1d=0.18, V3_3d=0.21",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir B": {
+            "gate_position": 0.5,
+            "estimated_release": 5.0,
+            "storage_fraction": 0.6999059266227657,
+            "reason": "storage=70.0%, V3_1d=7.40, V3_3d=7.54",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.5,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir C": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.5918774584398059,
+            "reason": "storage=59.2%, V3_1d=1.97, V3_3d=2.11",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          },
+          "Virtual Reservoir D": {
+            "gate_position": 0.0,
+            "estimated_release": 0.0,
+            "storage_fraction": 0.5,
+            "reason": "storage=50.0%, V3_1d=11.06, V3_3d=10.86",
+            "controller": "MPC_FORECAST_AWARE",
+            "proposal_gate_position": 0.0,
+            "final_action_note": "predicted downstream flow 0.000000 MCM/day <= capacity 50.000000 MCM/day over 8 step(s); action applied unchanged"
+          }
+        },
+        "gate_unit": "percent [0, 100] (external); fraction [0.0, 1.0] (internal)"
+      },
+      "mass_balance": {
+        "status": "PASS",
+        "checked": true,
+        "residual": 1.1102230246251565e-16,
+        "tolerance": 1e-09,
+        "unit": "MCM",
+        "flow_unit": "MCM/day",
+        "timestep_days": 1.0,
+        "timestamp": "2026-10-03T15:49:10.615460+00:00",
+        "step_index": null,
+        "timestep": 6,
+        "reason": "every reservoir and every connection conserved mass within 1e-09 MCM over one 1-day step",
+        "reservoirs_checked": 4,
+        "reservoirs_expected": 4,
+        "per_reservoir": [
+          {
+            "node_id": "Virtual Reservoir A",
+            "description": "Virtual Reservoir A: storage 2.91 -> 3.91 MCM, in 1.0 (local) + 0.0 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 2.91,
+            "storage_after_mcm": 3.91,
+            "storage_change_mcm": 1.0,
+            "inflow_local_mcm_day": 1.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir B",
+            "description": "Virtual Reservoir B: storage 12.630000000000003 -> 10.380000000000003 MCM, in 0.5 (local) + 2.25 (routed) MCM/day, out 5.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 12.630000000000003,
+            "storage_after_mcm": 10.380000000000003,
+            "storage_change_mcm": -2.25,
+            "inflow_local_mcm_day": 0.5,
+            "inflow_routed_mcm_day": 2.25,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 5.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 5.0,
+            "commanded_gate_fraction": 0.5,
+            "applied_gate_position": 0.5,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir C",
+            "description": "Virtual Reservoir C: storage 214.145 -> 226.395 MCM, in 8.0 (local) + 4.25 (routed) MCM/day, out 0.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 214.145,
+            "storage_after_mcm": 226.395,
+            "storage_change_mcm": 12.25,
+            "inflow_local_mcm_day": 8.0,
+            "inflow_routed_mcm_day": 4.25,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 0.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 0.0,
+            "commanded_gate_fraction": 0.0,
+            "applied_gate_position": 0.0,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": false
+          },
+          {
+            "node_id": "Virtual Reservoir D",
+            "description": "Virtual Reservoir D: storage 200.715 -> 150.715 MCM, in 0.0 (local) + 0.0 (routed) MCM/day, out 50.0 (release) + 0.0 (spill) MCM/day",
+            "storage_before_mcm": 200.715,
+            "storage_after_mcm": 150.715,
+            "storage_change_mcm": -50.0,
+            "inflow_local_mcm_day": 0.0,
+            "inflow_routed_mcm_day": 0.0,
+            "routed_inflow_residual_mcm": 0.0,
+            "controlled_release_mcm_day": 50.0,
+            "spill_mcm": 0.0,
+            "total_outflow_mcm_day": 50.0,
+            "commanded_gate_fraction": 0.25,
+            "applied_gate_position": 0.25,
+            "residual_mcm": 0.0,
+            "within_tolerance": true,
+            "terminal": true
+          }
+        ],
+        "applied_action_source": "MANUAL_OPERATOR_GATES",
+        "applied_action_fraction": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 0.5,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 0.25
+        },
+        "applied_action_percent": {
+          "Virtual Reservoir A": 0.0,
+          "Virtual Reservoir B": 50.0,
+          "Virtual Reservoir C": 0.0,
+          "Virtual Reservoir D": 25.0
+        },
+        "state_valid": true,
+        "ever_violated": false,
+        "violation_count": 0,
+        "violations": [],
+        "non_finite": [],
+        "action_fully_applied": true,
+        "controller_action_checked": false,
+        "matches_final_safe_control_action": null,
+        "checked_action_source": null,
+        "action_check_note": "NO_CONTROLLER_ACTION_FOR_THIS_STEP: MANUAL mode applies operator gates",
+        "fail_safe": "NONE_DEFINED_IN_EXISTING_ARCHITECTURE",
+        "fail_safe_gap": "The validated architecture (ReservoirNetwork / SafetyLayer / MPC / DownstreamCapacityGuard) defines no response to a mass-balance violation: the SafetyLayer validates gates only, the MPC prices downstream flow only, and the downstream guard constrains flow only. Stage 11 therefore REPORTS the violation, marks the state invalid and never repairs it. It does not invent a fail-safe, does not halt the loop and does not suppress the diagnostic.",
+        "equation": "new_storage = old_storage + inflow_local + inflow_routed - controlled_release - spill",
+        "physics": "ReservoirNetwork (src/network_env/reservoir_network.py)",
+        "hardware_connected": false,
+        "latency_ms": 0.24200000189011917
+      }
+    }
+  ],
+  "gate_command": {
+    "status": "success",
+    "reservoir": "reservoir_1",
+    "gate": 50.0
+  },
+  "manual_visual": {
+    "fps": 2.2502250225022307,
+    "frameMs": 444.40000000000384,
+    "connection": "CONNECTED",
+    "stateId": "step4-t4",
+    "camera": [
+      -819.9999999999999,
+      990,
+      359.9999999999999
+    ],
+    "target": [
+      0,
+      24.999999999999993,
+      20
+    ],
+    "memory": {
+      "geometries": 56,
+      "textures": 10
+    },
+    "drawCalls": 59,
+    "triangles": 1251964,
+    "rendering": {
+      "quality": "PERFORMANCE",
+      "pixelRatio": 0.65,
+      "devicePixelRatio": 1,
+      "canvas": [
+        876,
+        429
+      ],
+      "shadowMaps": 1,
+      "shadowSize": [
+        1024,
+        1024
+      ],
+      "shadowAutoUpdate": false,
+      "contextLost": false,
+      "requestedGpuMode": "high-performance",
+      "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    },
+    "reservoirs": [
+      {
+        "id": 1,
+        "level": 0.17652495378927913,
+        "gate": 0.5,
+        "waterY": 106.75461185010198,
+        "gateY": 124.57776979884297,
+        "gateTargetY": 124.57777777777777,
+        "waterVisible": true,
+        "jetVisible": true,
+        "spillVisible": false,
+        "basin": {
+          "id": 1,
+          "cz": -380,
+          "up": 85,
+          "dn": 65,
+          "rx": 72,
+          "depth": 38
+        }
+      },
+      {
+        "id": 2,
+        "level": 0.6999059266227657,
+        "gate": 0,
+        "waterY": 77.81607874302428,
+        "gateY": 80.91111111111111,
+        "gateTargetY": 80.91111111111111,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 2,
+          "cz": -170,
+          "up": 100,
+          "dn": 75,
+          "rx": 92,
+          "depth": 44
+        }
+      },
+      {
+        "id": 3,
+        "level": 0.5918774584398059,
+        "gate": 0,
+        "waterY": 29.591739720811525,
+        "gateY": 36.522222222222226,
+        "gateTargetY": 36.522222222222226,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 3,
+          "cz": 65,
+          "up": 115,
+          "dn": 85,
+          "rx": 132,
+          "depth": 48
+        }
+      },
+      {
+        "id": 4,
+        "level": 0.5,
+        "gate": 0,
+        "waterY": -29.748935264390916,
+        "gateY": -14.47777777777777,
+        "gateTargetY": -14.47777777777777,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 4,
+          "cz": 335,
+          "up": 135,
+          "dn": 105,
+          "rx": 218,
+          "depth": 58
+        }
+      }
+    ],
+    "channels": [
+      {
+        "key": "ch1",
+        "flow": 0.29246603167465357,
+        "visible": true,
+        "foamPhase": 0.22049972397593054,
+        "pathLength": 146.28617162684534,
+        "screenPath": [
+          [
+            504.007459699083,
+            376.31149104701234
+          ],
+          [
+            509.10630788656744,
+            377.863742752976
+          ],
+          [
+            517.4638942039406,
+            383.23625666606955
+          ],
+          [
+            526.9809256957238,
+            393.4659206611901
+          ],
+          [
+            535.788068613397,
+            410.7740153910773
+          ],
+          [
+            544.3386102071485,
+            416.96458982414134
+          ],
+          [
+            551.6032577586456,
+            417.130003327355
+          ],
+          [
+            556.551848881363,
+            417.47709309623684
+          ],
+          [
+            564.0047014904826,
+            417.84192779456674
+          ],
+          [
+            571.5054373771253,
+            418.13212381638095
+          ],
+          [
+            576.5093441457855,
+            418.14401379063963
+          ],
+          [
+            584.0256806673175,
+            417.9984736689964
+          ],
+          [
+            591.5482329266653,
+            417.7272620786942
+          ],
+          [
+            596.6342039478466,
+            417.9191320538217
+          ],
+          [
+            603.477408360202,
+            413.32351708480275
+          ],
+          [
+            609.8188685463188,
+            404.8321832865588
+          ],
+          [
+            616.7969642494479,
+            399.83313157023014
+          ]
+        ]
+      },
+      {
+        "key": "ch2",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 170.9385154848585,
+        "screenPath": [
+          [
+            682.198223752522,
+            403.54239358923843
+          ],
+          [
+            689.8073086401398,
+            403.8081159099625
+          ],
+          [
+            697.3753736922324,
+            404.65757702079395
+          ],
+          [
+            705.1920472406513,
+            411.2242269097168
+          ],
+          [
+            713.3571158453811,
+            428.1296977322009
+          ],
+          [
+            720.9786041612899,
+            435.69232527142805
+          ],
+          [
+            728.2945986408071,
+            436.5645410691899
+          ],
+          [
+            735.5469202152661,
+            436.852456511714
+          ],
+          [
+            742.7851040162436,
+            437.62634156218877
+          ],
+          [
+            750.03059932998,
+            438.34189178885725
+          ],
+          [
+            757.2622170246499,
+            439.0861102272611
+          ],
+          [
+            764.4695525726489,
+            440.2918772202722
+          ],
+          [
+            771.6530857407168,
+            441.55658040904603
+          ],
+          [
+            778.8113764421585,
+            442.55157499517793
+          ],
+          [
+            786.0736780515663,
+            440.52018988392797
+          ],
+          [
+            793.5894624041495,
+            434.3676665733557
+          ],
+          [
+            801.0404184386928,
+            431.6000184678538
+          ]
+        ]
+      },
+      {
+        "key": "ch3",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 179.1196624354738,
+        "screenPath": [
+          [
+            864.9134115357632,
+            453.01127465937014
+          ],
+          [
+            872.0493920190778,
+            456.1627496796667
+          ],
+          [
+            878.6850081620954,
+            462.75917370419126
+          ],
+          [
+            884.8009215872578,
+            472.4776077769436
+          ],
+          [
+            890.236992414269,
+            500.7357081441769
+          ],
+          [
+            896.7439561111726,
+            506.46980994718217
+          ],
+          [
+            903.930593748114,
+            508.4718418223272
+          ],
+          [
+            911.1418662262494,
+            510.54342658054117
+          ],
+          [
+            920.86248306925,
+            513.0289287563187
+          ],
+          [
+            928.2302904998676,
+            514.6862098979261
+          ],
+          [
+            935.6560107792646,
+            516.1969784481247
+          ],
+          [
+            943.0649562898158,
+            517.861286586693
+          ],
+          [
+            952.996504755476,
+            519.9293170742994
+          ],
+          [
+            960.6012912153986,
+            520.9191126281371
+          ],
+          [
+            968.5158506184819,
+            520.8350475689606
+          ],
+          [
+            978.0524830124446,
+            515.0910354147068
+          ],
+          [
+            990.3165526318237,
+            509.7233155064513
+          ]
+        ]
+      },
+      {
+        "key": "ch4",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 836.4619457899773,
+        "screenPath": [
+          [
+            1076.3389310606028,
+            525.2983786151824
+          ],
+          [
+            1112.435020807259,
+            538.0144324329979
+          ],
+          [
+            1149.1193286834223,
+            560.0466297185837
+          ],
+          [
+            1184.1952988196417,
+            586.695396949379
+          ],
+          [
+            1217.1323447572759,
+            618.1003081354847
+          ],
+          [
+            1249.4219067461547,
+            646.8962753143986
+          ],
+          [
+            1285.2917654212517,
+            679.0530572765647
+          ],
+          [
+            1322.3829284889343,
+            712.6954690151875
+          ],
+          [
+            1363.4916876496231,
+            743.2768685319692
+          ],
+          [
+            1404.745890837406,
+            766.970682584978
+          ],
+          [
+            1449.365959714688,
+            786.2738680720881
+          ],
+          [
+            1493.2123384378363,
+            800.0795944777144
+          ],
+          [
+            1536.588442254628,
+            811.1991886960947
+          ],
+          [
+            1576.9298480208329,
+            822.3302587291679
+          ],
+          [
+            1621.5433501680204,
+            836.9240142917871
+          ],
+          [
+            1667.2735320608642,
+            855.3937428452621
+          ],
+          [
+            1711.2783175086226,
+            877.7791352090034
+          ]
+        ]
+      },
+      {
+        "key": "in1",
+        "flow": 0.0879662209710305,
+        "visible": true,
+        "foamPhase": 0.3386338804099286,
+        "pathLength": 90.92931029643185,
+        "screenPath": [
+          [
+            383.68137556968566,
+            284.69376592421077
+          ],
+          [
+            385.56275841943295,
+            286.671594943408
+          ],
+          [
+            387.44848437053076,
+            288.6881737110622
+          ],
+          [
+            389.3210898272301,
+            290.6907271319647
+          ],
+          [
+            392.88296866539105,
+            294.22563608983234
+          ],
+          [
+            394.5326478957828,
+            295.6337408065796
+          ],
+          [
+            396.1273089826846,
+            296.8887960624247
+          ],
+          [
+            399.4203940190037,
+            299.7042808051277
+          ],
+          [
+            401.1648974218986,
+            301.3943634093549
+          ],
+          [
+            403.017857998691,
+            303.397007832948
+          ],
+          [
+            408.10632258104755,
+            311.4664487291069
+          ],
+          [
+            410.1976290381488,
+            314.1551568099145
+          ],
+          [
+            415.42139833012453,
+            326.1658285319041
+          ],
+          [
+            423.267836670668,
+            342.51896704139375
+          ],
+          [
+            425.2003105983587,
+            344.71965572817817
+          ],
+          [
+            426.8518573621944,
+            346.03696160136013
+          ],
+          [
+            430.2636966323965,
+            348.86502701581344
+          ]
+        ]
+      },
+      {
+        "key": "sp1",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 126.1402698381733,
+        "screenPath": [
+          [
+            520.3380097948062,
+            385.96314607203084
+          ],
+          [
+            526.7668593263186,
+            392.57304709554154
+          ],
+          [
+            535.7281984612492,
+            410.3245120606409
+          ],
+          [
+            541.7803105819526,
+            416.1369859419235
+          ],
+          [
+            549.0775022310413,
+            416.9679402062947
+          ],
+          [
+            553.9433428607912,
+            417.174255328346
+          ],
+          [
+            558.9830538478716,
+            417.8700419461482
+          ],
+          [
+            566.4251587287515,
+            417.97116684703246
+          ],
+          [
+            571.444662873387,
+            418.1276258648967
+          ],
+          [
+            576.455153058595,
+            418.12826983751006
+          ],
+          [
+            583.9736598701651,
+            417.99941460305735
+          ],
+          [
+            588.9645241625915,
+            417.6981671170285
+          ],
+          [
+            594.0060943501155,
+            417.5709360706547
+          ],
+          [
+            601.3018377520204,
+            415.6727976060607
+          ],
+          [
+            605.6312834456639,
+            410.90455573709767
+          ],
+          [
+            609.8110470194083,
+            404.82934906810215
+          ],
+          [
+            616.7969642494479,
+            399.83313157023014
+          ]
+        ]
+      },
+      {
+        "key": "sp2",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 141.16156698869506,
+        "screenPath": [
+          [
+            702.2093707285652,
+            405.50204402851057
+          ],
+          [
+            707.5451208513418,
+            412.00044720820364
+          ],
+          [
+            715.8117019446734,
+            431.8753248742545
+          ],
+          [
+            720.8429503424102,
+            436.044448913057
+          ],
+          [
+            728.1629415525905,
+            436.7987839664999
+          ],
+          [
+            733.0220306991004,
+            437.00882870017796
+          ],
+          [
+            740.2968644898169,
+            437.3312046980484
+          ],
+          [
+            745.1429613787326,
+            437.95028877147854
+          ],
+          [
+            752.3959202243175,
+            438.49867032558035
+          ],
+          [
+            757.2214359378953,
+            439.0706512849923
+          ],
+          [
+            764.4343623803009,
+            440.28407902287296
+          ],
+          [
+            769.222623516618,
+            441.21930198265795
+          ],
+          [
+            776.3976283778933,
+            442.2425631103982
+          ],
+          [
+            781.1838286158622,
+            442.7373250987429
+          ],
+          [
+            788.5815499047633,
+            438.52670889546414
+          ],
+          [
+            793.6099174347187,
+            434.3062851112423
+          ],
+          [
+            801.0404184386928,
+            431.6000184678538
+          ]
+        ]
+      },
+      {
+        "key": "sp3",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 159.04438891251982,
+        "screenPath": [
+          [
+            878.2399733527783,
+            462.247434496963
+          ],
+          [
+            882.6108474954129,
+            467.25094160949163
+          ],
+          [
+            887.0112392826354,
+            487.5465106804021
+          ],
+          [
+            891.8945968814805,
+            503.36981581902097
+          ],
+          [
+            898.7805855602544,
+            507.09261759416
+          ],
+          [
+            906.0249536218405,
+            509.0174060451458
+          ],
+          [
+            913.2726665716858,
+            511.11041749475726
+          ],
+          [
+            920.5979838449298,
+            512.9748013361564
+          ],
+          [
+            927.9952275385239,
+            514.6389257347182
+          ],
+          [
+            932.9614368155839,
+            515.6571845032333
+          ],
+          [
+            940.4164285957846,
+            517.2364127942897
+          ],
+          [
+            947.9114528505719,
+            518.715387436469
+          ],
+          [
+            955.3806210560633,
+            520.3394090817178
+          ],
+          [
+            963.0181355883342,
+            521.3360307477396
+          ],
+          [
+            971.4889887211323,
+            519.353169918456
+          ],
+          [
+            981.3076297880706,
+            512.9052827320435
+          ],
+          [
+            990.3165526318237,
+            509.7233155064513
+          ]
+        ]
+      }
+    ],
+    "objects": [
+      "SKY_OVERCAST",
+      "TERRAIN_WESTERN_GHATS",
+      "DISTANT_MOUNTAIN_CONTEXT",
+      "VEGETATION",
+      "DAM_01",
+      "SERVICE_ACCESS_01",
+      "SPILLWAY_JET_01",
+      "SEPARATE_OVERFLOW_01",
+      "PLUNGE_SPRAY_01",
+      "DAM_02",
+      "SERVICE_ACCESS_02",
+      "SPILLWAY_JET_02",
+      "SEPARATE_OVERFLOW_02",
+      "PLUNGE_SPRAY_02",
+      "DAM_03",
+      "SERVICE_ACCESS_03",
+      "SPILLWAY_JET_03",
+      "SEPARATE_OVERFLOW_03",
+      "PLUNGE_SPRAY_03",
+      "DAM_04",
+      "SERVICE_ACCESS_04",
+      "SPILLWAY_JET_04",
+      "SEPARATE_OVERFLOW_04",
+      "PLUNGE_SPRAY_04",
+      "RESERVOIR_01",
+      "RESERVOIR_02",
+      "RESERVOIR_03",
+      "RESERVOIR_04",
+      "CHANNEL_01",
+      "CHANNEL_01_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_01",
+      "CHANNEL_02",
+      "CHANNEL_02_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_02",
+      "CHANNEL_03",
+      "CHANNEL_03_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_03",
+      "CHANNEL_04",
+      "CHANNEL_04_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_04",
+      "INFLOW_01",
+      "INFLOW_01_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_01",
+      "SPILL_CONTINUATION_01_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_02",
+      "SPILL_CONTINUATION_02_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_03",
+      "SPILL_CONTINUATION_03_TRAVELLING_FOAM",
+      "RAIN_SYSTEM",
+      "MIST_LAYER"
+    ]
+  },
+  "ai_visual": {
+    "fps": 2.5002083506959036,
+    "frameMs": 399.9666666666647,
+    "connection": "CONNECTED",
+    "stateId": "step5-t5",
+    "camera": [
+      -819.9999999999999,
+      990,
+      359.9999999999999
+    ],
+    "target": [
+      0,
+      24.999999999999993,
+      20
+    ],
+    "memory": {
+      "geometries": 58,
+      "textures": 10
+    },
+    "drawCalls": 59,
+    "triangles": 1251974,
+    "rendering": {
+      "quality": "PERFORMANCE",
+      "pixelRatio": 0.65,
+      "devicePixelRatio": 1,
+      "canvas": [
+        876,
+        429
+      ],
+      "shadowMaps": 1,
+      "shadowSize": [
+        1024,
+        1024
+      ],
+      "shadowAutoUpdate": false,
+      "contextLost": false,
+      "requestedGpuMode": "high-performance",
+      "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)"
+    },
+    "reservoirs": [
+      {
+        "id": 1,
+        "level": 0.2689463955637708,
+        "gate": 0,
+        "waterY": 104.88010959349045,
+        "gateY": 121.72379696520261,
+        "gateTargetY": 120.57777777777777,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 1,
+          "cz": -380,
+          "up": 85,
+          "dn": 65,
+          "rx": 72,
+          "depth": 38
+        }
+      },
+      {
+        "id": 2,
+        "level": 0.5940733772342428,
+        "gate": 0.5,
+        "waterY": 79.0693196986117,
+        "gateY": 83.76509192367035,
+        "gateTargetY": 84.91111111111111,
+        "waterVisible": true,
+        "jetVisible": true,
+        "spillVisible": false,
+        "basin": {
+          "id": 2,
+          "cz": -170,
+          "up": 100,
+          "dn": 75,
+          "rx": 92,
+          "depth": 44
+        }
+      },
+      {
+        "id": 3,
+        "level": 0.6148468230497574,
+        "gate": 0,
+        "waterY": 30.614025646719906,
+        "gateY": 36.522222222222226,
+        "gateTargetY": 36.522222222222226,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 3,
+          "cz": 65,
+          "up": 115,
+          "dn": 85,
+          "rx": 132,
+          "depth": 48
+        }
+      },
+      {
+        "id": 4,
+        "level": 0.5,
+        "gate": 0,
+        "waterY": -29.748935264390916,
+        "gateY": -14.47777777777777,
+        "gateTargetY": -14.47777777777777,
+        "waterVisible": true,
+        "jetVisible": false,
+        "spillVisible": false,
+        "basin": {
+          "id": 4,
+          "cz": 335,
+          "up": 135,
+          "dn": 105,
+          "rx": 218,
+          "depth": 58
+        }
+      }
+    ],
+    "channels": [
+      {
+        "key": "ch1",
+        "flow": 0.06525800191518746,
+        "visible": false,
+        "foamPhase": 0.4214800700192986,
+        "pathLength": 146.28617162684534,
+        "screenPath": [
+          [
+            504.007459699083,
+            376.31149104701234
+          ],
+          [
+            509.10630788656744,
+            377.863742752976
+          ],
+          [
+            517.4638942039406,
+            383.23625666606955
+          ],
+          [
+            526.9809256957238,
+            393.4659206611901
+          ],
+          [
+            535.788068613397,
+            410.7740153910773
+          ],
+          [
+            544.3386102071485,
+            416.96458982414134
+          ],
+          [
+            551.6032577586456,
+            417.130003327355
+          ],
+          [
+            556.551848881363,
+            417.47709309623684
+          ],
+          [
+            564.0047014904826,
+            417.84192779456674
+          ],
+          [
+            571.5054373771253,
+            418.13212381638095
+          ],
+          [
+            576.5093441457855,
+            418.14401379063963
+          ],
+          [
+            584.0256806673175,
+            417.9984736689964
+          ],
+          [
+            591.5482329266653,
+            417.7272620786942
+          ],
+          [
+            596.6342039478466,
+            417.9191320538217
+          ],
+          [
+            603.452960273038,
+            413.17165779575646
+          ],
+          [
+            609.746055007401,
+            404.35503126726235
+          ],
+          [
+            616.7016038812075,
+            399.1719130948793
+          ]
+        ]
+      },
+      {
+        "key": "ch2",
+        "flow": 0.35158845033108715,
+        "visible": true,
+        "foamPhase": 0.0211898739792003,
+        "pathLength": 170.9385154848585,
+        "screenPath": [
+          [
+            682.198223752522,
+            403.54239358923843
+          ],
+          [
+            689.8073086401398,
+            403.8081159099625
+          ],
+          [
+            697.3753736922324,
+            404.65757702079395
+          ],
+          [
+            705.1920472406513,
+            411.2242269097168
+          ],
+          [
+            713.3571158453811,
+            428.1296977322009
+          ],
+          [
+            720.9786041612899,
+            435.69232527142805
+          ],
+          [
+            728.2945986408071,
+            436.5645410691899
+          ],
+          [
+            735.5469202152661,
+            436.852456511714
+          ],
+          [
+            742.7851040162436,
+            437.62634156218877
+          ],
+          [
+            750.03059932998,
+            438.34189178885725
+          ],
+          [
+            757.2622170246499,
+            439.0861102272611
+          ],
+          [
+            764.4695525726489,
+            440.2918772202722
+          ],
+          [
+            771.6530857407168,
+            441.55658040904603
+          ],
+          [
+            778.8113764421585,
+            442.55157499517793
+          ],
+          [
+            786.0783992754393,
+            440.4046346434867
+          ],
+          [
+            793.6074755260364,
+            434.0002584481646
+          ],
+          [
+            801.0696200791799,
+            431.0897671506858
+          ]
+        ]
+      },
+      {
+        "key": "ch3",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 179.1196624354738,
+        "screenPath": [
+          [
+            864.9134115357632,
+            453.01127465937014
+          ],
+          [
+            872.0493920190778,
+            456.1627496796667
+          ],
+          [
+            878.6850081620954,
+            462.75917370419126
+          ],
+          [
+            884.8009215872578,
+            472.4776077769436
+          ],
+          [
+            890.236992414269,
+            500.7357081441769
+          ],
+          [
+            896.7439561111726,
+            506.46980994718217
+          ],
+          [
+            903.930593748114,
+            508.4718418223272
+          ],
+          [
+            911.1418662262494,
+            510.54342658054117
+          ],
+          [
+            920.86248306925,
+            513.0289287563187
+          ],
+          [
+            928.2302904998676,
+            514.6862098979261
+          ],
+          [
+            935.6560107792646,
+            516.1969784481247
+          ],
+          [
+            943.0649562898158,
+            517.861286586693
+          ],
+          [
+            952.996504755476,
+            519.9293170742994
+          ],
+          [
+            960.6012912153986,
+            520.9191126281371
+          ],
+          [
+            968.5158506184819,
+            520.8350475689606
+          ],
+          [
+            978.0524830124446,
+            515.0910354147068
+          ],
+          [
+            990.3165526318237,
+            509.7233155064513
+          ]
+        ]
+      },
+      {
+        "key": "ch4",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 836.4619457899773,
+        "screenPath": [
+          [
+            1076.3389310606028,
+            525.2983786151824
+          ],
+          [
+            1112.435020807259,
+            538.0144324329979
+          ],
+          [
+            1149.1193286834223,
+            560.0466297185837
+          ],
+          [
+            1184.1952988196417,
+            586.695396949379
+          ],
+          [
+            1217.1323447572759,
+            618.1003081354847
+          ],
+          [
+            1249.4219067461547,
+            646.8962753143986
+          ],
+          [
+            1285.2917654212517,
+            679.0530572765647
+          ],
+          [
+            1322.3829284889343,
+            712.6954690151875
+          ],
+          [
+            1363.4916876496231,
+            743.2768685319692
+          ],
+          [
+            1404.745890837406,
+            766.970682584978
+          ],
+          [
+            1449.365959714688,
+            786.2738680720881
+          ],
+          [
+            1493.2123384378363,
+            800.0795944777144
+          ],
+          [
+            1536.588442254628,
+            811.1991886960947
+          ],
+          [
+            1576.9298480208329,
+            822.3302587291679
+          ],
+          [
+            1621.5433501680204,
+            836.9240142917871
+          ],
+          [
+            1667.2735320608642,
+            855.3937428452621
+          ],
+          [
+            1711.2783175086226,
+            877.7791352090034
+          ]
+        ]
+      },
+      {
+        "key": "in1",
+        "flow": 0.08796622097114708,
+        "visible": true,
+        "foamPhase": 0.5339294469123911,
+        "pathLength": 90.92931029643185,
+        "screenPath": [
+          [
+            383.68137556968566,
+            284.69376592421077
+          ],
+          [
+            385.56275841943295,
+            286.671594943408
+          ],
+          [
+            387.44848437053076,
+            288.6881737110622
+          ],
+          [
+            389.3210898272301,
+            290.6907271319647
+          ],
+          [
+            392.88296866539105,
+            294.22563608983234
+          ],
+          [
+            394.5326478957828,
+            295.6337408065796
+          ],
+          [
+            396.1273089826846,
+            296.8887960624247
+          ],
+          [
+            399.4203940190037,
+            299.7042808051277
+          ],
+          [
+            401.1648974218986,
+            301.3943634093549
+          ],
+          [
+            403.017857998691,
+            303.397007832948
+          ],
+          [
+            408.10632258104755,
+            311.4664487291069
+          ],
+          [
+            410.1976290381488,
+            314.1551568099145
+          ],
+          [
+            415.42139833012453,
+            326.1658285319041
+          ],
+          [
+            423.267836670668,
+            342.51896704139375
+          ],
+          [
+            425.2003105983587,
+            344.71965572817817
+          ],
+          [
+            426.8518573621944,
+            346.03696160136013
+          ],
+          [
+            430.2636966323965,
+            348.86502701581344
+          ]
+        ]
+      },
+      {
+        "key": "sp1",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 126.1402698381733,
+        "screenPath": [
+          [
+            520.3380097948062,
+            385.96314607203084
+          ],
+          [
+            526.7668593263186,
+            392.57304709554154
+          ],
+          [
+            535.7281984612492,
+            410.3245120606409
+          ],
+          [
+            541.7803105819526,
+            416.1369859419235
+          ],
+          [
+            549.0775022310413,
+            416.9679402062947
+          ],
+          [
+            553.9433428607912,
+            417.174255328346
+          ],
+          [
+            558.9830538478716,
+            417.8700419461482
+          ],
+          [
+            566.4251587287515,
+            417.97116684703246
+          ],
+          [
+            571.444662873387,
+            418.1276258648967
+          ],
+          [
+            576.455153058595,
+            418.12826983751006
+          ],
+          [
+            583.9736598701651,
+            417.99941460305735
+          ],
+          [
+            588.9645241625915,
+            417.6981671170285
+          ],
+          [
+            594.0060943501155,
+            417.5709360706547
+          ],
+          [
+            601.2908715641141,
+            415.60585098389834
+          ],
+          [
+            605.590978193214,
+            410.6497892080477
+          ],
+          [
+            609.73829436748,
+            404.3526211738554
+          ],
+          [
+            616.7016038812075,
+            399.1719130948793
+          ]
+        ]
+      },
+      {
+        "key": "sp2",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 141.16156698869506,
+        "screenPath": [
+          [
+            702.2093707285652,
+            405.50204402851057
+          ],
+          [
+            707.5451208513418,
+            412.00044720820364
+          ],
+          [
+            715.8117019446734,
+            431.8753248742545
+          ],
+          [
+            720.8429503424102,
+            436.044448913057
+          ],
+          [
+            728.1629415525905,
+            436.7987839664999
+          ],
+          [
+            733.0220306991004,
+            437.00882870017796
+          ],
+          [
+            740.2968644898169,
+            437.3312046980484
+          ],
+          [
+            745.1429613787326,
+            437.95028877147854
+          ],
+          [
+            752.3959202243175,
+            438.49867032558035
+          ],
+          [
+            757.2214359378953,
+            439.0706512849923
+          ],
+          [
+            764.4343623803009,
+            440.28407902287296
+          ],
+          [
+            769.222623516618,
+            441.21930198265795
+          ],
+          [
+            776.3976283778933,
+            442.2425631103982
+          ],
+          [
+            781.1841711220751,
+            442.7276518454505
+          ],
+          [
+            788.5900670491006,
+            438.33135626636755
+          ],
+          [
+            793.627925719024,
+            433.93912259465816
+          ],
+          [
+            801.0696200791799,
+            431.0897671506858
+          ]
+        ]
+      },
+      {
+        "key": "sp3",
+        "flow": 0,
+        "visible": false,
+        "foamPhase": 0,
+        "pathLength": 159.04438891251982,
+        "screenPath": [
+          [
+            878.2399733527783,
+            462.247434496963
+          ],
+          [
+            882.6108474954129,
+            467.25094160949163
+          ],
+          [
+            887.0112392826354,
+            487.5465106804021
+          ],
+          [
+            891.8945968814805,
+            503.36981581902097
+          ],
+          [
+            898.7805855602544,
+            507.09261759416
+          ],
+          [
+            906.0249536218405,
+            509.0174060451458
+          ],
+          [
+            913.2726665716858,
+            511.11041749475726
+          ],
+          [
+            920.5979838449298,
+            512.9748013361564
+          ],
+          [
+            927.9952275385239,
+            514.6389257347182
+          ],
+          [
+            932.9614368155839,
+            515.6571845032333
+          ],
+          [
+            940.4164285957846,
+            517.2364127942897
+          ],
+          [
+            947.9114528505719,
+            518.715387436469
+          ],
+          [
+            955.3806210560633,
+            520.3394090817178
+          ],
+          [
+            963.0181355883342,
+            521.3360307477396
+          ],
+          [
+            971.4889887211323,
+            519.353169918456
+          ],
+          [
+            981.3076297880706,
+            512.9052827320435
+          ],
+          [
+            990.3165526318237,
+            509.7233155064513
+          ]
+        ]
+      }
+    ],
+    "objects": [
+      "SKY_OVERCAST",
+      "TERRAIN_WESTERN_GHATS",
+      "DISTANT_MOUNTAIN_CONTEXT",
+      "VEGETATION",
+      "DAM_01",
+      "SERVICE_ACCESS_01",
+      "SPILLWAY_JET_01",
+      "SEPARATE_OVERFLOW_01",
+      "PLUNGE_SPRAY_01",
+      "DAM_02",
+      "SERVICE_ACCESS_02",
+      "SPILLWAY_JET_02",
+      "SEPARATE_OVERFLOW_02",
+      "PLUNGE_SPRAY_02",
+      "DAM_03",
+      "SERVICE_ACCESS_03",
+      "SPILLWAY_JET_03",
+      "SEPARATE_OVERFLOW_03",
+      "PLUNGE_SPRAY_03",
+      "DAM_04",
+      "SERVICE_ACCESS_04",
+      "SPILLWAY_JET_04",
+      "SEPARATE_OVERFLOW_04",
+      "PLUNGE_SPRAY_04",
+      "RESERVOIR_01",
+      "RESERVOIR_02",
+      "RESERVOIR_03",
+      "RESERVOIR_04",
+      "CHANNEL_01",
+      "CHANNEL_01_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_01",
+      "CHANNEL_02",
+      "CHANNEL_02_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_02",
+      "CHANNEL_03",
+      "CHANNEL_03_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_03",
+      "CHANNEL_04",
+      "CHANNEL_04_TRAVELLING_FOAM",
+      "TOPOLOGY_DIRECTION_04",
+      "INFLOW_01",
+      "INFLOW_01_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_01",
+      "SPILL_CONTINUATION_01_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_02",
+      "SPILL_CONTINUATION_02_TRAVELLING_FOAM",
+      "SPILL_CONTINUATION_03",
+      "SPILL_CONTINUATION_03_TRAVELLING_FOAM",
+      "RAIN_SYSTEM",
+      "MIST_LAYER"
+    ]
+  },
+  "result": "PASS",
+  "websocket_frames": 14,
+  "page_errors": []
+}

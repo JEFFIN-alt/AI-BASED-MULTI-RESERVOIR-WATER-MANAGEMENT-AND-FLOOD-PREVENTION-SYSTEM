@@ -1,0 +1,102 @@
+{
+  "R1": {
+    "crop": [
+      877,
+      645,
+      1269,
+      940
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 1117,
+        "mean_channel_delta": 5.559509414406634
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 1201,
+        "mean_channel_delta": 5.179651062359648
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 549,
+        "mean_channel_delta": 2.8402141993435825
+      }
+    ]
+  },
+  "R2": {
+    "crop": [
+      1058,
+      535,
+      1418,
+      839
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 455,
+        "mean_channel_delta": 2.1497942386831275
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 344,
+        "mean_channel_delta": 2.2449931412894375
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 444,
+        "mean_channel_delta": 2.6751714677640606
+      }
+    ]
+  },
+  "R3": {
+    "crop": [
+      932,
+      561,
+      1239,
+      872
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 857,
+        "mean_channel_delta": 4.499466869763899
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 661,
+        "mean_channel_delta": 3.8862147753236864
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 830,
+        "mean_channel_delta": 5.64006092916984
+      }
+    ]
+  },
+  "R4": {
+    "crop": [
+      939,
+      578,
+      1600,
+      940
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 2215,
+        "mean_channel_delta": 11.592854989448297
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 1739,
+        "mean_channel_delta": 6.5343684051854085
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 1212,
+        "mean_channel_delta": 5.099336750075369
+      }
+    ]
+  }
+}

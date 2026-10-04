@@ -1,0 +1,8 @@
+{
+  "scope": "Real core and extracted production final boundary; not full FastAPI/PyTorch startup",
+  "tests_run": 8,
+  "passed": true,
+  "failures": [],
+  "errors": [],
+  "reserve_fraction": 0.3
+}

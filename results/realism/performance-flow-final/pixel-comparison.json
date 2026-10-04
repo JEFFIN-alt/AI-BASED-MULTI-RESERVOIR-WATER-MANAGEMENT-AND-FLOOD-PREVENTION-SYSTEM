@@ -1,0 +1,102 @@
+{
+  "R1": {
+    "crop": [
+      877,
+      645,
+      1269,
+      940
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 2387,
+        "mean_channel_delta": 9.771078092605391
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 489,
+        "mean_channel_delta": 3.940739460953697
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 2462,
+        "mean_channel_delta": 10.598134070490671
+      }
+    ]
+  },
+  "R2": {
+    "crop": [
+      1058,
+      535,
+      1418,
+      839
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 303,
+        "mean_channel_delta": 1.9664271717831483
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 490,
+        "mean_channel_delta": 2.868190725016329
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 181,
+        "mean_channel_delta": 1.9182233834095364
+      }
+    ]
+  },
+  "R3": {
+    "crop": [
+      932,
+      561,
+      1239,
+      872
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 185,
+        "mean_channel_delta": 1.6557494279176201
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 216,
+        "mean_channel_delta": 2.1277173913043477
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 355,
+        "mean_channel_delta": 2.472683066361556
+      }
+    ]
+  },
+  "R4": {
+    "crop": [
+      939,
+      578,
+      1600,
+      940
+    ],
+    "pixel_comparisons": [
+      {
+        "t": 1,
+        "channel_pixels_changed_gt_8": 1249,
+        "mean_channel_delta": 4.422821826952065
+      },
+      {
+        "t": 2,
+        "channel_pixels_changed_gt_8": 1132,
+        "mean_channel_delta": 4.796804341272234
+      },
+      {
+        "t": 4,
+        "channel_pixels_changed_gt_8": 1297,
+        "mean_channel_delta": 5.3798613204703045
+      }
+    ]
+  }
+}

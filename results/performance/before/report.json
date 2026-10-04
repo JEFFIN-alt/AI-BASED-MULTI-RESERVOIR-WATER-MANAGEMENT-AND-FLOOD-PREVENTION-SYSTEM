@@ -1,0 +1,530 @@
+{
+  "errors": [],
+  "runs": {
+    "baseline-overview": {
+      "median_fps": 32.03883495145631,
+      "samples": [
+        {
+          "fps": 30.63543828441541,
+          "frameMs": 32.641935483871016,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 32.03883495145631,
+          "frameMs": 31.212121212121215,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 31.44345091873831,
+          "frameMs": 31.803125000000023,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 33.80393716444611,
+          "frameMs": 29.58235294117656,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 32.80318091451292,
+          "frameMs": 30.484848484848484,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        }
+      ]
+    },
+    "baseline-focus": {
+      "median_fps": 0.9941346058256345,
+      "samples": [
+        {
+          "fps": 28.95473409902523,
+          "frameMs": 34.53666666666662,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1568,
+            818
+          ],
+          "css": [
+            1568,
+            818
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.9431293030274457,
+          "frameMs": 1060.2999999999993,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1568,
+            818
+          ],
+          "css": [
+            1568,
+            818
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.994134605825631,
+          "frameMs": 1005.8999999999978,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1568,
+            818
+          ],
+          "css": [
+            1568,
+            818
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.9944311853619672,
+          "frameMs": 1005.6000000000058,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1568,
+            818
+          ],
+          "css": [
+            1568,
+            818
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.9941346058256345,
+          "frameMs": 1005.8999999999942,
+          "calls": 75,
+          "triangles": 1603376,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1568,
+            818
+          ],
+          "css": [
+            1568,
+            818
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        }
+      ]
+    },
+    "vegetation-overview": {
+      "median_fps": 0.9942334460131246,
+      "samples": [
+        {
+          "fps": 0.9942334460131246,
+          "frameMs": 1005.7999999999993,
+          "calls": 69,
+          "triangles": 411576,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.9942334460131246,
+          "frameMs": 1005.7999999999993,
+          "calls": 69,
+          "triangles": 411576,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            600
+          ],
+          "css": [
+            1248,
+            600
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.9943323058566166,
+          "frameMs": 1005.7000000000007,
+          "calls": 69,
+          "triangles": 411576,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.994134605825631,
+          "frameMs": 1005.8999999999978,
+          "calls": 69,
+          "triangles": 411576,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        },
+        {
+          "fps": 0.994233446013121,
+          "frameMs": 1005.8000000000029,
+          "calls": 69,
+          "triangles": 411576,
+          "memory": {
+            "geometries": 65,
+            "textures": 9
+          },
+          "shadowMaps": [
+            {
+              "name": "DirectionalLight",
+              "size": [
+                2048,
+                2048
+              ],
+              "autoUpdate": false
+            }
+          ],
+          "canvas": [
+            1248,
+            580
+          ],
+          "css": [
+            1248,
+            580
+          ],
+          "dpr": 1.0000000149011612,
+          "pixelRatio": 1.0000000149011612,
+          "renderer": "ANGLE (Intel, Intel(R) UHD Graphics (0x0000A78B) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+          "vendor": "Google Inc. (Intel)",
+          "webgl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+          "requested": "high-performance"
+        }
+      ]
+    }
+  }
+}

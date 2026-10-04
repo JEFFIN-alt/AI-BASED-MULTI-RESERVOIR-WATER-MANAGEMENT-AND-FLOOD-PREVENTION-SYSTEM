@@ -110,6 +110,17 @@ assert.match(feedback.at(-1),/REJECTED/);
 globalThis.fetch = async () => { throw Error('offline'); };
 await api.pause();
 assert.match(feedback.at(-1),/FAILED/);
+// REST outages and late REST responses must not freeze a healthy WS display.
+await api.checkFreshness();
+assert.equal(connection.at(-1),'CONNECTED');
+api.ws.onmessage({data:JSON.stringify({state_identity:{state_id:'step8-t8',sim_step_index:8}})});
+globalThis.fetch = async () => ({ok:true,json:async()=>({state_identity:{state_id:'step7-t7',sim_step_index:7},simulation:{running:true}})});
+await api.checkFreshness();
+assert.equal(connection.at(-1),'CONNECTED');
+const received = states.length;
+api.ws.onmessage({data:JSON.stringify({state_identity:{state_id:'step6-t6',sim_step_index:6}})});
+assert.equal(states.length,received);
+assert.equal(api.lastStateId,'step8-t8');
 api.ws.onclose();
 assert.equal(connection.at(-1),'STALE DATA');
 """

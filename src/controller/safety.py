@@ -27,7 +27,7 @@ class SafetyLayer:
       1. Gate bounds [0.0, 1.0]
       2. Finite numeric values (no NaN, no Inf)
       3. Maximum gate movement per timestep
-      4. Downstream capacity (estimated from proposed releases)
+      4. Downstream capacity is checked by a separate live boundary
       5. All required nodes present
 
     If violations are found, the layer either corrects the output
@@ -70,11 +70,11 @@ class SafetyLayer:
             gate = proposed_gates[nid]
 
             # Check for NaN/Inf
-            if not isinstance(gate, (int, float)) or math.isnan(gate) or math.isinf(gate):
+            if isinstance(gate, bool) or not isinstance(gate, (int, float)) or not math.isfinite(gate):
                 violations.append(f"{nid}: invalid gate value {gate} — clamped to 0.1")
-                validated[nid] = 0.1
+                gate = 0.1
                 corrected = True
-                continue
+                # Fallbacks must pass the same movement limit as valid commands.
 
             # Clamp to [0, 1]
             original = gate

@@ -720,8 +720,8 @@ def test_manual_mode_names_operator_gates_and_does_not_claim_a_controller_verdic
     audit = sim.bridge.cascade.mass_balance_diagnostic()
     assert audit["status"] == MASS_BALANCE_STATUS_PASS
     assert audit["applied_action_source"] == "MANUAL_OPERATOR_GATES"
-    assert audit["applied_action_percent"][D] == pytest.approx(50.0)
-    assert audit["applied_action_fraction"][D] == pytest.approx(0.5)
+    assert audit["applied_action_percent"][D] == pytest.approx(25.0)  # final capacity guard
+    assert audit["applied_action_fraction"][D] == pytest.approx(0.25)
 
     twin = sim.get_adapted_state()["mass_balance"]
     assert twin["controller_action_checked"] is False

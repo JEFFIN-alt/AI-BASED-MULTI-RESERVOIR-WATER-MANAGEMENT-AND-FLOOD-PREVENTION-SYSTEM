@@ -512,3 +512,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 Additional project resources (literature, datasets and tooling links) are collected in
 [`docs/Resources.md`](docs/Resources.md).
+# Gmail downstream alert configuration
+
+See [`docs/GMAIL_ALERTS.md`](docs/GMAIL_ALERTS.md) for Gmail App Password setup,
+environment loading examples, and recipient configuration.

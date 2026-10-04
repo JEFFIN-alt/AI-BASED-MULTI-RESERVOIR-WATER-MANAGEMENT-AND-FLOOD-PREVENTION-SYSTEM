@@ -1,4 +1,5 @@
 import datetime
+import math
 
 from src.common import units
 
@@ -273,6 +274,7 @@ def _simulation_block(simulation: dict | None) -> dict:
     return {
         "running": simulation.get("running"),
         "speed": simulation.get("speed"),
+        "error": simulation.get("error"),
         "source": simulation.get("source"),
     }
 
@@ -487,28 +489,40 @@ def _auto_control_block(block) -> dict:
 
 
 def _forecast_source_block(sim_state: dict) -> dict:
-    """
-    STAGE 18 — which forecast source may feed the controller, and what that
-    means for the provenance gate.
+    """Report current forecast availability; the controller checks each decision.
 
-    ``control_forecast_validated`` is the backend's own answer to "is the
-    forecast driving the controller validated?". The demonstration badge is
-    keyed off it, so the badge disappears exactly when the backend says the
-    control forecast is no longer simulation-derived.
+    A source selection or an earlier eligible decision cannot authorize a new
+    forecast date whose records are missing. Require all controlled reservoirs
+    to carry the backend's validated, real-data provenance and finite horizons.
     """
     source = str(sim_state.get("forecast_source") or "SIMULATION")
-    validated = source == "VALIDATED_REPLAY"
+    replay = source == "VALIDATED_REPLAY"
+    rows = sim_state.get("reservoirs") or {}
+    def ready(name):
+        row = rows.get(name) or {}
+        if (row.get("forecast_status") != "VALIDATED"
+                or row.get("validated_metrics_apply") is not True
+                or row.get("is_simulated") is not False):
+            return False
+        for key in ("forecast_1d", "forecast_3d", "forecast_7d"):
+            value = row.get(key)
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                return False
+            if not math.isfinite(value) or value < 0:
+                return False
+        return True
+    validated = replay and all(ready(name) for name in TWIN_RESERVOIR_KEYS)
     return {
         "selected": source,
         "control_forecast_validated": validated,
-        "replay_is_historical_not_live": validated,
+        "replay_is_historical_not_live": replay,
         "options": ["SIMULATION", "VALIDATED_REPLAY"],
         "note": (
             "VALIDATED_REPLAY: the frozen LSTM V3 model's predictions on its "
-            "held-out REAL historical test split, read read-only. They satisfy "
-            "the provenance gate; they are a HISTORICAL REPLAY, not a forecast "
-            "of current live conditions."
-            if validated else
+            "held-out REAL historical test split, read read-only. Available "
+            "records are checked by the controller on each decision. This is a "
+            "HISTORICAL REPLAY, not a forecast of current live conditions."
+            if replay else
             "SIMULATION: the frozen LSTM V3 model run on this simulation's own "
             "state, with explicitly-labelled synthetic placeholders for features "
             "the live simulation cannot produce. Reported DEMONSTRATION_ONLY, so "
@@ -608,6 +622,7 @@ def adapt_state_for_twin(sim_state, current_mode="MANUAL", storm_intensity=0.0):
             "model": "LSTM_V3_LOGTARGET",
             "model_status": "FROZEN_UNMODIFIED",
             "forecast_unit": "MCM/day",
+            "display_forecast_unit": "m³/s",
             "horizons": ["1d", "3d", "7d"],
             "validated_evaluation": "historical held-out data -> frozen LSTM V3",
             "live_path": "authoritative simulation state -> simulation/demo feature inputs -> frozen LSTM V3",

@@ -1,6 +1,8 @@
 import asyncio
 import json
 import logging
+import math
+from src.controller.storage_reserve import reserve_bounds, verify_reserve_action
 import os
 import time
 from collections import deque
@@ -12,6 +14,7 @@ from typing import Optional
 from src.dashboard.sim_bridge import SimBridge
 from src.common import units
 from src.dashboard.twin_component.state_adapter import adapt_state_for_twin
+from src.dashboard.api.notifications import DownstreamNotificationManager
 from src.modeling.inference import LiveForecaster, ForecastUnavailableError
 from src.modeling.gnn_inference import LiveGNNForecaster
 from src.modeling.gnn_advisory import (
@@ -174,6 +177,8 @@ class GlobalSimulationState:
         #: step, so a NORMAL -> HIGH transition can be reported truthfully.
         self._last_risk = {}
         self._last_downstream_status = None
+        self.notification_manager = DownstreamNotificationManager(on_update=self._schedule_notification_broadcast)
+        self._notification_loop = None
         #: Lazily constructed READ-ONLY reader of the frozen V3 held-out
         #: prediction artifact (VALIDATED_REPLAY source only).
         self._v3_replay_adapter = None
@@ -206,6 +211,9 @@ class GlobalSimulationState:
             # decision for the same four reservoirs.
             "Virtual Reservoir D": 50.0,
         }
+        self.classroom_demo = False
+        self.final_safety = {"checked": False}
+        self.simulation_error = None
         self.clients = set()
         self.loop_task = None
         self._update_inflows()
@@ -396,22 +404,16 @@ class GlobalSimulationState:
         return self._v3_replay_adapter
 
     def _replay_date(self, adapter: V3ForecastAdapter) -> Optional[str]:
-        """
-        Latest date on which ALL mapped reservoirs have all three horizons.
-
-        Chosen by asking the adapter itself, so no date is assumed and no value is
-        interpolated. Returns ``None`` when no such date exists.
-        """
-        df = pd.read_csv(adapter.artifact_path)
-        node_ids = list(adapter.reservoir_mapping.keys())
-        for date in sorted({str(d) for d in df["date"].unique()}, reverse=True):
-            snapshot = adapter.get_network_snapshot(date, node_ids=node_ids)
-            if all(
-                all(snapshot.forecasts[nid].is_available(h) for h in ("1d", "3d", "7d"))
-                for nid in node_ids
-            ):
-                return date
-        return None
+        """One historical calendar day per simulated day; never repeat a stale issue."""
+        dates = sorted(str(d) for d in adapter.available_dates)
+        if not dates:
+            return None
+        date = (pd.Timestamp(dates[0]) + pd.Timedelta(days=self.bridge.cascade.network.timestep)).strftime("%Y-%m-%d")
+        if date not in dates:
+            return None
+        snapshot = adapter.get_network_snapshot(date, node_ids=list(adapter.reservoir_mapping))
+        return date if all(all(fc.is_available(h) for h in ("1d", "3d", "7d"))
+                           for fc in snapshot.forecasts.values()) else None
 
     @staticmethod
     def _replay_unavailable(reason: str, note: str, live_names) -> dict:
@@ -545,6 +547,9 @@ class GlobalSimulationState:
                 self.history_buffers[p_name].pop(0)
 
     def _update_inflows(self):
+        if getattr(self, "classroom_demo", False):
+            self.manual_inflows = dict(zip(self.bridge.cascade.network.processing_order, [1.0, .5, 8.0, 0.0]))
+            return
         # Storm multiplier scales baseline inflow up to 4x (1 + 3*storm).
         # Baselines are chosen so that at storm=0 every inflow is below the
         # reservoir's max release capacity — full gate can then drain it.
@@ -708,9 +713,10 @@ class GlobalSimulationState:
                 ordered = pd.DataFrame([flat], columns=self.lstm_forecaster.expected_cols)
                 scaled = self.lstm_forecaster.feature_scaler.transform(ordered)
                 window = scaled[0, : HISTORY_DAYS * len(self.lstm_forecaster.dynamic_features)]
+                # Scaler columns are feature-major: each feature contains seven days.
                 history[p_name] = window.reshape(
-                    HISTORY_DAYS, len(self.lstm_forecaster.dynamic_features)
-                ).astype(np.float32)
+                    len(self.lstm_forecaster.dynamic_features), HISTORY_DAYS
+                ).T.astype(np.float32)
             except Exception:
                 continue
         return history
@@ -932,7 +938,11 @@ class GlobalSimulationState:
         """
         network = self.bridge.cascade.network
         adapter = LiveForecastAdapter.for_network(network, project_root=str(_PROJECT_ROOT))
-        return adapter.build_bundle(ctrl_forecasts, self._forecast_date())
+        issue_dates = {v.get("forecast_date") for v in ctrl_forecasts.values()
+                       if isinstance(v, dict) and v.get("forecast_date")}
+        if len(issue_dates) > 1:
+            raise ValueError("Mixed forecast issue dates")
+        return adapter.build_bundle(ctrl_forecasts, next(iter(issue_dates), self._forecast_date()))
 
     def _apply_ai_control(self, ctrl_forecasts: dict, gate_commands: dict) -> dict:
         """
@@ -954,6 +964,7 @@ class GlobalSimulationState:
         try:
             bundle = self._build_live_forecast_bundle(ctrl_forecasts)
         except Exception as exc:
+            gate_commands = self._current_gate_pct()
             decision = LiveControlDecision(
                 controller_status=ControllerStatus.BLOCKED.value,
                 forecast_control_eligible=False,
@@ -1317,14 +1328,18 @@ class GlobalSimulationState:
         self.last_risk_transitions = []
         self._last_risk = {}
         self.event_log.clear()
+        for history in self.history_buffers.values():
+            history.clear()
+        self.final_safety = {"checked": False}
+        self.simulation_error = None
         # STAGE 19 (P3) — a RESET rebuilds the cascade and starts a new run:
         # the display pipeline must be recomputed for it, never reused.
         self._invalidate_pipeline_cache()
         self.log_event("reset", "Simulation RESET — authoritative state re-initialised")
 
     def step(self):
+        self.simulation_error = None
         self._update_inflows()
-        self._record_history()
 
         ctrl_forecasts = self._run_ml_pipeline()
 
@@ -1344,7 +1359,11 @@ class GlobalSimulationState:
             action_source = getattr(decision, "final_safe_control_action_source", None) \
                 or "UNKNOWN"
 
+        # Final boundary for EVERY live path: manual, MPC, unavailable forecast,
+        # and adapter failure. No gate reaches physics before this check.
+        gate_commands = self._final_action_boundary(gate_commands)
         self.bridge.step(self.manual_inflows, gate_commands, action_source=action_source)
+        self._record_history()
         # STAGE 11 — verify (after the step, on the audit of that step) that the
         # action applied to ReservoirNetwork is the controller's
         # FINAL_SAFE_CONTROL_ACTION. Never repairs and never re-applies.
@@ -1357,8 +1376,105 @@ class GlobalSimulationState:
                 previous_gates, gate_commands
             )
         state = self.get_adapted_state()
+        # Observe only authoritative step results. Email delivery runs on a
+        # bounded worker and cannot hold up simulation/control/WebSocket work.
+        self.notification_manager.observe(state)
+        state["notification"] = self.notification_manager.payload()
         self._record_control_events(state)
         return state
+
+    def _final_action_boundary(self, requested):
+        network = self.bridge.cascade.network
+        ids = network.processing_order
+        current = {n: network.nodes[n].state.gate_position for n in ids}
+        proposed = {n: requested[n] / 100.0 for n in ids if n in requested}
+        safety = self.mpc_orchestrator.safety.validate(proposed, current, ids)
+        mpc = getattr(self.mpc_orchestrator, 'mpc', None)
+        fraction = getattr(getattr(mpc, 'config', None), 'minimum_storage_fraction', None)
+        reserve = reserve_bounds(network, self.manual_inflows,
+            fraction) if self.mode == 'AI' and fraction is not None else None
+        decision = self.last_control_decision if self.mode == "AI" else None
+        if decision is not None and decision.control_applied:
+            # Reuse THIS step's already checked forecast trajectory; verify the
+            # exact proposed vector survived the final bounds/rate validation.
+            checked_action = decision.final_safe_control_action_fraction
+            if set(safety.validated_gates) != set(checked_action) or any(
+                not math.isclose(value, checked_action[node], rel_tol=0.0, abs_tol=1e-11)
+                for node, value in safety.validated_gates.items()
+            ):
+                raise RuntimeError("Final action diverged from the checked MPC action")
+            # Apply the original checked vector without a percent round-trip.
+            applied = dict(checked_action)
+            downstream = dict(decision.downstream_capacity_protection)
+            if downstream.get("predicted_flow_mcm_day") is None:
+                raise RuntimeError("Cannot advance: MPC downstream prediction unavailable")
+        else:
+            proposal = dict(safety.validated_gates)
+            if reserve:
+                proposal = {n: min(g, reserve['gate_upper_bounds'][n]) for n, g in proposal.items()}
+            checked = self.mpc_orchestrator.downstream_guard.evaluate(
+                network, action_fraction=proposal,
+                current_fraction=current, node_ids=ids,
+                max_gate_change=self.mpc_orchestrator.safety.max_gate_change,
+                inflows=dict(self.manual_inflows),
+                **({'gate_upper_bounds': reserve['gate_upper_bounds']} if reserve else {}))
+            if not checked.trajectory_mcm_day:
+                raise RuntimeError("Cannot advance: downstream prediction unavailable")
+            applied = checked.action_fraction
+            downstream = checked.to_dict()
+        if not self.mpc_orchestrator.downstream_guard.safety_layer_feasible(
+                applied, ids, current, self.mpc_orchestrator.safety.max_gate_change):
+            raise RuntimeError("Cannot advance: final gate bounds/rate check failed")
+        verify_reserve_action(applied, reserve)
+        self.final_safety = {"checked": True, "mode": self.mode,
+            "gate_status": safety.status, "violations": safety.violations,
+            "requested_gate_pct": dict(requested),
+            "applied_gate_pct": {n: g * 100.0 for n, g in applied.items()},
+            "downstream": downstream,
+            "storage_reserve": dict(reserve, verified=True) if reserve else {"enabled": False, "reason": "Manual mode or reserve not configured"}}
+        return dict(self.final_safety["applied_gate_pct"])
+
+    def load_classroom_demo(self):
+        """Deterministic initial conditions; all subsequent physics is unchanged."""
+        self.running = False
+        self.mode = "MANUAL"
+        self.storm_intensity = 0.0
+        self.classroom_demo = True
+        self.simulation_error = None
+        self.bridge.init_cascade(50.0)
+        self.manual_gates = {n: 0.0 for n in self.bridge.cascade.network.processing_order}
+        self.set_forecast_source("SIMULATION")
+        self.reset_auto_control_state()
+        self._update_inflows()
+        self.log_event("classroom_demo", "Classroom preset: fixed local inflows; gates closed; daily steps")
+
+    def _classroom_telemetry(self):
+        network = self.bridge.cascade.network
+        return {"active": self.classroom_demo, "day": network.timestep,
+            "units": "storage MCM; flow MCM/day; one step = one day",
+            "spill_policy": "Upstream spill exits through separate lateral outlets; controlled release routes downstream.",
+            "reservoirs": [{"node": n, "storage": node.state.storage,
+                "local_inflow": node.state.inflow_local, "routed_inflow": node.state.inflow_routed,
+                "controlled_release": node.state.controlled_release, "spill": node.state.spill,
+                "gate_pct": node.state.gate_position * 100.0}
+                for n, node in network.nodes.items()],
+            "routes": [{"source": c.source, "destination": c.destination,
+                "delay_days": c.delay, "attenuation": c.attenuation,
+                "queued_mcm": sum(c.queue)} for c in network.connections]}
+
+    def _schedule_notification_broadcast(self):
+        """Publish asynchronous mail completion without blocking its SMTP worker."""
+        loop = self._notification_loop
+        if loop is not None and loop.is_running():
+            loop.call_soon_threadsafe(lambda: asyncio.create_task(self.broadcast_state()))
+
+    def close_resolved_notification_after_reset(self):
+        """Close a prior incident from the reset cascade's existing status."""
+        reset_state = self.bridge.get_state({})
+        adapted = adapt_state_for_twin(reset_state, self.mode, self.storm_intensity)
+        adapted["state_identity"] = {"network_timestep": int(self.bridge.cascade.network.timestep)}
+        downstream = adapted.get("downstream") or {}
+        self.notification_manager.close_if_resolved(downstream.get("status"), state=adapted)
 
     #: Tolerance for the applied-vs-final-action comparison (gate PERCENT).
     ACTION_MATCH_TOLERANCE_PERCENT = 1e-9
@@ -1449,6 +1565,7 @@ class GlobalSimulationState:
         current_state["simulation"] = {
             "running": bool(self.running),
             "speed": float(self.sim_speed),
+            "error": self.simulation_error,
             "source": "GlobalSimulationState.running / sim_speed",
         }
 
@@ -1480,7 +1597,11 @@ class GlobalSimulationState:
                 if res in current_state["reservoirs"]:
                     current_state["reservoirs"][res]["requested_gate_pct"] = gate_val
 
-        return adapt_state_for_twin(current_state, self.mode, self.storm_intensity)
+        adapted = adapt_state_for_twin(current_state, self.mode, self.storm_intensity)
+        adapted["notification"] = self.notification_manager.payload()
+        adapted["final_safety"] = self.final_safety
+        adapted["classroom_demo"] = self._classroom_telemetry()
+        return adapted
 
     def _record_loop_overrun(self, overrun_s: float) -> None:
         """
@@ -1502,14 +1623,36 @@ class GlobalSimulationState:
     async def broadcast_state(self):
         if not self.clients:
             return
-        state = self.get_adapted_state()
-        state_json = json.dumps(state)
-        for client in list(self.clients):
+        loop = asyncio.get_running_loop()
+        if getattr(self, "_broadcast_loop", None) is not loop:
+            self._broadcast_loop = loop
+            self._broadcast_lock = asyncio.Lock()
+
+        async def send(client, state_json):
             try:
-                await client.send_text(state_json)
+                await asyncio.wait_for(client.send_text(state_json), timeout=0.5)
             except Exception:
-                self.clients.remove(client)
+                self.clients.discard(client)
+                # Removing a slow socket from broadcasts must also trigger the
+                # browser's reconnect path; heartbeats alone could look healthy.
+                if hasattr(client, "close"):
+                    try:
+                        await asyncio.wait_for(client.close(code=1013), timeout=0.1)
+                    except Exception:
+                        pass
+
+        # Order snapshots, serialize once, and bound each client's backpressure.
+        async with self._broadcast_lock:
+            state_json = json.dumps(self.get_adapted_state(), allow_nan=False)
+            await asyncio.gather(*(send(client, state_json) for client in list(self.clients)))
                 
+    def record_simulation_error(self, exc):
+        """Pause visibly after a rejected step; keep the loop available for recovery."""
+        self.running = False
+        self.simulation_error = str(exc)
+        self.log_event("simulation_error", f"Simulation paused: {exc}")
+        logger.exception("Simulation step failed; playback paused")
+
     async def simulation_loop(self):
         """
         STAGE 19 (P4) — DEADLINE-BASED scheduling (no cadence drift).
@@ -1533,6 +1676,7 @@ class GlobalSimulationState:
         * Physics, controller timing semantics and `sim_speed`'s meaning
           (steps per second) are unchanged: only WHEN the sleep happens moved.
         """
+        self._notification_loop = asyncio.get_running_loop()
         # Monotonic clock for the deadline arithmetic.
         clock = time.monotonic
         next_deadline = clock()
@@ -1544,7 +1688,10 @@ class GlobalSimulationState:
                 continue
 
             # ── ONE authoritative step, exactly as before.
-            self.step()
+            try:
+                self.step()
+            except Exception as exc:
+                self.record_simulation_error(exc)
             # ── Broadcast the resulting authoritative state.
             await self.broadcast_state()
 
@@ -1576,4 +1723,3 @@ class GlobalSimulationState:
 # published is always the state produced by the simulation that processed the
 # commands. No other live producer exists.
 sim_state = GlobalSimulationState()
-

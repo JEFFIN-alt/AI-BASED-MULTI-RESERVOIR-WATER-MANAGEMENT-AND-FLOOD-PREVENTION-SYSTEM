@@ -26,12 +26,16 @@ any other physical state directly.
 """
 
 import math
+import asyncio
+import re
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, field_validator
 
 from src.dashboard.api.state_manager import sim_state
+from src.dashboard.api.gmail_auth import gmail_oauth
 
 router = APIRouter()
 
@@ -104,6 +108,104 @@ class SpeedCommand(BaseModel):
         return max(0.05, min(50.0, f))
 
 
+class NotificationPreferences(BaseModel):
+    recipient: str | None = None
+    high_enabled: bool | None = None
+    critical_enabled: bool | None = None
+    telegram_enabled: bool | None = None
+    discord_enabled: bool | None = None
+
+    @field_validator("recipient")
+    @classmethod
+    def valid_recipient(cls, value):
+        if value is None:
+            return value
+        value = value.strip()
+        if value and (len(value) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", value)):
+            raise ValueError("Enter a valid recipient email address")
+        return value
+
+
+@router.get("/notifications/settings")
+async def get_notification_settings():
+    return sim_state.notification_manager.settings_payload()
+
+
+@router.put("/notifications/settings")
+async def save_notification_settings(settings: NotificationPreferences):
+    return sim_state.notification_manager.update_preferences(**settings.model_dump(exclude_unset=True))
+
+
+@router.post("/notifications/test")
+async def send_test_notification():
+    sim_state._notification_loop = asyncio.get_running_loop()
+    try:
+        return sim_state.notification_manager.send_test()
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
+
+
+@router.post("/notifications/telegram/test")
+async def send_test_telegram_notification():
+    return sim_state.notification_manager.telegram.send_test()
+
+
+@router.post("/notifications/discord/test")
+async def send_test_discord_notification():
+    sim_state._notification_loop = asyncio.get_running_loop()
+    try:
+        return sim_state.notification_manager.discord.send_test(sim_state.get_adapted_state())
+    except RuntimeError:
+        raise HTTPException(status_code=409, detail="Discord test cooldown is active") from None
+
+
+@router.post("/notifications/incidents/{incident_id}/acknowledge")
+async def acknowledge_notification_incident(incident_id: str):
+    sim_state._notification_loop = asyncio.get_running_loop()
+    try:
+        return sim_state.notification_manager.acknowledge(incident_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="Incident not found") from None
+    except ValueError:
+        raise HTTPException(status_code=409, detail="Incident is already resolved") from None
+
+
+@router.post("/notifications/gmail/connect")
+async def connect_gmail():
+    authorization_url = gmail_oauth.authorization_url()
+    if not authorization_url:
+        raise HTTPException(status_code=503, detail="Google OAuth is not configured. Administrator OAuth credentials are required.")
+    return {"authorization_url": authorization_url}
+
+
+@router.get("/notifications/gmail/callback")
+async def gmail_oauth_callback_get(code: str | None = None, state: str | None = None, error: str | None = None):
+    if error or not code:
+        return RedirectResponse("/?settings=notifications&gmail_oauth=error")
+    try:
+        await asyncio.to_thread(gmail_oauth.complete, code, state)
+    except Exception:
+        return RedirectResponse("/?settings=notifications&gmail_oauth=error")
+    return RedirectResponse("/?settings=notifications&gmail_oauth=connected")
+
+
+@router.post("/notifications/gmail/callback")
+async def gmail_oauth_callback_post(request: Request):
+    # Accept Google's form_post response mode for deployments that explicitly use it.
+    from urllib.parse import parse_qs
+    form = parse_qs((await request.body()).decode("utf-8", errors="replace"))
+    return await gmail_oauth_callback_get((form.get("code") or [None])[0],
+                                          (form.get("state") or [None])[0],
+                                          (form.get("error") or [None])[0])
+
+@router.post("/notifications/gmail/disconnect")
+async def disconnect_gmail():
+    gmail_oauth.disconnect()
+    return sim_state.notification_manager.settings_payload()
+
+
 @router.get("/state")
 async def get_state():
     """Read the ONE authoritative Digital Twin state."""
@@ -158,12 +260,27 @@ async def pause_simulation():
 @router.post("/simulation/step")
 async def step_simulation():
     sim_state.running = False
-    sim_state.step()
+    sim_state._notification_loop = __import__("asyncio").get_running_loop()
+    try:
+        sim_state.step()
+    except Exception as exc:
+        sim_state.record_simulation_error(exc)
+        await sim_state.broadcast_state()
+        raise HTTPException(status_code=409, detail=f"Simulation paused: {exc}") from None
     await sim_state.broadcast_state()
     return {"status": "success", "stepped": True}
 
+@router.post("/simulation/classroom-demo")
+async def classroom_demo():
+    sim_state.load_classroom_demo()
+    sim_state.close_resolved_notification_after_reset()
+    await sim_state.broadcast_state()
+    return {"status": "success", "preset": "classroom", "running": False}
+
+
 @router.post("/simulation/reset")
 async def reset_simulation():
+    sim_state.classroom_demo = False
     sim_state.bridge.init_cascade(50.0)
     # STAGE 18 — a reset begins a NEW run, so the previous run's controller
     # decision, gate transitions, risk memory and event log are cleared. This is
@@ -172,6 +289,9 @@ async def reset_simulation():
     # exists (GlobalSimulationState.simulation_loop), so there is no second
     # automatic loop to leak.
     sim_state.reset_auto_control_state()
+    # Close a prior incident against the new cascade state without warming the
+    # display forecast cache or invoking any controller logic.
+    sim_state.close_resolved_notification_after_reset()
     if not sim_state.running:
         await sim_state.broadcast_state()
     return {"status": "success", "reset": True}

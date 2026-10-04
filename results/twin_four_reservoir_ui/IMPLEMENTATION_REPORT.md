@@ -87,3 +87,12 @@ The targeted integration selection (`test_stage12_authoritative_twin_state.py`, 
 - Independently measured true A -> B -> C -> D arrival-lag propagation: **NOT VERIFIED**. The browser run verifies backend-reported inflows at every reservoir and terminal D response; the existing network FIFO routing delays are prototype assumptions, and this run does not wait for a separate water parcel to traverse each configured delay.
 - Full regression all-green: **FAIL** due only to the two pre-existing dirty-protected-source guards described above. Other selected regression tests pass.
 - Visible, headed on-screen rendering on a separate professor/demo machine: **NOT VERIFIED**. GPU renderer measurement was made on this Windows Intel UHD device in headless Edge.
+
+## Follow-up presentation pass (2026-10-01)
+
+- `src/dashboard/web/index.html`: inter-reservoir channel ribbons now use the authoritative `controlled_release` field. Spill remains represented separately by the backend-spill-driven spillway ribbon; total release is no longer mixed into the directed controlled-release channel.
+- Added a restrained downstream operator banner driven only by the backend downstream status. WATCH/WARNING is shown as a watch state. ALERT/HIGH RISK/DANGER/CRITICAL states display **DOWNSTREAM ALERT · Operator notification required · NOT CONFIGURED**; no notification is sent or implied.
+- Idukki's larger relative basin and dam scale was already present in the scene geometry (largest `rx` and dam span) and was retained. This is a visual relative scale, not a claim of geographic scale.
+- JavaScript module syntax check: **PASS** (`node --check --input-type=module`). Focused UI/presentation and Stage 12/18 pytest selection: **51 passed**, 32 warnings.
+- Fresh live-browser verification for this follow-up: **NOT VERIFIED**. The host-managed browser inventory was empty in this session, so no fresh render, focus-mode interaction, camera preset, or runtime performance observation was possible. The browser evidence above is from the earlier implementation run and is not evidence for this follow-up change.
+- Backend and scientific/controller source files were not changed in this follow-up.

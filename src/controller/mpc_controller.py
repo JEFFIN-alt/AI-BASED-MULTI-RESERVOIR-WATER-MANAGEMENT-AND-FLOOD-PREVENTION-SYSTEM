@@ -1,44 +1,23 @@
-"""
-Phase 15.3 — Deterministic MPC-Style Coordinated Reservoir Controller
+"""Deterministic MPC-style coordinated reservoir controller.
 
-Receding-horizon controller that uses:
-  - Current network state
-  - V3 forecast metadata (1d/3d/7d point forecasts)
-  - Network dynamics model (Phase 15.1 reservoir_network)
-  - Explicit objective function (objective.py)
-  - Safety validation layer (safety.py)
+Searches nominal gate targets over a cloned daily network trajectory, applies
+only the first daily action, and replans at the next step. In live AUTO, each
+simulated day clips targets to movement limits and the storage reserve. The
+first day uses actual inflows; future days use the forecast scenario. Six nominal gate
+levels across four reservoirs give 1,296 vectors before movement filtering.
+The objective prices spill, terminal capacity excursions, storage-band deviation,
+unnecessary releases and gate movement. Physical bounds come from the simulator;
+live downstream feasibility is checked separately after optimization.
 
-to compute coordinated gate actions across all reservoirs.
+Live configuration: eight daily offsets 0..7, current inflow at offset 0, model
+point forecasts at 1, 3 and 7, explicitly interpolated scenarios between anchors.
+Only feasible trajectories are scored. The live orchestrator independently
+rescores the final action after downstream correction.
 
-FORECAST HANDLING — CRITICAL:
-  V3 provides point forecasts for days +1, +3, +7 ONLY.
-  Days +2, +4, +5, +6 are NOT predicted by V3.
-  This controller does NOT interpolate missing horizons.
-  This controller does NOT fabricate intermediate forecasts.
-
-  Strategy: The MPC uses a 3-step lookahead aligned with the
-  available V3 horizons:
-    Step 0 (current day): use actual/observed current inflow
-    Step 1 (day +1):      use target_1d if available, else hold current
-    Step 2 (day +3):      use target_3d if available, else hold current
-
-  Day +7 (target_7d) is used as an informational signal to adjust
-  the objective's storage target but is NOT used as an explicit
-  simulation step (since days +4-6 would require fabricated inflows).
-
-  This is a scientifically defensible choice because:
-  1. We only simulate through points with forecast support
-  2. We do not invent intermediate-day forecasts
-  3. The 7-day signal provides situational awareness without
-     pretending we have daily resolution
-
-OPTIMIZATION METHOD:
-  Grid search over discrete candidate gate positions for each
-  reservoir at each step. With 4 reservoirs and ~5 gate levels,
-  the search space is manageable (5^4 = 625 candidates per step,
-  evaluated via rollout on a cloned network).
-
-  This is transparent, deterministic, and reproducible.
+Default configuration: preserves the original three-step historical benchmark
+for reproducibility. Its third step uses the day-3 point on the next daily step;
+that legacy timing convention is NOT the live configuration. The unused legacy
+day7_headroom_factor is retained solely for configuration compatibility.
 """
 
 import copy
@@ -53,6 +32,7 @@ from ..network_env.v3_forecast_adapter import (
 )
 from .objective import ObjectiveFunction, ObjectiveWeights
 from .safety import SafetyLayer, SafetyCheckResult
+from .storage_reserve import reserve_bounds
 
 logger = logging.getLogger(__name__)
 
@@ -106,6 +86,8 @@ class MPCConfig:
     # MPC lookahead steps (aligned with V3 forecast availability)
     # Step 0 = current day, Step 1 = day+1, Step 2 = day+3
     lookahead_steps: int = 3
+    # Opt-in live daily timeline; legacy research reproduction remains unchanged.
+    daily_forecast_horizon: bool = False
 
     # Fallback inflow when forecast unavailable (hold current)
     use_current_inflow_as_fallback: bool = True
@@ -116,6 +98,8 @@ class MPCConfig:
 
     # Maximum gate change per step
     max_gate_change: float = 0.5
+    # Live-only hard first-step reserve; None preserves historical reproduction.
+    minimum_storage_fraction: Optional[float] = None
 
 
 class MPCController:
@@ -198,7 +182,19 @@ class MPCController:
         candidates_evaluated = 0
 
         # For the first step, evaluate all gate combinations
-        gate_combos = list(itertools.product(self.config.gate_levels, repeat=len(node_ids)))
+        reserve = reserve_bounds(network, current_inflows, self.config.minimum_storage_fraction)
+        if reserve:
+            for nid in node_ids:
+                upper = reserve['gate_upper_bounds'][nid]
+                lower = max(0., current_gates[nid] - self.config.max_gate_change)
+                if lower > upper + 1e-11:
+                    raise RuntimeError(f'No action satisfies AUTO reserve and movement limit for {nid}')
+            # Search nominal policies. Each forecast rollout applies daily
+            # movement/reserve limits, so tomorrow's replenishment can support
+            # tomorrow's release without authorizing depletion today.
+            gate_combos = itertools.product(self.config.gate_levels, repeat=len(node_ids))
+        else:
+            gate_combos = itertools.product(self.config.gate_levels, repeat=len(node_ids))
 
         # STAGE 19 (P1) — ONE rollout clone per decision, reused for all
         # candidates. `ReservoirNetwork` topology/config is invariant during a
@@ -210,6 +206,11 @@ class MPCController:
 
         for combo in gate_combos:
             candidate_gates_step0 = {nid: g for nid, g in zip(node_ids, combo)}
+            if not reserve and self.config.daily_forecast_horizon and any(
+                abs(candidate_gates_step0[nid] - current_gates[nid]) > self.config.max_gate_change + 1e-9
+                for nid in node_ids
+            ):
+                continue
 
             # Simulate trajectory on the reused rollout clone. When THIS
             # `_simulate_trajectory` accepts `rollout_clone` (the normal
@@ -242,11 +243,14 @@ class MPCController:
 
             if result["total_cost"] < best_cost:
                 best_cost = result["total_cost"]
-                best_gates = candidate_gates_step0
+                best_gates = ({nid: trajectory[0][nid].gate_position for nid in node_ids}
+                              if reserve else candidate_gates_step0)
                 best_result = result
 
         # --- Handle case where no candidate was found ---
         if best_gates is None:
+            if reserve:
+                raise RuntimeError('No reserve-feasible MPC action found; AUTO action refused')
             return ControlDecision(
                 gate_positions=SafetyLayer.emergency_fallback(node_ids),
                 objective_score=float('inf'),
@@ -312,6 +316,23 @@ class MPCController:
 
         NO interpolation. NO fabrication.
         """
+        if self.config.daily_forecast_horizon:
+            # Eight DAILY steps: offsets 0..7. Intermediate days are explicitly
+            # interpolated scenario inputs, not extra model predictions.
+            daily = [{} for _ in range(8)]
+            for nid in node_ids:
+                anchors = {0: float(current_inflows.get(nid, 0.0))}
+                fc = forecast_snapshot.get(nid) if forecast_snapshot else None
+                for offset in (1, 3, 7):
+                    if fc and fc.is_available(f"{offset}d"):
+                        anchors[offset] = float(getattr(fc, f"target_{offset}d"))
+                for day in range(8):
+                    left = max(x for x in anchors if x <= day)
+                    right = min((x for x in anchors if x >= day), default=left)
+                    daily[day][nid] = anchors[left] if left == right else (
+                        anchors[left] + (anchors[right] - anchors[left]) * (day-left)/(right-left))
+            return daily
+
         steps = []
 
         for step_idx in range(self.config.lookahead_steps):
@@ -417,7 +438,7 @@ class MPCController:
         """
         if rollout_clone is None:
             # Deep clone the network config and rebuild
-            clone = ReservoirNetwork(config_dict=copy.deepcopy(real_network._raw_config))
+            clone = ReservoirNetwork(config_dict=copy.deepcopy(real_network._raw_config), emit_warnings=False)
 
             # Copy current storage state from the real network
             for nid in node_ids:
@@ -434,9 +455,21 @@ class MPCController:
         trajectory = []
 
         for step_idx, step_inflows in enumerate(inflow_scenarios):
-            # For simplicity, hold gates constant across lookahead
-            # (the first-step action is what we select)
+            # Legacy benchmarks hold gates constant. Live AUTO follows the
+            # nominal target subject to each day's movement and reserve limits.
             gates = candidate_gates
+            if self.config.minimum_storage_fraction is not None:
+                previous = {nid: (real_network.nodes[nid].state.gate_position if step_idx == 0
+                                  else clone.nodes[nid].state.gate_position) for nid in node_ids}
+                bounds = reserve_bounds(clone, step_inflows, self.config.minimum_storage_fraction)
+                gates = {}
+                for nid in node_ids:
+                    lower = max(0., previous[nid] - self.config.max_gate_change)
+                    upper = min(1., previous[nid] + self.config.max_gate_change,
+                                bounds['gate_upper_bounds'][nid])
+                    if lower > upper + 1e-11:
+                        return None
+                    gates[nid] = min(upper, max(lower, candidate_gates[nid]))
 
             try:
                 states = clone.step(step_inflows, gates)

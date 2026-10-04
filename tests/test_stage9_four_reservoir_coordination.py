@@ -215,7 +215,9 @@ def test_mpc_scored_the_complete_action_vector(orchestrator):
     network = _live_network()
     decision = orchestrator.decide(network, bundle=_validated_bundle(network))
 
-    assert decision.candidates_evaluated == decision.action_space["candidate_vectors"]
+    expected = math.prod(sum(abs(g - network.nodes[n].state.gate_position) <= .5 + 1e-9
+                             for g in orchestrator.mpc.config.gate_levels) for n in NODES)
+    assert decision.candidates_evaluated == expected
 
 
 def test_candidate_search_covers_the_joint_cartesian_product(orchestrator, monkeypatch):
@@ -243,10 +245,13 @@ def test_candidate_search_covers_the_joint_cartesian_product(orchestrator, monke
     expected = {
         tuple(sorted(dict(zip(NODES, combo)).items()))
         for combo in itertools.product(levels, repeat=len(NODES))
+        if all(abs(g - network.nodes[n].state.gate_position) <= .5 + 1e-9
+               for n, g in zip(NODES, combo))
     }
     observed = {tuple(sorted(c.items())) for c in captured}
 
-    assert len(captured) == len(expected) == 1296
+    assert len(expected) == 256
+    assert len(captured) == len(expected) + 1  # final corrected action is independently rescored
     assert observed == expected
     for candidate in captured:
         assert set(candidate.keys()) == set(NODES), "candidate is not four-dimensional"
@@ -357,9 +362,9 @@ def test_reservoir_d_gate_is_not_permanently_fixed(live_sim):
         })
 
     assert observed[0]["payload"] == pytest.approx(0.10, abs=1e-9)
-    assert observed[1]["payload"] == pytest.approx(0.73, abs=1e-9)
+    assert observed[1]["payload"] == pytest.approx(0.25, abs=1e-9)
     assert observed[0]["physics"] == pytest.approx(0.10, abs=1e-9)
-    assert observed[1]["physics"] == pytest.approx(0.73, abs=1e-9)
+    assert observed[1]["physics"] == pytest.approx(0.25, abs=1e-9)
     assert observed[0] != observed[1], "reservoir D is still pinned"
 
 
