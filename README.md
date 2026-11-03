@@ -516,3 +516,38 @@ Additional project resources (literature, datasets and tooling links) are collec
 
 See [`docs/GMAIL_ALERTS.md`](docs/GMAIL_ALERTS.md) for Gmail App Password setup,
 environment loading examples, and recipient configuration.
+
+
+---
+
+## Application Screenshots
+
+The following screenshots show the AquaFlow application interface. Images are stored in the repository's `screenshots/` directory.
+
+### Screenshot 1
+
+![AquaFlow application screenshot 1](screenshots/photo_2026-11-03_21-32-42.jpg)
+
+### Screenshot 2
+
+![AquaFlow application screenshot 2](screenshots/photo_2026-11-03_21-32-46.jpg)
+
+### Screenshot 3
+
+![AquaFlow application screenshot 3](screenshots/photo_2026-11-03_21-32-49.jpg)
+
+### Screenshot 4
+
+![AquaFlow application screenshot 4](screenshots/photo_2026-11-03_21-32-54.jpg)
+
+### Screenshot 5
+
+![AquaFlow application screenshot 5](screenshots/photo_2026-11-03_21-32-57.jpg)
+
+### Screenshot 6
+
+![AquaFlow application screenshot 6](screenshots/photo_2026-11-03_21-33-00.jpg)
+
+### Screenshot 7
+
+![AquaFlow application screenshot 7](screenshots/photo_2026-11-03_21-33-03.jpg)
