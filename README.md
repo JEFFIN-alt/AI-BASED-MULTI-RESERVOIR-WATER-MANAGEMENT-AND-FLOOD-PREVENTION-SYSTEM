@@ -34,6 +34,8 @@ The current system is a **development/validation prototype**. It demonstrates th
 software chain end-to-end on a four-reservoir network; it is not a claim of operational safety
 for any real dam.
 
+**[View application screenshots](#application-screenshots)**
+
 ---
 
 ## System Architecture
