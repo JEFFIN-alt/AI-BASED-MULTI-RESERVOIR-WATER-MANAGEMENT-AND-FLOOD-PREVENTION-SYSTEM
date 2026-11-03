@@ -419,6 +419,53 @@ streamlit run src/dashboard/app.py
 
 The Streamlit dashboard is a **read-only client** of the authoritative digital-twin state.
 
+### Application screenshots
+
+The screenshots below illustrate the AquaFlow operator interface and 3D digital twin. They are existing project captures stored in `screenshots/`; values shown are example simulation states, not live operational measurements.
+
+#### 1. Models and control panel
+
+The Models & Control view presents the GCN-LSTM spatial-advisory network, LSTM forecast inputs, and the controller's current decision context.
+
+![Models and control panel](screenshots/photo_2026-11-03_21-32-42.jpg)
+
+#### 2. Coordinated simulation dashboard
+
+The main simulation workspace combines the 3D reservoir cascade with scenario controls, live reservoir-state values, and the storage-over-time panel.
+
+![Coordinated simulation dashboard](screenshots/photo_2026-11-03_21-32-46.jpg)
+
+#### 3. Operator dashboard overview
+
+The operator-facing interface brings together the digital-twin scene, reservoir summaries, simulation controls, and downstream safety information.
+
+![Operator dashboard overview](screenshots/photo_2026-11-03_21-32-49.jpg)
+
+#### 4. Reservoir and gate status close-up
+
+A closer 3D view highlights individual reservoir storage, gate positions, inflow readings, and downstream discharge status.
+
+![Reservoir and gate status close-up](screenshots/photo_2026-11-03_21-32-54.jpg)
+
+#### 5. Aerial reservoir network view
+
+The aerial perspective shows the connected reservoirs and their displayed storage, gate, inflow, and risk states.
+
+![Aerial reservoir network view](screenshots/photo_2026-11-03_21-32-57.jpg)
+
+#### 6. Cascade topology and downstream warning
+
+This view illustrates the multi-reservoir cascade and the downstream warning state shown by the simulation.
+
+![Cascade topology and downstream warning](screenshots/photo_2026-11-03_21-33-00.jpg)
+
+#### 7. Terrain perspective of the reservoir cascade
+
+A wider terrain view shows the reservoir sequence and the telemetry overlays used to inspect the simulated system.
+
+![Terrain perspective of the reservoir cascade](screenshots/photo_2026-11-03_21-33-03.jpg)
+
+
 ### Reproducibility / validation scripts
 
 ```bash
@@ -516,38 +563,3 @@ Additional project resources (literature, datasets and tooling links) are collec
 
 See [`docs/GMAIL_ALERTS.md`](docs/GMAIL_ALERTS.md) for Gmail App Password setup,
 environment loading examples, and recipient configuration.
-
-
----
-
-## Application Screenshots
-
-The following screenshots show the AquaFlow application interface. Images are stored in the repository's `screenshots/` directory.
-
-### Screenshot 1
-
-![AquaFlow application screenshot 1](screenshots/photo_2026-11-03_21-32-42.jpg)
-
-### Screenshot 2
-
-![AquaFlow application screenshot 2](screenshots/photo_2026-11-03_21-32-46.jpg)
-
-### Screenshot 3
-
-![AquaFlow application screenshot 3](screenshots/photo_2026-11-03_21-32-49.jpg)
-
-### Screenshot 4
-
-![AquaFlow application screenshot 4](screenshots/photo_2026-11-03_21-32-54.jpg)
-
-### Screenshot 5
-
-![AquaFlow application screenshot 5](screenshots/photo_2026-11-03_21-32-57.jpg)
-
-### Screenshot 6
-
-![AquaFlow application screenshot 6](screenshots/photo_2026-11-03_21-33-00.jpg)
-
-### Screenshot 7
-
-![AquaFlow application screenshot 7](screenshots/photo_2026-11-03_21-33-03.jpg)
